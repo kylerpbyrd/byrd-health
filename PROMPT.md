@@ -1,128 +1,154 @@
-# Byrd Health Architect Prompt
+You are starting Phase 0 of the Byrd Health project.
 
-You are the Lead Architect for Byrd Health.
+Before any implementation work begins, perform a complete architectural discovery and legacy analysis.
 
-Your responsibility is to design the platform architecture, coordinate agents, and establish engineering standards.
+Read and follow:
 
-Do not rush into implementation.
+- AGENTS.md
+- PROMPT.md
+- PROJECTPLAN.md
+- PROJECT_IDEA.md
+- .opencode/agents/architect.md
 
-The first objective is understanding.
+Your current objective is NOT to write code.
 
----
-
-# Initial Mission
-
-Analyze the legacy fertility application located under:
-
+Your objective is to understand the existing fertility application under:
 
 /legacy
 
+and create the architectural foundation for the future Byrd Health platform.
+
+---
+
+## Phase 0 Goals
+
+Analyze the legacy application and determine:
+
+- What exists today.
+- What works well.
+- What should be preserved.
+- What should be rewritten.
+- What should be removed.
+- What architectural lessons can be carried forward.
 
 Do not modify legacy code.
 
-Do not create production code.
-
-Perform architectural discovery.
+Treat the legacy application as historical reference material.
 
 ---
 
-# Required Initial Deliverables
+## Required Deliverables
 
 Create:
 
-
 docs/LEGACY_REVIEW.md
+
+Include:
+
+- Existing technology stack
+- Application structure
+- Existing features
+- Database design
+- Business logic
+- Fertility tracking logic
+- User workflows
+- Integrations
+- Strengths
+- Weaknesses
+- Technical debt
+- Security concerns
+- Scalability concerns
+
+
+Create:
 
 docs/MIGRATION_PLAN.md
 
+For every major component classify:
+
+KEEP
+REFACTOR
+REWRITE
+REMOVE
+
+Explain the reasoning behind each decision.
+
+
+Create:
+
 docs/ARCHITECTURE_RECOMMENDATIONS.md
+
+Recommend:
+
+- Future service boundaries
+- Backend architecture
+- Frontend architecture
+- Database strategy
+- Home Assistant integration approach
+- API strategy
+- Device integration approach
+- Future ByrdOS compatibility strategy
+
+
+Create:
 
 docs/GRAPHIFY_INDEX_PLAN.md
 
+Identify:
+
+- Important entities
+- Services
+- Modules
+- Dependencies
+- Relationships
+- Architectural decisions
+- Existing concepts that should be indexed
 
 ---
 
-# Legacy Review Requirements
+## Graphify Requirements
 
-Analyze:
+Before analysis:
 
-- Technology stack
-- Existing features
-- Database structure
-- UI architecture
-- Business logic
-- Fertility algorithms
-- Integrations
-- Security concerns
-- Technical debt
-- Scalability concerns
+Query Graphify for existing project knowledge.
+
+After completing documents:
+
+Prepare the Graphify updates required.
+
+Do not leave architectural knowledge only inside markdown files.
 
 ---
 
-# Migration Classification
+## Agent Coordination
 
-Every existing component must receive one classification:
+If additional expertise is required:
 
-KEEP
+Recommend creation of specialist agents.
 
-REFACTOR
+Do not create implementation tasks yet.
 
-REWRITE
-
-REMOVE
-
-Explain the reasoning.
+Do not begin coding.
 
 ---
 
-# Future Architecture Requirements
+## Completion Criteria
 
-Byrd Health must:
+Phase 0 is complete when:
 
-- Run independently.
-- Support Home Assistant deployment.
-- Maintain future ByrdOS compatibility.
-- Keep health data local.
-- Use documented APIs.
-- Avoid unnecessary dependencies.
+✓ Legacy application has been analyzed
 
----
+✓ Migration decisions have been documented
 
-# Agent Strategy
+✓ Future architecture recommendations exist
 
-Use specialized agents.
+✓ Graphify indexing plan exists
 
-Do not perform every task yourself.
+✓ No production implementation has started
 
-Delegate:
+After completion, provide:
 
-- Backend work
-- Frontend work
-- Testing
-- Documentation
-- Research
-- Graphify management
-
----
-
-# Model Usage
-
-Use the smallest capable model.
-
-Use advanced reasoning models only for:
-
-- Architecture
-- Security
-- Complex tradeoffs
-- Algorithm design
-
----
-
-# Completion Standard
-
-A phase is complete only when:
-
-- Documentation exists.
-- Decisions are recorded.
-- Graphify is updated.
-- Architecture is reviewed.
+1. Summary of findings
+2. Major architectural recommendations
+3. Recommended next phase
+4. Questions requiring user decisions
