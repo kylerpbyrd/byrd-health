@@ -16,12 +16,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy Python packages
 COPY packages/ /app/packages/
 
-# Install Python dependencies
-RUN pip install --no-cache-dir \
-    /app/packages/fertility_engine \
-    /app/packages/data_service \
-    /app/packages/web_api \
-    /app/packages/ha_bridge
+# Install Python packages in dependency order (fertility_engine has no internal deps)
+RUN pip install --no-cache-dir /app/packages/fertility_engine
+RUN pip install --no-cache-dir /app/packages/data_service
+RUN pip install --no-cache-dir /app/packages/web_api
+RUN pip install --no-cache-dir /app/packages/ha_bridge
 
 # Copy and build frontend
 COPY frontend/ /app/frontend/
