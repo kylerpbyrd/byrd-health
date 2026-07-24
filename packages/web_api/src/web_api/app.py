@@ -1,11 +1,16 @@
+import os
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from .config import settings
+
+STATIC_DIR = os.environ.get("STATIC_DIR", "/app/static")
 
 
 @asynccontextmanager
@@ -48,6 +53,21 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
     @app.get("/api/health")
     async def health_check() -> dict[str, str]:
         return {"status": "ok"}
+
+    # Serve frontend static files and SPA fallback (after all API routes)
+    if os.path.isdir(STATIC_DIR):
+        app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
+
+        @app.get("/{full_path:path}")
+        async def serve_spa(full_path: str) -> FileResponse:
+            # Don't intercept API, docs, or static asset requests
+            if full_path.startswith(("api/", "docs", "openapi.json")):
+                raise HTTPException(status_code=404)
+
+            index_path = os.path.join(STATIC_DIR, "index.html")
+            if not os.path.isfile(index_path):
+                raise HTTPException(status_code=404)
+            return FileResponse(index_path)
 
     return app
 
