@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "project": "byrd-health",
+  "last_updated": "2026-07-23T00:00:00Z",
+  "nodes": {
+    "services": [
+      "fertility-engine",
+      "data-service",
+      "web-api",
+      "web-frontend",
+      "ha-bridge",
+      "device-adapters"
+    ],
+    "entities": [
+      "profile",
+      "cycle",
+      "temperature-record",
+      "fertility-signs",
+      "symptom",
+      "computed-insights",
+      "device-reading",
+      "cycle-phase",
+      "flow-value",
+      "mucus-value",
+      "opk-value",
+      "interpretation-method",
+      "temp-unit"
+    ],
+    "agents": [
+      "architect",
+      "backend-engineer",
+      "frontend-engineer",
+      "home-assistant-engineer",
+      "database-engineer",
+      "ai-data-science-engineer",
+      "security-engineer",
+      "qa-engineer",
+      "devops-engineer",
+      "documentation-engineer",
+      "knowledge-engineer"
+    ],
+    "adrs": [
+      "adr-0001",
+      "adr-0002",
+      "adr-0003",
+      "adr-0004",
+      "adr-0005",
+      "adr-0006",
+      "adr-0007",
+      "adr-0008",
+      "adr-0009",
+      "adr-0010"
+    ],
+    "apis": [
+      "fertility-api-v1"
+    ],
+    "documents": [
+      "legacy-review",
+      "migration-plan",
+      "architecture-recommendations",
+      "graphify-index-plan",
+      "phase1-plan",
+      "project-plan",
+      "agents-md",
+      "developer-guide",
+      "architecture-doc"
+    ],
+    "concepts": [
+      "privacy-first",
+      "modular-design",
+      "ai-first-development",
+      "graphify-canonical",
+      "token-optimization",
+      "byrdos-compatibility",
+      "portable-data",
+      "explainable-intelligence",
+      "sympto-thermal-method"
+    ],
+    "integrations": [
+      "home-assistant",
+      "byrdos"
+    ],
+    "milestones": [
+      "phase-0",
+      "phase-1",
+      "phase-2",
+      "phase-3",
+      "phase-4"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+name: "Byrd Health — Fertility Tracker"
+version: "2.0.0"
+slug: byrd_health_fertility
+description: >-
+  Privacy-first fertility intelligence. Track basal body temperature,
+  monitor cycles, detect ovulation, and identify fertile windows using
+  the sympto-thermal method. Powered by Byrd Health.
+url: "https://github.com/kylerpbyrd/byrd-health"
+arch:
+  - amd64
+  - aarch64
+  - armhf
+  - armv7
+startup: application
+boot: auto
+ingress: true
+ingress_port: 8000
+panel_icon: mdi:thermometer-lines
+panel_title: "Fertility Tracker"
+homeassistant_api: true
+hassio_api: false
+options:
+  temp_unit: "F"
+  ha_sensor_entity: ""
+  poll_interval_minutes: 15
+schema:
+  temp_unit: "list(F|C)"
+  ha_sensor_entity: "str?"
+  poll_interval_minutes: "int(1,60)?"
+map:
+  - config:rw
+init: false

@@ -1,0 +1,12 @@
+{
+  "id": "entity:symptom",
+  "type": "entity",
+  "label": "Symptom",
+  "description": "User-reported symptoms logged against a cycle date. Table: symptoms. Free-form or tracked symptoms.",
+  "source": "ADR-0003",
+  "properties": {
+    "table": "symptoms",
+    "package": "data_service",
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "symptom_type", "severity", "notes"]
+  }
+}

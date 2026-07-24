@@ -1,0 +1,290 @@
+[
+  {
+    "source": "service:web-api",
+    "target": "service:data-service",
+    "relationship": "DEPENDS_ON",
+    "description": "Web API requires Data Service for all CRUD operations"
+  },
+  {
+    "source": "service:web-api",
+    "target": "service:fertility-engine",
+    "relationship": "DEPENDS_ON",
+    "description": "Web API invokes Fertility Engine for cycle analysis"
+  },
+  {
+    "source": "service:web-frontend",
+    "target": "service:web-api",
+    "relationship": "CONSUMES",
+    "description": "Frontend calls Web API endpoints"
+  },
+  {
+    "source": "service:web-frontend",
+    "target": "api:fertility-api-v1",
+    "relationship": "CONSUMES",
+    "description": "Frontend consumes Fertility API v1"
+  },
+  {
+    "source": "service:ha-bridge",
+    "target": "service:web-api",
+    "relationship": "CONSUMES",
+    "description": "HA Bridge calls Web API to trigger analysis and read insights"
+  },
+  {
+    "source": "service:ha-bridge",
+    "target": "integration:home-assistant",
+    "relationship": "INTEGRATES_WITH",
+    "description": "HA Bridge publishes entities, polls sensors, registers Lovelace card"
+  },
+  {
+    "source": "service:ha-bridge",
+    "target": "integration:home-assistant",
+    "relationship": "ISOLATES",
+    "description": "All HA-specific logic is contained in HA Bridge"
+  },
+  {
+    "source": "service:fertility-engine",
+    "target": "entity:temperature-record",
+    "relationship": "CONSUMES",
+    "description": "Reads temperature records as input"
+  },
+  {
+    "source": "service:fertility-engine",
+    "target": "entity:fertility-signs",
+    "relationship": "CONSUMES",
+    "description": "Reads fertility signs as input"
+  },
+  {
+    "source": "service:fertility-engine",
+    "target": "entity:computed-insights",
+    "relationship": "PRODUCES",
+    "description": "Produces computed insights as output"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:profile",
+    "relationship": "HANDLES",
+    "description": "Manages profile CRUD operations"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:cycle",
+    "relationship": "HANDLES",
+    "description": "Manages cycle CRUD operations"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:temperature-record",
+    "relationship": "HANDLES",
+    "description": "Manages temperature record operations"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:fertility-signs",
+    "relationship": "HANDLES",
+    "description": "Manages fertility signs operations"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:symptom",
+    "relationship": "HANDLES",
+    "description": "Manages symptom operations"
+  },
+  {
+    "source": "service:data-service",
+    "target": "entity:computed-insights",
+    "relationship": "HANDLES",
+    "description": "Manages computed insights persistence"
+  },
+  {
+    "source": "entity:profile",
+    "target": "entity:cycle",
+    "relationship": "OWNS",
+    "description": "Profile has many cycles"
+  },
+  {
+    "source": "entity:cycle",
+    "target": "entity:temperature-record",
+    "relationship": "OWNS",
+    "description": "Cycle has many temperature records"
+  },
+  {
+    "source": "entity:cycle",
+    "target": "entity:fertility-signs",
+    "relationship": "OWNS",
+    "description": "Cycle has many fertility signs"
+  },
+  {
+    "source": "entity:cycle",
+    "target": "entity:symptom",
+    "relationship": "OWNS",
+    "description": "Cycle has many symptoms"
+  },
+  {
+    "source": "entity:cycle",
+    "target": "entity:computed-insights",
+    "relationship": "OWNS",
+    "description": "Cycle has one computed insights record"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:backend-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates Backend Engineer"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:frontend-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates Frontend Engineer"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:home-assistant-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates HA Engineer"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:database-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates Database Engineer"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:ai-data-science-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates AI Engineer"
+  },
+  {
+    "source": "agent:architect",
+    "target": "agent:knowledge-engineer",
+    "relationship": "OWNS",
+    "description": "Architect coordinates Knowledge Engineer"
+  },
+  {
+    "source": "agent:knowledge-engineer",
+    "target": "concept:graphify-canonical",
+    "relationship": "OWNS",
+    "description": "Knowledge Engineer owns Graphify"
+  },
+  {
+    "source": "agent:backend-engineer",
+    "target": "service:web-api",
+    "relationship": "IMPLEMENTS",
+    "description": "Backend Engineer implements Web API"
+  },
+  {
+    "source": "agent:backend-engineer",
+    "target": "service:fertility-engine",
+    "relationship": "IMPLEMENTS",
+    "description": "Backend Engineer implements Fertility Engine"
+  },
+  {
+    "source": "agent:frontend-engineer",
+    "target": "service:web-frontend",
+    "relationship": "IMPLEMENTS",
+    "description": "Frontend Engineer implements Web Frontend"
+  },
+  {
+    "source": "agent:home-assistant-engineer",
+    "target": "service:ha-bridge",
+    "relationship": "IMPLEMENTS",
+    "description": "HA Engineer implements HA Bridge"
+  },
+  {
+    "source": "agent:database-engineer",
+    "target": "service:data-service",
+    "relationship": "IMPLEMENTS",
+    "description": "Database Engineer implements Data Service"
+  },
+  {
+    "source": "agent:ai-data-science-engineer",
+    "target": "service:fertility-engine",
+    "relationship": "IMPLEMENTS",
+    "description": "AI Engineer implements fertility algorithms"
+  },
+  {
+    "source": "adr:adr-0001",
+    "target": "document:architecture-recommendations",
+    "relationship": "REFERENCES",
+    "description": "Platform architecture ADR references architecture recommendations"
+  },
+  {
+    "source": "adr:adr-0001",
+    "target": "document:legacy-review",
+    "relationship": "REFERENCES",
+    "description": "Platform architecture references legacy review findings"
+  },
+  {
+    "source": "adr:adr-0003",
+    "target": "adr:adr-0004",
+    "relationship": "REFERENCES",
+    "description": "Database strategy references user/profile model"
+  },
+  {
+    "source": "service:web-api",
+    "target": "api:fertility-api-v1",
+    "relationship": "IMPLEMENTS",
+    "description": "Web API implements Fertility API v1 endpoints"
+  },
+  {
+    "source": "adr:adr-0007",
+    "target": "document:legacy-review",
+    "relationship": "REFERENCES",
+    "description": "AI architecture references legacy algorithm analysis"
+  },
+  {
+    "source": "milestone:phase-0",
+    "target": "milestone:phase-1",
+    "relationship": "PRECEDES",
+    "description": "Discovery must complete before platform foundation"
+  },
+  {
+    "source": "milestone:phase-1",
+    "target": "milestone:phase-2",
+    "relationship": "PRECEDES",
+    "description": "Platform foundation must complete before fertility service"
+  },
+  {
+    "source": "milestone:phase-2",
+    "target": "milestone:phase-3",
+    "relationship": "PRECEDES",
+    "description": "Fertility service must be stable before device integration"
+  },
+  {
+    "source": "milestone:phase-3",
+    "target": "milestone:phase-4",
+    "relationship": "PRECEDES",
+    "description": "Device integration precedes platform expansion"
+  },
+  {
+    "source": "concept:privacy-first",
+    "target": "concept:portable-data",
+    "relationship": "REFERENCES",
+    "description": "Privacy-first principle implies data portability"
+  },
+  {
+    "source": "concept:modular-design",
+    "target": "concept:byrdos-compatibility",
+    "relationship": "REFERENCES",
+    "description": "Modular design enables ByrdOS compatibility"
+  },
+  {
+    "source": "concept:explainable-intelligence",
+    "target": "service:fertility-engine",
+    "relationship": "REFERENCES",
+    "description": "Fertility Engine must produce explainable insights"
+  },
+  {
+    "source": "document:developer-guide",
+    "target": "document:phase1-plan",
+    "relationship": "REFERENCES",
+    "description": "Developer guide references Phase 1 implementation plan"
+  },
+  {
+    "source": "document:architecture-doc",
+    "target": "adr:adr-0001",
+    "relationship": "REFERENCES",
+    "description": "Architecture overview references platform architecture ADR"
+  }
+]

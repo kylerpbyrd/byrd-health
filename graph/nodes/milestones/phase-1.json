@@ -1,0 +1,28 @@
+{
+  "id": "milestone:phase-1",
+  "type": "milestone",
+  "label": "Phase 1 — Platform Foundation",
+  "description": "Create the core Byrd Health architecture: Fertility Engine, Data Service, Web API, Web Frontend. No HA integration. Pure platform only.",
+  "source": "PROJECTPLAN.md, docs/PHASE1_PLAN.md",
+  "status": "in_progress",
+  "deliverables": [
+    "fertility_engine Python package",
+    "data_service Python package",
+    "web_api FastAPI service",
+    "web_frontend React SPA",
+    "CI pipeline with test/lint/typecheck",
+    "10 accepted ADRs",
+    "Graphify knowledge graph populated"
+  ],
+  "agents": ["backend-engineer", "ai-data-science-engineer", "database-engineer", "frontend-engineer", "qa-engineer", "devops-engineer", "documentation-engineer", "knowledge-engineer"],
+  "acceptance_criteria": [
+    "All packages pip-installable",
+    "All tests pass with coverage targets met",
+    "API documented via OpenAPI at /docs",
+    "Frontend renders with mock data",
+    "CI green on all branches",
+    "Graphify contains all Phase 1 nodes"
+  ],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-23T00:00:00Z"
+}

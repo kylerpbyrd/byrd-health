@@ -1,0 +1,12 @@
+{
+  "id": "entity:temperature-record",
+  "type": "entity",
+  "label": "TemperatureRecord",
+  "description": "Basal body temperature reading for a specific date within a cycle. Table: temperatures.",
+  "source": "ADR-0003",
+  "properties": {
+    "table": "temperatures",
+    "package": "data_service",
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "value", "time_taken", "is_bbt"]
+  }
+}

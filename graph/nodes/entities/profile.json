@@ -1,0 +1,12 @@
+{
+  "id": "entity:profile",
+  "type": "entity",
+  "label": "Profile",
+  "description": "User profile with fertility tracking settings. Table: profiles. UUID primary key.",
+  "source": "ADR-0004",
+  "properties": {
+    "table": "profiles",
+    "package": "data_service",
+    "key_fields": ["id (UUID)", "name", "slug", "temp_unit", "interpretation_method", "is_active"]
+  }
+}

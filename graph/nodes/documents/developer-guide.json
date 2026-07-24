@@ -1,0 +1,8 @@
+{
+  "id": "document:developer-guide",
+  "type": "document",
+  "label": "Developer Setup Guide",
+  "description": "Prerequisites, setup steps, local development workflow, testing, linting, and troubleshooting for Byrd Health developers.",
+  "source": "Phase 1 M6.2",
+  "path": "docs/DEVELOPER_GUIDE.md"
+}

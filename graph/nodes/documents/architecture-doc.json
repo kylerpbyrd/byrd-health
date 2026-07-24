@@ -1,0 +1,8 @@
+{
+  "id": "document:architecture-doc",
+  "type": "document",
+  "label": "Architecture Overview",
+  "description": "Platform architecture summary: service diagram, service descriptions, data flow, phase roadmap, and key architectural decisions.",
+  "source": "Phase 1 M6.2",
+  "path": "docs/ARCHITECTURE.md"
+}

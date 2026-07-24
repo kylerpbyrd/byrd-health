@@ -1,0 +1,8 @@
+{
+  "id": "milestone:phase-0",
+  "type": "milestone",
+  "label": "Phase 0 — Discovery & Architecture",
+  "description": "Legacy analysis, migration plan, architecture recommendations, ADR foundation",
+  "status": "completed",
+  "deliverables": ["LEGACY_REVIEW.md", "MIGRATION_PLAN.md", "ARCHITECTURE_RECOMMENDATIONS.md", "GRAPHIFY_INDEX_PLAN.md", "PHASE1_PLAN.md"]
+}

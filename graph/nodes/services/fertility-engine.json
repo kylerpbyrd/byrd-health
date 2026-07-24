@@ -1,0 +1,20 @@
+{
+  "id": "service:fertility-engine",
+  "type": "service",
+  "label": "Fertility Engine",
+  "description": "Pure Python package implementing sympto-thermal fertility algorithms. Ported from legacy algorithms/ with type safety and expanded test coverage.",
+  "source": "ADR-0001, ADR-0007",
+  "phase": 1,
+  "status": "planned",
+  "owner": "ai-data-science-engineer",
+  "properties": {
+    "language": "Python 3.12+",
+    "dependencies": ["pydantic"],
+    "ha_dependency": false,
+    "deployment": "pip-installable package",
+    "modules": ["coverline", "ovulation", "fertile_window", "cycle_analysis", "prediction"],
+    "test_coverage_target": "95%+"
+  },
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-23T00:00:00Z"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "api:fertility-api-v1",
+  "type": "api",
+  "label": "Fertility API v1",
+  "description": "Version 1 REST + WebSocket endpoints under /api/v1/fertility/",
+  "source": "ADR-0001",
+  "properties": {
+    "prefix": "/api/v1/fertility",
+    "routers": ["profiles", "entries", "cycles", "insights"],
+    "protocol": "REST",
+    "docs": "/docs"
+  }
+}

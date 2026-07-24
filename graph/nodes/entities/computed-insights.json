@@ -1,0 +1,12 @@
+{
+  "id": "entity:computed-insights",
+  "type": "entity",
+  "label": "ComputedInsights",
+  "description": "Algorithmically derived insights for a cycle: coverline, ovulation date, fertile window, predictions. Table: computed_insights.",
+  "source": "ADR-0003, ADR-0007",
+  "properties": {
+    "table": "computed_insights",
+    "package": "data_service",
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "coverline_value", "ovulation_date", "fertile_window_start", "fertile_window_end", "predicted_next_period"]
+  }
+}

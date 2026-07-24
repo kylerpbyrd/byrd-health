@@ -1,0 +1,12 @@
+{
+  "id": "entity:cycle",
+  "type": "entity",
+  "label": "Cycle",
+  "description": "A tracked menstrual cycle belonging to a profile. Table: cycles. UUID primary key.",
+  "source": "ADR-0003, ADR-0004",
+  "properties": {
+    "table": "cycles",
+    "package": "data_service",
+    "key_fields": ["id (UUID)", "profile_id (FK)", "start_date", "end_date", "is_archived"]
+  }
+}

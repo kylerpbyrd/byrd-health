@@ -1,0 +1,22 @@
+{
+  "id": "service:ha-bridge",
+  "type": "service",
+  "label": "HA Bridge",
+  "description": "Home Assistant integration bridge. The ONLY service with HA dependencies. Publishes entities, polls sensors, handles Ingress, registers Lovelace card. Implemented in Phase 2-3.",
+  "source": "ADR-0001, ADR-0006",
+  "phase": 2,
+  "status": "planned",
+  "owner": "home-assistant-engineer",
+  "properties": {
+    "language": "Python 3.12+",
+    "dependencies": ["httpx"],
+    "ha_dependency": true,
+    "isolates": "all Home Assistant logic",
+    "entities": 9,
+    "naming_pattern": "bbt_{slug}_{metric}",
+    "lovelace_card": "Lit + TypeScript (Phase 3)",
+    "test_coverage_target": "80%+"
+  },
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-23T00:00:00Z"
+}
