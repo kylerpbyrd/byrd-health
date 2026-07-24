@@ -1,16 +1,47 @@
 import os
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable, MutableMapping
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 
 STATIC_DIR = os.environ.get("STATIC_DIR", "/app/static")
+
+
+class IngressMiddleware:
+    """ASGI middleware that strips the HA Ingress path prefix.
+
+    Reads X-Ingress-Path from headers and strips it from PATH_INFO,
+    setting SCRIPT_NAME so downstream apps see clean paths.
+    """
+
+    def __init__(self, app: Callable[..., Awaitable[None]]) -> None:
+        self._app = app
+
+    async def __call__(
+        self,
+        scope: MutableMapping[str, Any],
+        receive: Callable[[], Awaitable[dict[str, Any]]],
+        send: Callable[[dict[str, Any]], Awaitable[None]],
+    ) -> None:
+        if scope["type"] != "http":
+            await self._app(scope, receive, send)
+            return
+
+        headers = dict(scope.get("headers", []))
+        ingress_path = headers.get(b"x-ingress-path", b"").decode("latin-1").rstrip("/")
+        if ingress_path:
+            path = scope.get("path", "/")
+            if path.startswith(ingress_path):
+                scope["path"] = path[len(ingress_path):] or "/"
+                scope["script_name"] = ingress_path
+
+        await self._app(scope, receive, send)
 
 
 @asynccontextmanager
@@ -43,6 +74,8 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
         allow_headers=["*"],
     )
 
+    app.add_middleware(IngressMiddleware)
+
     from .routers import profiles, entries, cycles, insights
 
     app.include_router(profiles.router)
@@ -59,7 +92,7 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
         app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
 
         @app.get("/{full_path:path}")
-        async def serve_spa(full_path: str) -> FileResponse:
+        async def serve_spa(full_path: str, request: Request) -> Response:
             # Don't intercept API, docs, or static asset requests
             if full_path.startswith(("api/", "docs", "openapi.json")):
                 raise HTTPException(status_code=404)
@@ -67,7 +100,12 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
             index_path = os.path.join(STATIC_DIR, "index.html")
             if not os.path.isfile(index_path):
                 raise HTTPException(status_code=404)
-            return FileResponse(index_path)
+
+            html = open(index_path).read()
+            script_name = request.scope.get("script_name", "")
+            if script_name:
+                html = html.replace("<head>", f'<head><base href="{script_name}/">')
+            return HTMLResponse(content=html)
 
     return app
 
