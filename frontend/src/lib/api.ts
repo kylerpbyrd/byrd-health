@@ -13,7 +13,8 @@ import type {
   EntryItem,
 } from "@/types/fertility";
 
-const API_BASE = "/api/v1/fertility";
+const INGRESS = (window as any).__INGRESS_PATH__ || "";
+const API_BASE = `${INGRESS}/api/v1/fertility`;
 
 export async function fetchDashboard(): Promise<DashboardData> {
   const [insightsRes, cycleRes] = await Promise.all([

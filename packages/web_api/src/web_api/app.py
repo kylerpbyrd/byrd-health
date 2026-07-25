@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from collections.abc import Awaitable, Callable, MutableMapping
+from collections.abc import Callable
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Optional
 
@@ -11,53 +11,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
+from .ingress import IngressMiddleware, get_application_prefix
 
 _log = logging.getLogger(__name__)
 
 STATIC_DIR = os.environ.get("STATIC_DIR", "/app/static")
-
-
-class IngressMiddleware:
-    """ASGI middleware that strips the HA Ingress path prefix.
-
-    Reads X-Ingress-Path from headers and strips it from PATH_INFO,
-    setting SCRIPT_NAME so downstream apps see clean paths.
-    """
-
-    def __init__(self, app: Callable[..., Awaitable[None]]) -> None:
-        self._app = app
-
-    async def __call__(
-        self,
-        scope: MutableMapping[str, Any],
-        receive: Callable[[], Awaitable[dict[str, Any]]],
-        send: Callable[[dict[str, Any]], Awaitable[None]],
-    ) -> None:
-        if scope["type"] != "http":
-            await self._app(scope, receive, send)
-            return
-
-        headers = dict(scope.get("headers", []))
-        ingress_path = headers.get(b"x-ingress-path", b"").decode("latin-1").rstrip("/")
-        original_path = scope.get("path", "/")  # TEMPORARY DEBUG
-
-        if ingress_path:
-            path = scope.get("path", "/")
-            if path.startswith(ingress_path):
-                scope["path"] = path[len(ingress_path):] or "/"
-                scope["script_name"] = ingress_path
-
-        # TEMPORARY DEBUG: log paths before/after Ingress stripping
-        _log.info(
-            "INGRESS: raw_path=%s stripped_path=%s script_name=%s ingress_header=%s",
-            original_path,
-            scope.get("path", "/"),
-            scope.get("script_name", "N/A"),
-            ingress_path or "NOT SET",
-        )
-        # END TEMPORARY DEBUG
-
-        await self._app(scope, receive, send)
 
 
 @asynccontextmanager
@@ -132,21 +90,21 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
             return "<h1>index.html not found at {}</h1>".format(index_path)
 
         html = open(index_path).read()
-        script_name = request.scope.get("script_name", "")
+        prefix = get_application_prefix(request)
 
-        if script_name:
+        if prefix:
             head_match = re.search(r"<head[^>]*>", html, re.IGNORECASE)
             if head_match:
                 insert_pos = head_match.end()
                 injection = (
-                    f'\n<base href="{script_name}/">'
-                    f'\n<script>window.__INGRESS_PATH__ = "{script_name}";</script>'
+                    f'\n<base href="{prefix}/">'
+                    f'\n<script>window.__INGRESS_PATH__ = "{prefix}";</script>'
                 )
                 html = html[:insert_pos] + injection + html[insert_pos:]
 
         diagnostic_comment = (
-            f"<!-- TEMPORARY DEBUG: script_name='{script_name}' "
-            f"base_href='{script_name}/' static_dir='{STATIC_DIR}' -->\n"
+            f"<!-- TEMPORARY DEBUG: script_name='{prefix}' "
+            f"base_href='{prefix}/' static_dir='{STATIC_DIR}' -->\n"
         )
         return diagnostic_comment + html
 
@@ -184,14 +142,14 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
                 raise HTTPException(status_code=404)
 
             html = open(index_path).read()
-            script_name = request.scope.get("script_name", "")
-            if script_name:
+            prefix = get_application_prefix(request)
+            if prefix:
                 head_match = re.search(r"<head[^>]*>", html, re.IGNORECASE)
                 if head_match:
                     insert_pos = head_match.end()
                     injection = (
-                        f'\n<base href="{script_name}/">'
-                        f'\n<script>window.__INGRESS_PATH__ = "{script_name}";</script>'
+                        f'\n<base href="{prefix}/">'
+                        f'\n<script>window.__INGRESS_PATH__ = "{prefix}";</script>'
                     )
                     html = html[:insert_pos] + injection + html[insert_pos:]
             return HTMLResponse(content=html)

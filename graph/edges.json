@@ -322,5 +322,23 @@
     "target": "service:web-frontend",
     "relationship": "REFERENCES",
     "description": "Fix 2: BrowserRouter basename from __INGRESS_PATH__"
+  },
+  {
+    "source": "service:web-api",
+    "target": "concept:portable-data",
+    "relationship": "IMPLEMENTS",
+    "description": "ingress.py provides get_application_prefix() — single-source-of-truth for deployment prefix regardless of HA Ingress scheme"
+  },
+  {
+    "source": "service:web-frontend",
+    "target": "integration:home-assistant",
+    "relationship": "ADAPTS_TO",
+    "description": "Vite base: './' for relative asset URLs; API_BASE reads window.__INGRESS_PATH__ for ingress-aware fetch calls"
+  },
+  {
+    "source": "adr:adr-0006",
+    "target": "service:web-api",
+    "relationship": "GOVERNED_BY",
+    "description": "IngressMiddleware and get_application_prefix() implement the ingress path handling specified in ADR-0006"
   }
 ]
