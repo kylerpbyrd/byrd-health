@@ -1,0 +1,14 @@
+{
+  "id": "document:repair-plan",
+  "type": "document",
+  "label": "Repair Plan",
+  "description": "Three fixes in dependency order: Fix 1 — regex-based base tag injection with __INGRESS_PATH__ global. Fix 2 — BrowserRouter basename from __INGRESS_PATH__. Fix 3 — align DATABASE_URL env prefix.",
+  "source": "docs/REPAIR_PLAN.md",
+  "properties": {
+    "based_on": "docs/DEBUG_REPORT.md",
+    "fix_count": 3,
+    "risk_level": "low"
+  },
+  "created_at": "2026-07-24T00:00:00Z",
+  "updated_at": "2026-07-24T00:00:00Z"
+}

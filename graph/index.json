@@ -63,7 +63,9 @@
       "project-plan",
       "agents-md",
       "developer-guide",
-      "architecture-doc"
+      "architecture-doc",
+      "debug-report",
+      "repair-plan"
     ],
     "concepts": [
       "privacy-first",

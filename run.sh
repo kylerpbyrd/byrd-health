@@ -12,7 +12,7 @@ POLL_INTERVAL=$(bashio::config 'poll_interval_minutes' '15')
 export BBT_TEMP_UNIT="${TEMP_UNIT}"
 export BBT_HA_SENSOR_ENTITY="${HA_SENSOR_ENTITY}"
 export BBT_POLL_INTERVAL="${POLL_INTERVAL}"
-export DATABASE_URL="sqlite+aiosqlite:///data/byrd_health.db"
+export BYRD_DATABASE_URL="sqlite+aiosqlite:///data/byrd_health.db"
 
 bashio::log.info "Starting Byrd Health Fertility Tracker v2.0.0"
 bashio::log.info "  Temperature unit : ${TEMP_UNIT}"

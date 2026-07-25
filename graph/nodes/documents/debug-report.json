@@ -1,0 +1,23 @@
+{
+  "id": "document:debug-report",
+  "type": "document",
+  "label": "Debug Report",
+  "description": "Systematic diagnosis of white page on HA Add-on load. Two root causes: base tag injection fails on indented HTML, BrowserRouter lacks basename for Ingress paths. Secondary: database URL env prefix mismatch.",
+  "source": "docs/DEBUG_REPORT.md",
+  "properties": {
+    "severity": "critical",
+    "symptom": "White/blank page when accessed via HA Ingress",
+    "root_causes": [
+      "Base tag injection fails due to HTML indentation (app.py:107)",
+      "BrowserRouter without basename (App.tsx:15)",
+      "DATABASE_URL env prefix mismatch (config.py:9 / run.sh:15)"
+    ],
+    "affected_files": [
+      "packages/web_api/src/web_api/app.py",
+      "frontend/src/App.tsx",
+      "run.sh"
+    ]
+  },
+  "created_at": "2026-07-24T00:00:00Z",
+  "updated_at": "2026-07-24T00:00:00Z"
+}

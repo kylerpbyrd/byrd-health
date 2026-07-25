@@ -1,4 +1,5 @@
 import os
+import re
 from collections.abc import Awaitable, Callable, MutableMapping
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, Optional
@@ -104,7 +105,11 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
             html = open(index_path).read()
             script_name = request.scope.get("script_name", "")
             if script_name:
-                html = html.replace("<head>", f'<head><base href="{script_name}/">')
+                html = re.sub(
+                    r"(\s*)<head>",
+                    rf"\1<head>\n\1  <base href='{script_name}/'>\n\1  <script>window.__INGRESS_PATH__ = '{script_name}';</script>",
+                    html,
+                )
             return HTMLResponse(content=html)
 
     return app

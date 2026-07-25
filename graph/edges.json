@@ -286,5 +286,41 @@
     "target": "adr:adr-0001",
     "relationship": "REFERENCES",
     "description": "Architecture overview references platform architecture ADR"
+  },
+  {
+    "source": "document:debug-report",
+    "target": "service:web-api",
+    "relationship": "REFERENCES",
+    "description": "Debug report identifies root cause in web-api app.py base tag injection"
+  },
+  {
+    "source": "document:debug-report",
+    "target": "service:web-frontend",
+    "relationship": "REFERENCES",
+    "description": "Debug report identifies root cause in frontend BrowserRouter basename"
+  },
+  {
+    "source": "document:debug-report",
+    "target": "integration:home-assistant",
+    "relationship": "REFERENCES",
+    "description": "Debug report documents HA Ingress path handling failure"
+  },
+  {
+    "source": "document:repair-plan",
+    "target": "document:debug-report",
+    "relationship": "REFERENCES",
+    "description": "Repair plan based on debug report findings"
+  },
+  {
+    "source": "document:repair-plan",
+    "target": "service:web-api",
+    "relationship": "REFERENCES",
+    "description": "Fix 1: regex-based base tag injection in web-api"
+  },
+  {
+    "source": "document:repair-plan",
+    "target": "service:web-frontend",
+    "relationship": "REFERENCES",
+    "description": "Fix 2: BrowserRouter basename from __INGRESS_PATH__"
   }
 ]

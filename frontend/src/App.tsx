@@ -9,10 +9,18 @@ import CycleDetailPage from "@/pages/CycleDetailPage";
 import ProfilesPage from "@/pages/ProfilesPage";
 import SettingsPage from "@/pages/SettingsPage";
 
+declare global {
+  interface Window {
+    __INGRESS_PATH__?: string;
+  }
+}
+
+const BASENAME = (window as any).__INGRESS_PATH__ || "/";
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={BASENAME}>
         <Layout>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
