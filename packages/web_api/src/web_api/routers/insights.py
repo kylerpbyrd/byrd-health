@@ -31,7 +31,7 @@ async def _build_insights_response(
         round(sum(past_lengths) / len(past_lengths)) if past_lengths else None
     )
 
-    signs = await data_svc.entries.get_signs_for_cycle(cycle.id)
+    signs = await data_svc.entries_for(profile_id).get_signs_for_cycle(cycle.id)
     flow_days = [
         s.date.isoformat()
         for s in signs

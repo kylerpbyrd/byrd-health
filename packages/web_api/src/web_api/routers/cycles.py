@@ -88,8 +88,9 @@ async def get_cycle_chart(
     if cycle is None:
         raise HTTPException(status_code=404, detail="Cycle not found")
 
-    temps = await data_svc.entries.get_temps_for_cycle(cycle_id)
-    signs_list = await data_svc.entries.get_signs_for_cycle(cycle_id)
+    entries = data_svc.entries_for(profile.id)
+    temps = await entries.get_temps_for_cycle(cycle_id)
+    signs_list = await entries.get_signs_for_cycle(cycle_id)
     insights = await data_svc.get_insights(cycle_id)
 
     labels = []
@@ -174,9 +175,10 @@ async def _build_cycle_detail(
     if cycle is None:
         raise HTTPException(status_code=404, detail="Cycle not found")
 
-    temps = await data_svc.entries.get_temps_for_cycle(cycle_id)
-    signs = await data_svc.entries.get_signs_for_cycle(cycle_id)
-    symptoms = await data_svc.entries.get_symptoms_for_cycle(cycle_id)
+    entries = data_svc.entries_for(profile_id)
+    temps = await entries.get_temps_for_cycle(cycle_id)
+    signs = await entries.get_signs_for_cycle(cycle_id)
+    symptoms = await entries.get_symptoms_for_cycle(cycle_id)
     insights = await data_svc.get_insights(cycle_id)
 
     return CycleDetailResponse(

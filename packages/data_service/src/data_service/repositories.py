@@ -5,6 +5,7 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from .encryption import ProfileEncryption
 from .models import Profile, Cycle, Temperature, FertilitySigns, Symptom, ComputedInsights
 
 
@@ -144,8 +145,37 @@ class CycleRepository:
 
 
 class EntryRepository:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, encryption: ProfileEncryption | None = None) -> None:
         self.session = session
+        self._encryption = encryption
+
+    def _encrypt_field(self, value: str | float | None) -> str | None:
+        if value is None:
+            return None
+        if self._encryption:
+            return self._encryption.encrypt(value)
+        return str(value) if isinstance(value, float) else value
+
+    def _decrypt_field(self, value: str | None) -> str | None:
+        if value is None:
+            return None
+        if self._encryption:
+            return self._encryption.decrypt(value)
+        return value
+
+    def _decrypt_temp_value(self, t: Temperature) -> None:
+        decrypted = self._decrypt_field(t.temp_value)
+        t.temp_value = float(decrypted) if decrypted else 0.0
+
+    def _decrypt_signs_fields(self, s: FertilitySigns) -> None:
+        for field in ("menstrual_flow", "cervical_mucus", "cervical_position",
+                      "cervical_firmness", "cervical_opening", "opk_result", "notes"):
+            current = getattr(s, field, None)
+            if current is not None:
+                setattr(s, field, self._decrypt_field(current))
+
+    def _decrypt_symptom(self, s: Symptom) -> None:
+        s.symptom_type = self._decrypt_field(s.symptom_type) or ""
 
     async def upsert_temperature(
         self,
@@ -163,25 +193,32 @@ class EntryRepository:
             )
         )
         temp = result.scalar_one_or_none()
+
+        encrypted_temp = self._encrypt_field(temp_value)
+        encrypted_notes = self._encrypt_field(notes) if notes else None
+
         if temp:
-            temp.temp_value = temp_value
+            temp.temp_value = encrypted_temp
             if time_taken is not None:
                 temp.time_taken = time_taken
             temp.is_discarded = is_discarded
             temp.discard_reason = discard_reason
-            temp.notes = notes
+            temp.notes = encrypted_notes
         else:
             temp = Temperature(
                 cycle_id=cycle_id,
                 date=entry_date,
-                temp_value=temp_value,
+                temp_value=encrypted_temp,
                 time_taken=time_taken,
                 is_discarded=is_discarded,
                 discard_reason=discard_reason,
-                notes=notes,
+                notes=encrypted_notes,
             )
             self.session.add(temp)
         await self.session.flush()
+
+        temp.temp_value = temp_value
+        temp.notes = notes if notes else None
         return temp
 
     async def upsert_signs(
@@ -190,6 +227,11 @@ class EntryRepository:
         entry_date: date,
         **kwargs: str,
     ) -> FertilitySigns:
+        encrypted_kwargs = {
+            key: self._encrypt_field(value) if value else None
+            for key, value in kwargs.items()
+        }
+
         result = await self.session.execute(
             select(FertilitySigns).where(
                 FertilitySigns.cycle_id == cycle_id, FertilitySigns.date == entry_date
@@ -197,13 +239,16 @@ class EntryRepository:
         )
         signs = result.scalar_one_or_none()
         if signs:
-            for key, value in kwargs.items():
+            for key, value in encrypted_kwargs.items():
                 if hasattr(signs, key):
                     setattr(signs, key, value)
         else:
-            signs = FertilitySigns(cycle_id=cycle_id, date=entry_date, **kwargs)
+            signs = FertilitySigns(cycle_id=cycle_id, date=entry_date, **encrypted_kwargs)
             self.session.add(signs)
         await self.session.flush()
+
+        for key, value in kwargs.items():
+            setattr(signs, key, value if value else None)
         return signs
 
     async def upsert_symptoms(
@@ -219,15 +264,19 @@ class EntryRepository:
         )
         models: list[Symptom] = []
         for s in symptoms:
+            original_type = str(s.get("symptom_type", ""))
             symptom = Symptom(
                 cycle_id=cycle_id,
                 date=entry_date,
-                symptom_type=str(s.get("symptom_type", "")),
+                symptom_type=self._encrypt_field(original_type),
                 severity=int(s.get("severity", 1)),
             )
             self.session.add(symptom)
             models.append(symptom)
         await self.session.flush()
+
+        for i, symptom in enumerate(models):
+            symptom.symptom_type = symptoms[i].get("symptom_type", "")
         return models
 
     async def get_temperature(
@@ -238,7 +287,11 @@ class EntryRepository:
                 Temperature.cycle_id == cycle_id, Temperature.date == entry_date
             )
         )
-        return result.scalar_one_or_none()
+        temp = result.scalar_one_or_none()
+        if temp:
+            self._decrypt_temp_value(temp)
+            temp.notes = self._decrypt_field(temp.notes)
+        return temp
 
     async def get_signs(
         self, cycle_id: UUID, entry_date: date
@@ -249,7 +302,10 @@ class EntryRepository:
                 FertilitySigns.date == entry_date,
             )
         )
-        return result.scalar_one_or_none()
+        signs = result.scalar_one_or_none()
+        if signs:
+            self._decrypt_signs_fields(signs)
+        return signs
 
     async def get_recent_temps(
         self, cycle_id: UUID, limit: int = 14
@@ -260,7 +316,11 @@ class EntryRepository:
             .order_by(Temperature.date.desc())
             .limit(limit)
         )
-        return list(result.scalars().all())
+        temps = list(result.scalars().all())
+        for t in temps:
+            self._decrypt_temp_value(t)
+            t.notes = self._decrypt_field(t.notes)
+        return temps
 
     async def get_temps_for_cycle(self, cycle_id: UUID) -> list[Temperature]:
         result = await self.session.execute(
@@ -268,7 +328,11 @@ class EntryRepository:
             .where(Temperature.cycle_id == cycle_id)
             .order_by(Temperature.date.asc())
         )
-        return list(result.scalars().all())
+        temps = list(result.scalars().all())
+        for t in temps:
+            self._decrypt_temp_value(t)
+            t.notes = self._decrypt_field(t.notes)
+        return temps
 
     async def get_signs_for_cycle(self, cycle_id: UUID) -> list[FertilitySigns]:
         result = await self.session.execute(
@@ -276,7 +340,10 @@ class EntryRepository:
             .where(FertilitySigns.cycle_id == cycle_id)
             .order_by(FertilitySigns.date.asc())
         )
-        return list(result.scalars().all())
+        signs_list = list(result.scalars().all())
+        for s in signs_list:
+            self._decrypt_signs_fields(s)
+        return signs_list
 
     async def get_symptoms_for_cycle(self, cycle_id: UUID) -> list[Symptom]:
         result = await self.session.execute(
@@ -284,7 +351,10 @@ class EntryRepository:
             .where(Symptom.cycle_id == cycle_id)
             .order_by(Symptom.date.asc(), Symptom.symptom_type.asc())
         )
-        return list(result.scalars().all())
+        symptoms = list(result.scalars().all())
+        for s in symptoms:
+            self._decrypt_symptom(s)
+        return symptoms
 
 
 class InsightsRepository:
@@ -326,8 +396,27 @@ class InsightsRepository:
 
 
 class ExportRepository:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, encryption: ProfileEncryption | None = None) -> None:
         self.session = session
+        self._encryption = encryption
+
+    def _decrypt_temp_value(self, t: Temperature) -> None:
+        if self._encryption is None:
+            t.temp_value = float(t.temp_value) if t.temp_value else 0.0
+            return
+        decrypted = self._encryption.decrypt(t.temp_value)
+        t.temp_value = float(decrypted) if decrypted else 0.0
+
+    def _decrypt_signs_fields(self, s: FertilitySigns) -> None:
+        for field in ("menstrual_flow", "cervical_mucus", "cervical_position",
+                      "cervical_firmness", "cervical_opening", "opk_result", "notes"):
+            current = getattr(s, field, None)
+            if current is not None and self._encryption is not None:
+                setattr(s, field, self._encryption.decrypt(current))
+
+    def _decrypt_symptom(self, s: Symptom) -> None:
+        if self._encryption is not None:
+            s.symptom_type = self._encryption.decrypt(s.symptom_type) or ""
 
     async def export_profile(self, profile_id: UUID) -> dict[str, Any] | None:
         profile_result = await self.session.execute(
@@ -361,15 +450,29 @@ class ExportRepository:
                     ComputedInsights.cycle_id == cycle.id
                 )
             )
+            temps = list(temps_result.scalars().all())
+            signs_list = list(signs_result.scalars().all())
+            symptoms = list(symptoms_result.scalars().all())
+
+            for t in temps:
+                self._decrypt_temp_value(t)
+                t.notes = self._encryption.decrypt(t.notes) if self._encryption and t.notes else t.notes
+
+            for s in signs_list:
+                self._decrypt_signs_fields(s)
+
+            for s in symptoms:
+                self._decrypt_symptom(s)
+
             cycles_data.append({
                 "id": cycle.id,
                 "start_date": cycle.start_date,
                 "end_date": cycle.end_date,
                 "cycle_length": cycle.cycle_length,
                 "notes": cycle.notes,
-                "temperatures": list(temps_result.scalars().all()),
-                "fertility_signs": list(signs_result.scalars().all()),
-                "symptoms": list(symptoms_result.scalars().all()),
+                "temperatures": temps,
+                "fertility_signs": signs_list,
+                "symptoms": symptoms,
                 "insights": insights_result.scalar_one_or_none(),
             })
 

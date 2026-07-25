@@ -152,7 +152,7 @@ class TestFertilitySignsModel:
 
         assert signs.menstrual_flow == "medium"
         assert signs.cervical_mucus == "eggwhite"
-        assert signs.cervical_position == ""
+        assert signs.cervical_position is None
 
 
 class TestSymptomModel:

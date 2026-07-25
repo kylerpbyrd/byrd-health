@@ -18,8 +18,9 @@ async def run_cycle_analysis(
     cycle_start_date: date,
     cycle_end_date: Optional[date] = None,
 ) -> dict[str, Any]:
-    temps = await data_svc.entries.get_temps_for_cycle(cycle_id)
-    signs = await data_svc.entries.get_signs_for_cycle(cycle_id)
+    entries = data_svc.entries_for(profile_id)
+    temps = await entries.get_temps_for_cycle(cycle_id)
+    signs = await entries.get_signs_for_cycle(cycle_id)
     profile = await data_svc.profiles.get_by_id(profile_id)
     past_lengths = await data_svc.cycles.get_past_lengths(profile_id)
 

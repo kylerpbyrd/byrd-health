@@ -12,6 +12,7 @@ POLL_INTERVAL=$(bashio::config 'poll_interval_minutes' '15')
 export BBT_TEMP_UNIT="${TEMP_UNIT}"
 export BBT_HA_SENSOR_ENTITY="${HA_SENSOR_ENTITY}"
 export BBT_POLL_INTERVAL="${POLL_INTERVAL}"
+export BYRD_SECRET_KEY="${BYRD_SECRET_KEY:-byrd-health-dev-key-change-me}"
 export BYRD_DATABASE_URL="sqlite+aiosqlite:///data/byrd_health.db"
 
 bashio::log.info "Starting Byrd Health Fertility Tracker v2.0.0"

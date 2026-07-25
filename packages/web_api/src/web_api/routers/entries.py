@@ -84,9 +84,11 @@ async def create_entry(
             detail="Entry date cannot be before the current cycle start",
         )
 
+    entries = data_svc.entries_for(profile.id)
+
     temp = None
     if entry.temp_value is not None:
-        temp = await data_svc.entries.upsert_temperature(
+        temp = await entries.upsert_temperature(
             cycle_id=cycle.id,
             entry_date=entry.date,
             temp_value=entry.temp_value,
@@ -109,7 +111,7 @@ async def create_entry(
         ]
     )
     if has_signs:
-        signs = await data_svc.entries.upsert_signs(
+        signs = await entries.upsert_signs(
             cycle_id=cycle.id,
             entry_date=entry.date,
             menstrual_flow=entry.menstrual_flow,
@@ -127,7 +129,7 @@ async def create_entry(
             {"symptom_type": s.symptom_type, "severity": s.severity}
             for s in entry.symptoms
         ]
-        symptoms = await data_svc.entries.upsert_symptoms(
+        symptoms = await entries.upsert_symptoms(
             cycle_id=cycle.id,
             entry_date=entry.date,
             symptoms=symptom_dicts,
@@ -175,10 +177,12 @@ async def get_today_entry(
     cycle = await data_svc.cycles.get_or_create_current(profile.id)
     today = date_type.today()
 
-    temp = await data_svc.entries.get_temperature(cycle.id, today)
-    signs = await data_svc.entries.get_signs(cycle.id, today)
+    entries = data_svc.entries_for(profile.id)
 
-    symptoms_list = await data_svc.entries.get_symptoms_for_cycle(cycle.id)
+    temp = await entries.get_temperature(cycle.id, today)
+    signs = await entries.get_signs(cycle.id, today)
+
+    symptoms_list = await entries.get_symptoms_for_cycle(cycle.id)
     today_symptoms = [s for s in symptoms_list if s.date == today]
 
     return EntryResponse(

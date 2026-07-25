@@ -1,3 +1,4 @@
+import os
 from collections.abc import AsyncGenerator
 from typing import Any
 
@@ -54,7 +55,8 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_data_service(session: AsyncSession = Depends(get_db)) -> DataService:
-    return DataService(session)
+    secret_key = os.environ.get("BYRD_SECRET_KEY")
+    return DataService(session, secret_key=secret_key)
 
 
 async def get_active_profile(

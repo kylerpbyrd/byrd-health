@@ -70,18 +70,18 @@ class Temperature(Base):
         ForeignKey("cycles.id", ondelete="CASCADE"), nullable=False
     )
     date: Mapped[date] = mapped_column(nullable=False)
-    temp_value: Mapped[float] = mapped_column(Float, nullable=False)
+    temp_value: Mapped[str] = mapped_column(Text, nullable=False)
     time_taken: Mapped[time | None] = mapped_column(nullable=True)
     is_discarded: Mapped[bool] = mapped_column(Boolean, default=False)
-    discard_reason: Mapped[str] = mapped_column(Text, default="")
-    notes: Mapped[str] = mapped_column(Text, default="")
+    discard_reason: Mapped[str] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     __table_args__ = (UniqueConstraint("cycle_id", "date"),)
 
     cycle: Mapped["Cycle"] = relationship(back_populates="temperatures")
 
     def __repr__(self) -> str:
-        return f"<Temperature(id={self.id}, date={self.date}, value={self.temp_value})>"
+        return f"<Temperature(id={self.id}, date={self.date})>"
 
 
 class FertilitySigns(Base):
@@ -92,13 +92,13 @@ class FertilitySigns(Base):
         ForeignKey("cycles.id", ondelete="CASCADE"), nullable=False
     )
     date: Mapped[date] = mapped_column(nullable=False)
-    menstrual_flow: Mapped[str] = mapped_column(String(16), default="")
-    cervical_mucus: Mapped[str] = mapped_column(String(16), default="")
-    cervical_position: Mapped[str] = mapped_column(String(8), default="")
-    cervical_firmness: Mapped[str] = mapped_column(String(8), default="")
-    cervical_opening: Mapped[str] = mapped_column(String(8), default="")
-    opk_result: Mapped[str] = mapped_column(String(16), default="")
-    notes: Mapped[str] = mapped_column(Text, default="")
+    menstrual_flow: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cervical_mucus: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cervical_position: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cervical_firmness: Mapped[str | None] = mapped_column(Text, nullable=True)
+    cervical_opening: Mapped[str | None] = mapped_column(Text, nullable=True)
+    opk_result: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     __table_args__ = (UniqueConstraint("cycle_id", "date"),)
 
@@ -116,13 +116,13 @@ class Symptom(Base):
         ForeignKey("cycles.id", ondelete="CASCADE"), nullable=False
     )
     date: Mapped[date] = mapped_column(nullable=False)
-    symptom_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    symptom_type: Mapped[str] = mapped_column(Text, nullable=False)
     severity: Mapped[int] = mapped_column(Integer, default=1)
 
     cycle: Mapped["Cycle"] = relationship(back_populates="symptoms")
 
     def __repr__(self) -> str:
-        return f"<Symptom(id={self.id}, type={self.symptom_type!r}, date={self.date})>"
+        return f"<Symptom(id={self.id}, date={self.date})>"
 
 
 class ComputedInsights(Base):

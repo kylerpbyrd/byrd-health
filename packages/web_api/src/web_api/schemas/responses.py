@@ -43,8 +43,8 @@ class TempResponse(BaseModel):
     temp_value: float
     time_taken: Optional[time] = None
     is_discarded: bool
-    discard_reason: str
-    notes: str
+    discard_reason: Optional[str] = ""
+    notes: Optional[str] = ""
 
     model_config = {"from_attributes": True}
 
@@ -53,13 +53,13 @@ class SignsResponse(BaseModel):
     id: UUID
     cycle_id: UUID
     date: date
-    menstrual_flow: str
-    cervical_mucus: str
-    cervical_position: str
-    cervical_firmness: str
-    cervical_opening: str
-    opk_result: str
-    notes: str
+    menstrual_flow: Optional[str] = ""
+    cervical_mucus: Optional[str] = ""
+    cervical_position: Optional[str] = ""
+    cervical_firmness: Optional[str] = ""
+    cervical_opening: Optional[str] = ""
+    opk_result: Optional[str] = ""
+    notes: Optional[str] = ""
 
     model_config = {"from_attributes": True}
 

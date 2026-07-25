@@ -111,7 +111,7 @@ async def export_profile(
 ) -> ExportResponse:
     from datetime import datetime
 
-    export_data = await data_svc.exports.export_profile(profile_id)
+    export_data = await data_svc.export_profile_data(profile_id)
     if export_data is None:
         raise HTTPException(status_code=404, detail="Profile not found")
 

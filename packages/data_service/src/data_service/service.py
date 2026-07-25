@@ -2,6 +2,7 @@ from datetime import date
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .encryption import ProfileEncryption
 from .repositories import (
     ProfileRepository,
     CycleRepository,
@@ -14,13 +15,24 @@ from .schemas import EntryCreate
 
 
 class DataService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, secret_key: str | None = None) -> None:
         self.session = session
+        self._secret_key = secret_key
         self.profiles = ProfileRepository(session)
         self.cycles = CycleRepository(session)
         self.entries = EntryRepository(session)
         self.insights_repo = InsightsRepository(session)
         self.exports = ExportRepository(session)
+
+    def entries_for(self, profile_id: UUID) -> EntryRepository:
+        if self._secret_key:
+            return EntryRepository(self.session, ProfileEncryption(self._secret_key, str(profile_id)))
+        return self.entries
+
+    def _encrypted_exports(self, profile_id: UUID) -> ExportRepository:
+        if self._secret_key:
+            return ExportRepository(self.session, ProfileEncryption(self._secret_key, str(profile_id)))
+        return self.exports
 
     async def create_profile(
         self, name: str, temp_unit: str = "F"
@@ -34,9 +46,10 @@ class DataService:
         self, profile_id: UUID, entry: EntryCreate
     ) -> None:
         cycle = await self.cycles.get_or_create_current(profile_id)
+        entries = self.entries_for(profile_id)
 
         if entry.temp_value is not None:
-            await self.entries.upsert_temperature(
+            await entries.upsert_temperature(
                 cycle_id=cycle.id,
                 entry_date=entry.date,
                 temp_value=entry.temp_value,
@@ -44,12 +57,12 @@ class DataService:
             )
 
         if entry.signs:
-            await self.entries.upsert_signs(
+            await entries.upsert_signs(
                 cycle_id=cycle.id, entry_date=entry.date, **entry.signs
             )
 
         if entry.symptoms:
-            await self.entries.upsert_symptoms(
+            await entries.upsert_symptoms(
                 cycle_id=cycle.id,
                 entry_date=entry.date,
                 symptoms=entry.symptoms,
@@ -86,4 +99,5 @@ class DataService:
         }
 
     async def export_profile_data(self, profile_id: UUID) -> dict | None:
-        return await self.exports.export_profile(profile_id)
+        exports = self._encrypted_exports(profile_id)
+        return await exports.export_profile(profile_id)
