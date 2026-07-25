@@ -7,13 +7,10 @@ Every subsystem MUST use `get_application_prefix()` for:
     - WebSocket endpoints
 """
 
-import logging
 from collections.abc import Awaitable, MutableMapping
 from typing import Any
 
 from fastapi import Request
-
-_log = logging.getLogger(__name__)
 
 
 class IngressMiddleware:

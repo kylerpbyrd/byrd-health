@@ -21,15 +21,5 @@ if [ -n "${HA_SENSOR_ENTITY}" ]; then
     bashio::log.info "  HA sensor entity : ${HA_SENSOR_ENTITY}"
 fi
 
-# ---- TEMPORARY DEBUG ----
-bashio::log.info "=== Debug Info ==="
-bashio::log.info "STATIC_DIR contents:"
-ls -la /app/static/ 2>&1 | while read line; do bashio::log.info "  $line"; done
-bashio::log.info "Assets dir:"
-ls -la /app/static/assets/ 2>&1 | while read line; do bashio::log.info "  $line"; done
-bashio::log.info "Database URL: ${BYRD_DATABASE_URL}"
-bashio::log.info "=================="
-# ---- END TEMPORARY DEBUG ----
-
 # Start the FastAPI app with uvicorn
 exec uvicorn web_api.app:create_app --factory --host 0.0.0.0 --port 8000
