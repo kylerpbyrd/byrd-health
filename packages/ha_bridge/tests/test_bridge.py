@@ -131,6 +131,29 @@ async def test_ingress_middleware_non_http_passthrough():
     await middleware(scope, receive, send)
 
 
+async def test_ingress_middleware_path_already_stripped():
+    """HA already stripped the prefix — still sets script_name."""
+    async def dummy_app(scope, receive, send):
+        assert scope["path"] == "/"
+        assert scope["script_name"] == "/api/hassio_ingress/abc123"
+
+    middleware = IngressMiddleware(dummy_app)
+
+    async def receive():
+        return {"type": "http.request"}
+
+    async def send(event):
+        pass
+
+    scope = {
+        "type": "http",
+        "method": "GET",
+        "path": "/",  # HA already stripped the prefix
+        "headers": [(b"x-ingress-path", b"/api/hassio_ingress/abc123")],
+    }
+    await middleware(scope, receive, send)
+
+
 async def test_bridge_register_lovelace_card_new(mock_client):
     mock_client._lovelace_resources = []
     bridge = HABridge(HABridgeConfig(), mock_client)

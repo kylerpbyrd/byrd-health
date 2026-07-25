@@ -27,8 +27,11 @@ class IngressMiddleware:
         if ingress_path_raw:
             ingress_path = ingress_path_raw.decode("latin-1").rstrip("/")
             path = scope.get("path", "/")
+            # HA Supervisor may already strip the prefix before forwarding.
+            # Strip only when the path still includes it (safety net),
+            # but ALWAYS set script_name so downstream code knows the prefix.
             if path.startswith(ingress_path):
                 scope["path"] = path[len(ingress_path):] or "/"
-                scope["script_name"] = ingress_path
+            scope["script_name"] = ingress_path
 
         await self._app(scope, receive, send)
