@@ -7,6 +7,7 @@ import DashboardPage from "@/pages/DashboardPage";
 vi.mock("@/hooks/useDashboard", () => ({
   useDashboard: () => ({
     data: {
+      cycleId: "cycle-3",
       phase: "luteal" as const,
       cycle_day: 18,
       avg_cycle_length: 28,
@@ -32,6 +33,42 @@ vi.mock("@/hooks/useDashboard", () => ({
   useReanalyzeInsights: () => ({
     mutate: vi.fn(),
     isPending: false,
+  }),
+  useChartData: () => ({
+    data: {
+      labels: ["07-06", "07-07", "07-08", "07-09"],
+      temperatures: [97.62, 97.55, 97.48, 97.38],
+      discarded: [],
+      coverline: 97.52,
+      fertile_start_day: 3,
+      fertile_end_day: 6,
+      ovulation_day: 5,
+      mucus: { "07-09": "watery" },
+      opk: { "07-09": "peak" },
+      unit: "F" as const,
+    },
+    isLoading: false,
+    isError: false,
+  }),
+  useTodayEntry: () => ({
+    data: {
+      temperature: null,
+      signs: {
+        id: "sign-1",
+        cycle_id: "cycle-3",
+        date: "2026-07-23",
+        menstrual_flow: "none",
+        cervical_mucus: "creamy",
+        cervical_position: "",
+        cervical_firmness: "",
+        cervical_opening: "",
+        opk_result: "not_tested",
+        notes: "",
+      },
+      symptoms: [],
+    },
+    isLoading: false,
+    isError: false,
   }),
 }));
 

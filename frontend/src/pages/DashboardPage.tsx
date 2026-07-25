@@ -1,4 +1,4 @@
-import { useDashboard } from "@/hooks/useDashboard";
+import { useDashboard, useChartData, useTodayEntry } from "@/hooks/useDashboard";
 import { PhaseBanner } from "@/components/PhaseBanner";
 import { StatTile } from "@/components/StatTile";
 import { WarningBanner } from "@/components/WarningBanner";
@@ -7,17 +7,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { mockChartData } from "@/lib/mock-data";
 import { formatShortDate } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import type { ChartData } from "@/types/fertility";
 
 function formatWindow(start: string | null, end: string | null): string {
   if (!start || !end) return "—";
   return `${formatShortDate(start)} – ${formatShortDate(end)}`;
 }
 
+function formatSignValue(val: string): string {
+  if (!val) return "Not logged";
+  return val.charAt(0).toUpperCase() + val.slice(1).replace(/_/g, " ");
+}
+
+const EMPTY_CHART: ChartData = {
+  labels: [],
+  temperatures: [],
+  discarded: [],
+  coverline: null,
+  fertile_start_day: null,
+  fertile_end_day: null,
+  ovulation_day: null,
+  mucus: {},
+  opk: {},
+  unit: "F",
+};
+
 export default function DashboardPage() {
   const { data, isLoading, isError } = useDashboard();
+  const { data: chartData } = useChartData();
+  const { data: todayEntry } = useTodayEntry();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -86,7 +106,7 @@ export default function DashboardPage() {
           </Button>
         </CardHeader>
         <CardContent>
-          <BBTChart chartData={mockChartData} height={220} mini />
+          <BBTChart chartData={chartData || EMPTY_CHART} height={220} mini />
         </CardContent>
       </Card>
 
@@ -96,8 +116,8 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">Mucus: Creamy</Badge>
-            <Badge variant="secondary">OPK: Not tested</Badge>
+            <Badge variant="secondary">Mucus: {formatSignValue(todayEntry?.signs?.cervical_mucus ?? "")}</Badge>
+            <Badge variant="secondary">OPK: {formatSignValue(todayEntry?.signs?.opk_result ?? "")}</Badge>
           </div>
         </CardContent>
       </Card>

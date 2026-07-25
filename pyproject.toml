@@ -42,6 +42,24 @@ strict = true
 python_version = "3.12"
 
 [tool.pytest.ini_options]
-testpaths = ["packages"]
+testpaths = [
+    "packages/fertility_engine",
+    "packages/data_service",
+    "packages/web_api",
+    "packages/ha_bridge",
+]
+pythonpath = [
+    "packages/fertility_engine/src",
+    "packages/data_service/src",
+    "packages/web_api/src",
+    "packages/ha_bridge/src",
+]
+norecursedirs = [
+    "frontend",
+    "legacy",
+    "tools",
+    ".git",
+    "node_modules",
+]
 asyncio_mode = "auto"
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --import-mode=importlib"

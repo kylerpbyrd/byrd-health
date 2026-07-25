@@ -39,6 +39,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
   }
 
   return {
+    cycleId: cycleDetail.id,
     phase: insights.phase as DashboardData["phase"],
     cycle_day: insights.cycle_day,
     avg_cycle_length: insights.avg_cycle_length,

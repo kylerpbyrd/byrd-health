@@ -69,6 +69,7 @@ export interface InsightsResponse {
 }
 
 export interface DashboardData {
+  cycleId: string;
   phase: CyclePhase;
   cycle_day: number;
   avg_cycle_length: number | null;

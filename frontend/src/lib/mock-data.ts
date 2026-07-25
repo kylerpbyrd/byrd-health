@@ -28,6 +28,7 @@ export const mockProfiles: Profile[] = [
 ];
 
 export const mockDashboardData: DashboardData = {
+  cycleId: "cycle-3",
   phase: "luteal",
   cycle_day: 18,
   avg_cycle_length: 28,
