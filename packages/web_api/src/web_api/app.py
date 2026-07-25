@@ -39,11 +39,23 @@ class IngressMiddleware:
 
         headers = dict(scope.get("headers", []))
         ingress_path = headers.get(b"x-ingress-path", b"").decode("latin-1").rstrip("/")
+        original_path = scope.get("path", "/")  # TEMPORARY DEBUG
+
         if ingress_path:
             path = scope.get("path", "/")
             if path.startswith(ingress_path):
                 scope["path"] = path[len(ingress_path):] or "/"
                 scope["script_name"] = ingress_path
+
+        # TEMPORARY DEBUG: log paths before/after Ingress stripping
+        _log.info(
+            "INGRESS: raw_path=%s stripped_path=%s script_name=%s ingress_header=%s",
+            original_path,
+            scope.get("path", "/"),
+            scope.get("script_name", "N/A"),
+            ingress_path or "NOT SET",
+        )
+        # END TEMPORARY DEBUG
 
         await self._app(scope, receive, send)
 
@@ -150,6 +162,12 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
         return result
 
     # ---- END TEMPORARY DEBUG ----
+
+    # TEMPORARY DEBUG: log all registered routes
+    for route in app.routes:
+        if hasattr(route, 'path'):
+            _log.info("ROUTE: %s %s", getattr(route, 'methods', ['GET']), route.path)
+    # END TEMPORARY DEBUG
 
     # Serve frontend static files and SPA fallback (after all API routes)
     if os.path.isdir(STATIC_DIR):
