@@ -6,7 +6,7 @@ from typing import Any, AsyncGenerator, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, Response
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
@@ -93,7 +93,7 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
         app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
 
         @app.get("/{full_path:path}")
-        async def serve_spa(full_path: str, request: Request) -> Response:
+        async def serve_spa(full_path: str, request: Request) -> HTMLResponse:
             # Don't intercept API, docs, or static asset requests
             if full_path.startswith(("api/", "docs", "openapi.json")):
                 raise HTTPException(status_code=404)
@@ -105,11 +105,14 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
             html = open(index_path).read()
             script_name = request.scope.get("script_name", "")
             if script_name:
-                html = re.sub(
-                    r"(\s*)<head>",
-                    rf"\1<head>\n\1  <base href='{script_name}/'>\n\1  <script>window.__INGRESS_PATH__ = '{script_name}';</script>",
-                    html,
-                )
+                head_match = re.search(r"<head[^>]*>", html, re.IGNORECASE)
+                if head_match:
+                    insert_pos = head_match.end()
+                    injection = (
+                        f'\n<base href="{script_name}/">'
+                        f'\n<script>window.__INGRESS_PATH__ = "{script_name}";</script>'
+                    )
+                    html = html[:insert_pos] + injection + html[insert_pos:]
             return HTMLResponse(content=html)
 
     return app
