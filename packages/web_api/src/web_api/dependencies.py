@@ -10,7 +10,23 @@ from data_service.service import DataService
 
 from .config import settings
 
+from ha_bridge.bridge import HABridge
+
 _engine = create_async_engine(settings.database_url, echo=settings.debug)
+
+_ha_bridge: HABridge | None = None
+
+
+def get_ha_bridge(requested: bool = False) -> HABridge | None:
+    if requested and _ha_bridge is None:
+        import logging
+        logging.getLogger(__name__).warning("HA Bridge requested but not initialized")
+    return _ha_bridge
+
+
+def set_ha_bridge(bridge: HABridge | None) -> None:
+    global _ha_bridge
+    _ha_bridge = bridge
 
 _async_sessionmaker = async_sessionmaker(
     _engine,

@@ -17,13 +17,55 @@ STATIC_DIR = os.environ.get("STATIC_DIR", "/app/static")
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    from .dependencies import _engine
+    import logging
+    _log = logging.getLogger(__name__)
+
+    from .dependencies import _engine, _async_sessionmaker, set_ha_bridge
+    from ha_bridge.bridge import HABridge
+    from ha_bridge.config import read_ha_config
 
     async with _engine.begin() as conn:
         from data_service.models import Base
 
         await conn.run_sync(Base.metadata.create_all)
+
+    bridge_config = read_ha_config()
+    bridge = HABridge(bridge_config)
+    set_ha_bridge(bridge)
+
+    try:
+        from data_service.service import DataService
+        from .analysis import run_cycle_analysis
+
+        async with _async_sessionmaker() as session:
+            data_svc = DataService(session)
+            profiles = await data_svc.profiles.get_all()
+            for profile in profiles:
+                if not profile.is_active:
+                    continue
+                cycle = await data_svc.cycles.get_or_create_current(profile.id)
+                insights = await run_cycle_analysis(
+                    data_svc=data_svc,
+                    cycle_id=cycle.id,
+                    profile_id=profile.id,
+                    cycle_start_date=cycle.start_date,
+                    cycle_end_date=cycle.end_date,
+                )
+                await bridge.publish_insights(
+                    slug=profile.slug,
+                    name=profile.name,
+                    temp_unit=profile.temp_unit,
+                    insights=insights,
+                    next_period=insights.get("next_period_date"),
+                )
+            _log.info("Published HA entities for %d profile(s)", len(profiles))
+    except Exception:
+        _log.exception("Failed to publish initial HA entities")
+
     yield
+
+    await bridge.stop_polling()
+    set_ha_bridge(None)
     await _engine.dispose()
 
 

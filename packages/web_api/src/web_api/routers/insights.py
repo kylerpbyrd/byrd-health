@@ -120,11 +120,27 @@ async def reanalyze_insights(
     data_svc: DataService = Depends(get_data_service),
 ) -> InsightsResponse:
     cycle = await data_svc.cycles.get_or_create_current(profile.id)
-    await run_cycle_analysis(
+    insights_result = await run_cycle_analysis(
         data_svc=data_svc,
         cycle_id=cycle.id,
         profile_id=profile.id,
         cycle_start_date=cycle.start_date,
         cycle_end_date=cycle.end_date,
     )
+
+    try:
+        from ..dependencies import get_ha_bridge
+        bridge = get_ha_bridge()
+        if bridge:
+            await bridge.publish_insights(
+                slug=profile.slug,
+                name=profile.name,
+                temp_unit=profile.temp_unit,
+                insights=insights_result,
+                next_period=insights_result.get("next_period_date"),
+            )
+    except Exception:
+        import logging
+        logging.getLogger(__name__).warning("Failed to publish HA entities", exc_info=True)
+
     return await _build_insights_response(data_svc, profile.id)
