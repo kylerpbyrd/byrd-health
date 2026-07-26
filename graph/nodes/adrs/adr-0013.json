@@ -1,0 +1,12 @@
+{
+  "id": "adr:adr-0013",
+  "type": "adr",
+  "label": "ADR-0013: Home Assistant Container Distribution",
+  "description": "Docker-based add-on distribution model for Home Assistant with Supervisor integration.",
+  "status": "accepted",
+  "phase": 2,
+  "governs": [],
+  "references": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "agent:frontend-engineer",
+  "type": "agent",
+  "label": "Frontend Engineer",
+  "description": "Owns React, UX, accessibility, charts, dashboards, and forms.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

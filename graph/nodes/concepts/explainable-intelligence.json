@@ -1,0 +1,8 @@
+{
+  "id": "concept:explainable-intelligence",
+  "type": "concept",
+  "label": "Explainable Intelligence",
+  "description": "All fertility analysis must produce transparent, human-readable reasoning alongside predictions.",
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

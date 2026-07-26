@@ -1,0 +1,10 @@
+{
+  "id": "integration:home-assistant",
+  "type": "integration",
+  "label": "Home Assistant",
+  "description": "Home Assistant Add-on integration with entity publishing, Ingress, and sensor polling via HA Bridge.",
+  "status": "active",
+  "phase": 2,
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

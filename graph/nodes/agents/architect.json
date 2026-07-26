@@ -1,0 +1,9 @@
+{
+  "id": "agent:architect",
+  "type": "agent",
+  "label": "Architect",
+  "description": "Owns architecture, milestone planning, ADR governance, package ownership, Graphify integrity, and engineering coordination.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

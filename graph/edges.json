@@ -436,5 +436,41 @@
     "target": "adr:adr-0012",
     "relationship": "GOVERNED_BY",
     "description": "Phase 3 implementation governed by ADR-0012 WebSocket architecture"
+  },
+  {
+    "source": "service:device-adapters",
+    "target": "service:ha-bridge",
+    "relationship": "DEPENDS_ON",
+    "description": "Device adapters depend on HA Bridge for entity publishing and sensor infrastructure"
+  },
+  {
+    "source": "service:device-adapters",
+    "target": "service:fertility-engine",
+    "relationship": "CONSUMES",
+    "description": "Device adapters feed temperature and BBT readings into the Fertility Engine for analysis"
+  },
+  {
+    "source": "service:web-frontend",
+    "target": "service:device-adapters",
+    "relationship": "CONSUMES",
+    "description": "Frontend receives real-time device readings via WebSocket from device adapters"
+  },
+  {
+    "source": "service:web-api",
+    "target": "adr:adr-0012",
+    "relationship": "IMPLEMENTS",
+    "description": "Web API implements the WebSocket broker and protocol defined in ADR-0012"
+  },
+  {
+    "source": "agent:release-engineer",
+    "target": "milestone:phase-3",
+    "relationship": "OWNS",
+    "description": "Release Engineer validated Phase 3 device integration and real-time features"
+  },
+  {
+    "source": "adr:adr-0012",
+    "target": "document:websocket-protocol-spec",
+    "relationship": "REFERENCES",
+    "description": "ADR-0012 references the WebSocket protocol specification at docs/specs/WEBSOCKET_PROTOCOL.md"
   }
 ]

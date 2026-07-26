@@ -1,0 +1,9 @@
+{
+  "id": "agent:documentation-engineer",
+  "type": "agent",
+  "label": "Documentation Engineer",
+  "description": "Owns user documentation, developer documentation, API documentation, migration guides, and troubleshooting.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

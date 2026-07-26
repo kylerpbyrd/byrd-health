@@ -1,0 +1,9 @@
+{
+  "id": "agent:backend-engineer",
+  "type": "agent",
+  "label": "Backend Engineer",
+  "description": "Owns FastAPI, service orchestration, APIs, analysis pipeline, and integration logic.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "integration:byrdos",
+  "type": "integration",
+  "label": "ByrdOS",
+  "description": "Standalone ByrdOS deployment target with full platform independence from Home Assistant.",
+  "status": "planned",
+  "phase": 4,
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

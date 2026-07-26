@@ -1,0 +1,9 @@
+{
+  "id": "agent:security-engineer",
+  "type": "agent",
+  "label": "Security Engineer",
+  "description": "Owns encryption, secrets, dependency review, threat modeling, and privacy review.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "agent:ai-data-science-engineer",
+  "type": "agent",
+  "label": "AI Data Science Engineer",
+  "description": "Owns fertility algorithms, AI prediction models, and analysis pipeline logic.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

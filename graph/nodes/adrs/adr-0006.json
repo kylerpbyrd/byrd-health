@@ -1,0 +1,12 @@
+{
+  "id": "adr:adr-0006",
+  "type": "adr",
+  "label": "ADR-0006: Home Assistant Integration Boundary",
+  "description": "HA-specific logic isolated in HA Bridge service. Ingress path handling and entity publishing patterns.",
+  "status": "accepted",
+  "phase": 1,
+  "governs": [],
+  "references": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

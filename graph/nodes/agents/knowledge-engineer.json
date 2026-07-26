@@ -1,0 +1,9 @@
+{
+  "id": "agent:knowledge-engineer",
+  "type": "agent",
+  "label": "Knowledge Engineer",
+  "description": "Owns repository indexing, relationship maintenance, architectural graph, and knowledge synchronization.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

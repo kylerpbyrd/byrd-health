@@ -1,0 +1,8 @@
+{
+  "id": "concept:token-optimization",
+  "type": "concept",
+  "label": "Token Optimization",
+  "description": "Minimize AI context window usage by preferring Graphify summaries over raw source files.",
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

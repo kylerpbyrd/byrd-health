@@ -1,0 +1,9 @@
+{
+  "id": "agent:home-assistant-engineer",
+  "type": "agent",
+  "label": "Home Assistant Engineer",
+  "description": "Owns add-on, ingress, entities, supervisor integration, sensors, and polling.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

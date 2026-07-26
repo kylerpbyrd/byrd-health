@@ -1,0 +1,12 @@
+{
+  "id": "adr:adr-0005",
+  "type": "adr",
+  "label": "ADR-0005: Legacy Migration Strategy",
+  "description": "Plan for extracting and porting legacy algorithm code into the new platform architecture.",
+  "status": "accepted",
+  "phase": 0,
+  "governs": [],
+  "references": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

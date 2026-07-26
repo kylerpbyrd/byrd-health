@@ -1,0 +1,9 @@
+{
+  "id": "agent:release-engineer",
+  "type": "agent",
+  "label": "Release Engineer",
+  "description": "Owns release validation, runtime verification, Docker validation, CI/CD verification, and release certification.",
+  "owns": [],
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}
