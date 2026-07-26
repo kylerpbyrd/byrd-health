@@ -25,6 +25,14 @@ jobs:
       - name: Ruff lint
         run: ruff check .
 
+      - name: Install sub-packages for mypy
+        run: |
+          pip install packages/fertility_engine
+          pip install packages/data_service
+          pip install packages/ha_bridge
+          pip install packages/device_adapters
+          pip install packages/web_api
+
       - name: Mypy type check
         run: mypy packages/
 

@@ -1,4 +1,10 @@
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ha_bridge.bridge import HABridgeConfig
 
 
 def _bool_env(key: str, default: bool = True) -> bool:
@@ -10,9 +16,7 @@ def _bool_env(key: str, default: bool = True) -> bool:
     return default
 
 
-def read_ha_config() -> "HABridgeConfig":
-    from ha_bridge.bridge import HABridgeConfig
-
+def read_ha_config() -> HABridgeConfig:
     return HABridgeConfig(
         temp_unit=os.environ.get("BBT_TEMP_UNIT", "F"),
         ha_sensor_entity=os.environ.get("BBT_HA_SENSOR_ENTITY", ""),

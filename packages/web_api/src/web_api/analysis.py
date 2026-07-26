@@ -109,7 +109,7 @@ async def enrich_insights_for_publishing(
     )
 
     phase = get_cycle_phase(
-        current_date=dt.date.today(),
+        current_date=date.today(),
         cycle_start=cycle.start_date,
         flow_days=flow_days,
         fertile_window=fw,
