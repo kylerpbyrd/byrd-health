@@ -6,11 +6,10 @@ description: >-
   monitor cycles, detect ovulation, and identify fertile windows using
   the sympto-thermal method. Powered by Byrd Health.
 url: "https://github.com/kylerpbyrd/byrd-health"
+image: ghcr.io/kylerpbyrd/byrd-health-fertility:main
 arch:
   - amd64
   - aarch64
-  - armhf
-  - armv7
 startup: application
 boot: auto
 ingress: true
