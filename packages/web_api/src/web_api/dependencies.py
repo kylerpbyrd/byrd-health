@@ -2,15 +2,13 @@ import os
 from collections.abc import AsyncGenerator
 from typing import Any
 
+from data_service.models import Profile
+from data_service.service import DataService
 from fastapi import Depends, HTTPException
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from data_service.models import Base, Profile
-from data_service.service import DataService
-
 from .config import settings
-
 from .ha_protocol import HABridgeProtocol
 from .websocket import WebSocketBroker
 

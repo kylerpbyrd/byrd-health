@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from typing import Optional, Union
 
 from fertility_engine.models import FertileWindowResult, OvulationResult
 
@@ -9,7 +8,7 @@ _MIN_CYCLE: int = 21
 _DEFAULT_FERTILE_START_DAY: int = 8
 
 
-def _to_date(value: Union[str, date]) -> date:
+def _to_date(value: str | date) -> date:
     if isinstance(value, date):
         return value
     return date.fromisoformat(value)
@@ -30,7 +29,7 @@ def compute_fertile_window(
 
     calendar_date = cycle_start_date + timedelta(days=calendar_day - 1)
 
-    mucus_date: Optional[date] = None
+    mucus_date: date | None = None
     for sign in sorted(fertility_signs, key=lambda s: s["date"]):
         if sign.get("cervical_mucus", "").lower() in _FERTILE_MUCUS:
             mucus_date = _to_date(sign["date"])
@@ -43,8 +42,8 @@ def compute_fertile_window(
         fertile_start = calendar_date
         mucus_triggered = False
 
-    fertile_end: Optional[date] = None
-    post_ov_infertile: Optional[date] = None
+    fertile_end: date | None = None
+    post_ov_infertile: date | None = None
 
     if ovulation_result.detected and ovulation_result.shift_start_date:
         shift_start = ovulation_result.shift_start_date
@@ -69,9 +68,9 @@ def get_cycle_phase(
     cycle_start: date,
     flow_days: list[str],
     fertile_window: FertileWindowResult,
-    ovulation_date: Optional[date],
+    ovulation_date: date | None,
     ovulation_confirmed: bool,
-    post_ov_infertile: Optional[date],
+    post_ov_infertile: date | None,
 ) -> str:
     today_str = current_date.isoformat()
 

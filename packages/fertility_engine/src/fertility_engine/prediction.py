@@ -1,14 +1,13 @@
 from datetime import date, timedelta
-from typing import Optional
 
 
 def predict_next_period(
     cycle_start_date: date,
-    ovulation_date: Optional[date],
+    ovulation_date: date | None,
     ovulation_confirmed: bool,
     average_luteal_length: int,
     average_cycle_length: int,
-) -> Optional[date]:
+) -> date | None:
     if ovulation_confirmed and ovulation_date:
         return ovulation_date + timedelta(days=average_luteal_length + 1)
 

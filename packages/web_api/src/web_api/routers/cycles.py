@@ -1,11 +1,10 @@
-from datetime import date, datetime
+from datetime import date
 from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 
 from data_service.models import Profile
 from data_service.service import DataService
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from ..dependencies import get_active_profile, get_data_service
 from ..schemas.responses import (

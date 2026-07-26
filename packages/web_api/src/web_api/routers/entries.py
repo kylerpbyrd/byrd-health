@@ -1,14 +1,11 @@
 from datetime import date, time
-from typing import Optional
-from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field
 
 from data_service.models import Profile
 from data_service.service import DataService
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 
-from ..analysis import run_cycle_analysis, enrich_insights_for_publishing
+from ..analysis import enrich_insights_for_publishing, run_cycle_analysis
 from ..dependencies import get_active_profile, get_data_service
 from ..schemas.responses import EntryResponse, SignsResponse, SymptomResponse, TempResponse
 
@@ -30,8 +27,8 @@ class SymptomItem(BaseModel):
 
 class EntryRequest(BaseModel):
     date: date
-    temp_value: Optional[float] = None
-    time_taken: Optional[time] = None
+    temp_value: float | None = None
+    time_taken: time | None = None
     is_discarded: bool = False
     discard_reason: str = ""
     menstrual_flow: str = ""

@@ -1,8 +1,8 @@
 import asyncio
+from datetime import UTC
 
 import pytest
 from starlette.testclient import TestClient
-
 from web_api.dependencies import set_ws_broker
 from web_api.websocket import WebSocketBroker
 
@@ -145,10 +145,10 @@ class TestMessageProtocol:
                 assert received["type"] == msg_type
 
     def test_payload_timestamp_is_iso8601(self, ws_client, broker):
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         with ws_client.websocket_connect("/api/v1/fertility/ws") as ws:
-            now_iso = datetime.now(timezone.utc).isoformat()
+            now_iso = datetime.now(UTC).isoformat()
             message = {
                 "type": "device_reading",
                 "payload": {

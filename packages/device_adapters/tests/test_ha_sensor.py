@@ -1,7 +1,6 @@
 import asyncio
 
 import pytest
-
 from device_adapters.adapters.ha_sensor import HASensorAdapter
 from device_adapters.protocol import DeviceAdapter
 

@@ -72,7 +72,10 @@ class HABridge:
 
     async def publish_entities(self, profile_slug: str) -> None:
         """Publish entities for a profile (delegates to publish_insights when data available)."""
-        logger.debug("publish_entities(%s) — use publish_insights with full data for entity publishing", profile_slug)
+        logger.debug(
+            "publish_entities(%s) — use publish_insights with full data for entity publishing",
+            profile_slug,
+        )
 
     async def publish_all_profiles(self) -> None:
         """Publish entities for all profiles (use app lifespan for batch publishing)."""

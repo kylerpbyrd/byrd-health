@@ -1,12 +1,13 @@
-from datetime import date, datetime, timezone
-from uuid import UUID
+from datetime import UTC, date, datetime
 from typing import Any
-from sqlalchemy import select, update, delete
+from uuid import UUID
+
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .encryption import ProfileEncryption
-from .models import Profile, Cycle, Temperature, FertilitySigns, Symptom, ComputedInsights
+from .models import ComputedInsights, Cycle, FertilitySigns, Profile, Symptom, Temperature
 
 
 class ProfileRepository:
@@ -372,7 +373,7 @@ class InsightsRepository:
             )
         )
         insights = result.scalar_one_or_none()
-        now = datetime.now(timezone.utc).replace(tzinfo=None)
+        now = datetime.now(UTC).replace(tzinfo=None)
         if insights:
             for key, value in insights_dict.items():
                 if hasattr(insights, key):

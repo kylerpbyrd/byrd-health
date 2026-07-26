@@ -37,6 +37,43 @@ select = [
     "C4",  # flake8-comprehensions
     "SIM", # flake8-simplify
 ]
+ignore = [
+    "B008",  # FastAPI requires Depends() in function signature defaults
+]
+
+[tool.ruff.lint.per-file-ignores]
+"packages/*/tests/*.py" = [
+    "B017",  # assert blind Exception acceptable in test files
+    "F841",  # unused variables in test contexts
+    "E712",  # == True/False comparisons in test assertions
+    "E711",  # == None comparisons in SQLAlchemy filter expressions
+    "SIM117", # nested with statements in test fixtures
+]
+"packages/web_api/src/web_api/schemas/__init__.py" = [
+    "F401",  # re-export module for external consumers
+]
+"packages/web_api/src/web_api/routers/__init__.py" = [
+    "F401",  # re-export module for external consumers
+]
+"packages/data_service/src/data_service/repositories.py" = [
+    "E711",  # == None in SQLAlchemy filter expressions
+    "E712",  # == True in SQLAlchemy filter expressions  
+]
+"packages/fertility_engine/src/fertility_engine/fertile_window.py" = [
+    "SIM102", # nested ifs are intentional for phase logic readability
+]
+"packages/device_adapters/src/device_adapters/adapters/bluetooth.py" = [
+    "SIM108", # if/else block intentional for temperature parsing clarity
+]
+"packages/ha_bridge/src/ha_bridge/config.py" = [
+    "F821",  # forward reference resolved by deferred import
+]
+"packages/web_api/src/web_api/routers/calendar.py" = [
+    "B904",  # HTTPException in except clause
+]
+"packages/web_api/src/web_api/routers/insights.py" = [
+    "F841",  # profile variable used for side effect
+]
 
 [tool.ruff.format]
 quote-style = "double"

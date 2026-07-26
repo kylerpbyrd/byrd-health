@@ -1,12 +1,12 @@
-from .database import get_session, create_all, drop_all, _engine
+from .database import _engine, create_all, drop_all, get_session
 from .models import (
     Base,
-    Profile,
-    Cycle,
-    Temperature,
-    FertilitySigns,
-    Symptom,
     ComputedInsights,
+    Cycle,
+    FertilitySigns,
+    Profile,
+    Symptom,
+    Temperature,
 )
 from .service import DataService
 

@@ -7,8 +7,6 @@ Every subsystem MUST use `get_application_prefix()` for:
     - WebSocket endpoints
 """
 
-from collections.abc import Awaitable, MutableMapping
-from typing import Any
 
 from fastapi import Request
 

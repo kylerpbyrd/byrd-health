@@ -1,5 +1,4 @@
-from datetime import date, timedelta
-from typing import Optional, Union
+from datetime import date
 
 from fertility_engine.fertile_window import compute_fertile_window
 from fertility_engine.models import (
@@ -12,7 +11,7 @@ from fertility_engine.models import (
 from fertility_engine.ovulation import detect_ovulation
 
 
-def _to_date(value: Union[str, date]) -> date:
+def _to_date(value: str | date) -> date:
     if isinstance(value, date):
         return value
     return date.fromisoformat(value)
@@ -40,7 +39,7 @@ def analyze_cycle(
     profile_settings: ProfileSettings,
     past_cycle_lengths: list[int],
     cycle_start_date: date,
-    cycle_end_date: Optional[date] = None,
+    cycle_end_date: date | None = None,
 ) -> CycleInsights:
     unit = profile_settings.temp_unit
     method = profile_settings.interpretation_method
@@ -58,7 +57,7 @@ def analyze_cycle(
         unit=unit,
     )
 
-    luteal_length: Optional[int] = None
+    luteal_length: int | None = None
     if ov.ovulation_date and cycle_end_date:
         luteal_length = max(0, (cycle_end_date - ov.ovulation_date).days)
 

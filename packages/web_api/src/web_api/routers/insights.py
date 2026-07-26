@@ -1,14 +1,12 @@
 from uuid import UUID
 
+from data_service.models import Profile
+from data_service.service import DataService
 from fastapi import APIRouter, Depends
-
 from fertility_engine import get_current_cycle_day, get_cycle_phase, predict_next_period
 from fertility_engine.models import FertileWindowResult
 
-from data_service.models import Profile
-from data_service.service import DataService
-
-from ..analysis import run_cycle_analysis, enrich_insights_for_publishing
+from ..analysis import enrich_insights_for_publishing, run_cycle_analysis
 from ..dependencies import get_active_profile, get_data_service
 from ..schemas.responses import InsightsResponse, WarningItem
 

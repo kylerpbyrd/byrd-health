@@ -27,8 +27,8 @@ class ProfileExportResponse(BaseModel):
 class CycleExportItem(BaseModel):
     id: UUID
     start_date: date
-    end_date: Optional[date] = None
-    cycle_length: Optional[int] = None
+    end_date: date | None = None
+    cycle_length: int | None = None
     notes: str = ""
     temperatures: list["TempResponse"]
     fertility_signs: list["SignsResponse"]
@@ -41,10 +41,10 @@ class TempResponse(BaseModel):
     cycle_id: UUID
     date: date
     temp_value: float
-    time_taken: Optional[time] = None
+    time_taken: time | None = None
     is_discarded: bool
-    discard_reason: Optional[str] = ""
-    notes: Optional[str] = ""
+    discard_reason: str | None = ""
+    notes: str | None = ""
 
     model_config = {"from_attributes": True}
 
@@ -53,13 +53,13 @@ class SignsResponse(BaseModel):
     id: UUID
     cycle_id: UUID
     date: date
-    menstrual_flow: Optional[str] = ""
-    cervical_mucus: Optional[str] = ""
-    cervical_position: Optional[str] = ""
-    cervical_firmness: Optional[str] = ""
-    cervical_opening: Optional[str] = ""
-    opk_result: Optional[str] = ""
-    notes: Optional[str] = ""
+    menstrual_flow: str | None = ""
+    cervical_mucus: str | None = ""
+    cervical_position: str | None = ""
+    cervical_firmness: str | None = ""
+    cervical_opening: str | None = ""
+    opk_result: str | None = ""
+    notes: str | None = ""
 
     model_config = {"from_attributes": True}
 
@@ -75,8 +75,8 @@ class SymptomResponse(BaseModel):
 
 
 class EntryResponse(BaseModel):
-    temperature: Optional[TempResponse] = None
-    signs: Optional[SignsResponse] = None
+    temperature: TempResponse | None = None
+    signs: SignsResponse | None = None
     symptoms: list[SymptomResponse] = []
 
 
@@ -88,28 +88,28 @@ class WarningItem(BaseModel):
 class DashboardResponse(BaseModel):
     phase: str
     cycle_day: int
-    avg_cycle_length: Optional[int] = None
-    next_period_date: Optional[date] = None
-    fertile_start_date: Optional[date] = None
-    fertile_end_date: Optional[date] = None
-    ovulation_date: Optional[date] = None
+    avg_cycle_length: int | None = None
+    next_period_date: date | None = None
+    fertile_start_date: date | None = None
+    fertile_end_date: date | None = None
+    ovulation_date: date | None = None
     ovulation_confirmed: bool = False
-    coverline: Optional[float] = None
-    last_temp: Optional[float] = None
-    luteal_length: Optional[int] = None
+    coverline: float | None = None
+    last_temp: float | None = None
+    luteal_length: int | None = None
     warnings: list[WarningItem] = []
-    today_temp: Optional[TempResponse] = None
-    today_signs: Optional[SignsResponse] = None
+    today_temp: TempResponse | None = None
+    today_signs: SignsResponse | None = None
 
 
 class CycleListItem(BaseModel):
     id: UUID
     start_date: date
-    end_date: Optional[date] = None
-    cycle_length: Optional[int] = None
-    ovulation_date: Optional[date] = None
+    end_date: date | None = None
+    cycle_length: int | None = None
+    ovulation_date: date | None = None
     ovulation_confirmed: bool = False
-    luteal_length: Optional[int] = None
+    luteal_length: int | None = None
     is_active: bool = False
 
 
@@ -121,8 +121,8 @@ class CycleDetailResponse(BaseModel):
     id: UUID
     profile_id: UUID
     start_date: date
-    end_date: Optional[date] = None
-    cycle_length: Optional[int] = None
+    end_date: date | None = None
+    cycle_length: int | None = None
     notes: str = ""
     temperatures: list[TempResponse] = []
     signs: list[SignsResponse] = []
@@ -133,20 +133,20 @@ class CycleDetailResponse(BaseModel):
 class InsightsDataResponse(BaseModel):
     id: UUID
     cycle_id: UUID
-    coverline: Optional[float] = None
-    ovulation_date: Optional[date] = None
+    coverline: float | None = None
+    ovulation_date: date | None = None
     ovulation_confirmed: bool = False
     ovulation_confidence: str = "none"
     ovulation_method: str = ""
-    fertile_start_date: Optional[date] = None
-    fertile_end_date: Optional[date] = None
-    post_ovulatory_infertile_date: Optional[date] = None
-    luteal_length: Optional[int] = None
+    fertile_start_date: date | None = None
+    fertile_end_date: date | None = None
+    post_ovulatory_infertile_date: date | None = None
+    luteal_length: int | None = None
     luteal_phase_short: bool = False
     pregnancy_indicator: bool = False
     consecutive_elevated_temps: int = 0
     engine_version: str = "1.0.0"
-    computed_at: Optional[datetime] = None
+    computed_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
@@ -154,30 +154,30 @@ class InsightsDataResponse(BaseModel):
 class InsightsResponse(BaseModel):
     cycle_day: int
     phase: str
-    coverline: Optional[float] = None
-    ovulation_date: Optional[date] = None
+    coverline: float | None = None
+    ovulation_date: date | None = None
     ovulation_confirmed: bool = False
     ovulation_confidence: str = "none"
     ovulation_method: str = ""
-    fertile_start: Optional[date] = None
-    fertile_end: Optional[date] = None
-    luteal_length: Optional[int] = None
+    fertile_start: date | None = None
+    fertile_end: date | None = None
+    luteal_length: int | None = None
     luteal_phase_short: bool = False
     pregnancy_indicator: bool = False
-    next_period_date: Optional[date] = None
-    avg_cycle_length: Optional[int] = None
+    next_period_date: date | None = None
+    avg_cycle_length: int | None = None
     warnings: list[WarningItem] = []
     engine_version: str = "1.0.0"
 
 
 class ChartDataResponse(BaseModel):
     labels: list[str]
-    temperatures: list[Optional[float]]
+    temperatures: list[float | None]
     discarded: list[dict[str, object]]
-    coverline: Optional[float] = None
-    fertile_start_day: Optional[int] = None
-    fertile_end_day: Optional[int] = None
-    ovulation_day: Optional[int] = None
+    coverline: float | None = None
+    fertile_start_day: int | None = None
+    fertile_end_day: int | None = None
+    ovulation_day: int | None = None
     mucus: dict[str, str]
     opk: dict[str, str]
     unit: str
@@ -193,12 +193,12 @@ class ExportResponse(BaseModel):
 
 class CalendarDayItem(BaseModel):
     date: str
-    cycle_day: Optional[int] = None
-    phase: Optional[str] = None
-    temp: Optional[float] = None
-    flow: Optional[str] = None
-    mucus: Optional[str] = None
-    opk: Optional[str] = None
+    cycle_day: int | None = None
+    phase: str | None = None
+    temp: float | None = None
+    flow: str | None = None
+    mucus: str | None = None
+    opk: str | None = None
     is_period_start: bool = False
     is_ovulation_day: bool = False
     is_fertile: bool = False
@@ -210,7 +210,7 @@ class CalendarDayItem(BaseModel):
 class CalendarCycleItem(BaseModel):
     id: UUID
     start_date: date
-    end_date: Optional[date] = None
+    end_date: date | None = None
     phase_dates: dict[str, list[str]] = {}
 
 

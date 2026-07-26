@@ -37,7 +37,6 @@ class TestCalendarEndpoint:
         assert len(current) >= 28
 
     async def test_calendar_with_entries(self, client):
-        import datetime as dt
 
         create_resp = await client.post(
             "/api/v1/fertility/profiles/",

@@ -1,7 +1,6 @@
 from datetime import date
 
 import pytest
-
 from fertility_engine.models import FertilitySignsRecord, ProfileSettings, TemperatureRecord
 
 

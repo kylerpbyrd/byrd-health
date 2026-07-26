@@ -1,7 +1,9 @@
-from datetime import date, datetime as dt
-from typing import Any, Literal, Optional, cast
+from datetime import date
+from datetime import datetime as dt
+from typing import Any, Literal, cast
 from uuid import UUID
 
+from data_service.service import DataService
 from fertility_engine import (
     FertilitySignsRecord,
     ProfileSettings,
@@ -12,7 +14,6 @@ from fertility_engine import (
     predict_next_period,
 )
 from fertility_engine.models import FertileWindowResult
-from data_service.service import DataService
 
 
 async def run_cycle_analysis(
@@ -20,7 +21,7 @@ async def run_cycle_analysis(
     cycle_id: UUID,
     profile_id: UUID,
     cycle_start_date: date,
-    cycle_end_date: Optional[date] = None,
+    cycle_end_date: date | None = None,
 ) -> dict[str, Any]:
     entries = data_svc.entries_for(profile_id)
     temps = await entries.get_temps_for_cycle(cycle_id)

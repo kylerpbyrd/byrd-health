@@ -1,18 +1,17 @@
 from datetime import date, time
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pytest
+from data_service.models import (
+    ComputedInsights,
+    Cycle,
+    FertilitySigns,
+    Profile,
+    Symptom,
+    Temperature,
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from data_service.models import (
-    Profile,
-    Cycle,
-    Temperature,
-    FertilitySigns,
-    Symptom,
-    ComputedInsights,
-)
 
 
 class TestProfileModel:

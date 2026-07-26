@@ -1,5 +1,6 @@
 from datetime import date, datetime, time
 from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 

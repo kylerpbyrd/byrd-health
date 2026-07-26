@@ -1,11 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-
 from data_service.models import Profile
 from data_service.schemas import ProfileCreate as ProfileCreateSchema
 from data_service.schemas import ProfileUpdate as ProfileUpdateSchema
 from data_service.service import DataService
+from fastapi import APIRouter, Depends, HTTPException
 
 from ..dependencies import get_active_profile, get_data_service
 from ..schemas.responses import ExportResponse, ProfileResponse

@@ -39,6 +39,41 @@ docker build -t byrd-health:rc1 .
 **Evidence to capture:**
 - Screenshot of the final `docker build` output showing "Successfully tagged byrd-health:rc1"
 
+PS C:\Users\kyler\OneDrive\Documents\Code\projects\byrd-health> docker build -t byrd-health:rc1 .
+[+] Building 80.2s (21/21) FINISHED                                                                                                                                                                                                                                              docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                                             0.1s
+ => => transferring dockerfile: 1.26kB                                                                                                                                                                                                                                                           0.0s
+ => [internal] load metadata for ghcr.io/home-assistant/base:latest                                                                                                                                                                                                                              1.2s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                                                0.1s
+ => => transferring context: 2B                                                                                                                                                                                                                                                                  0.0s
+ => [ 1/17] FROM ghcr.io/home-assistant/base:latest@sha256:94ff231402a5e7ad2a82e261ad5fa4ffae7d7bb095c3febb2edbdf309c9b6aca                                                                                                                                                                      0.2s
+ => => resolve ghcr.io/home-assistant/base:latest@sha256:94ff231402a5e7ad2a82e261ad5fa4ffae7d7bb095c3febb2edbdf309c9b6aca                                                                                                                                                                        0.2s
+ => [internal] load build context                                                                                                                                                                                                                                                                0.8s
+ => => transferring context: 1.41MB                                                                                                                                                                                                                                                              0.6s
+ => CACHED [ 2/17] RUN apk add --no-cache python3 py3-pip nodejs npm                                                                                                                                                                                                                             0.0s
+ => CACHED [ 3/17] RUN python3 -m venv /opt/venv                                                                                                                                                                                                                                                 0.0s
+ => [ 4/17] COPY packages/ /app/packages/                                                                                                                                                                                                                                                        0.5s
+ => [ 5/17] RUN pip install --no-cache-dir /app/packages/fertility_engine                                                                                                                                                                                                                        7.0s
+ => [ 6/17] RUN pip install --no-cache-dir /app/packages/data_service                                                                                                                                                                                                                           10.1s 
+ => [ 7/17] RUN pip install --no-cache-dir /app/packages/ha_bridge                                                                                                                                                                                                                               6.4s 
+ => [ 8/17] RUN pip install --no-cache-dir /app/packages/device_adapters                                                                                                                                                                                                                         3.4s 
+ => [ 9/17] RUN pip install --no-cache-dir /app/packages/web_api                                                                                                                                                                                                                                12.5s 
+ => [10/17] COPY frontend/ /app/frontend/                                                                                                                                                                                                                                                        4.6s 
+ => [11/17] WORKDIR /app/frontend                                                                                                                                                                                                                                                                0.7s 
+ => [12/17] RUN npm install && npm run build                                                                                                                                                                                                                                                     9.3s 
+ => [13/17] RUN mkdir -p /app/static && cp -r /app/frontend/dist/* /app/static/                                                                                                                                                                                                                  1.1s 
+ => [14/17] COPY packages/ha_bridge/src/ha_bridge/card/ha-card.js /app/static/ha-card.js                                                                                                                                                                                                         0.7s 
+ => [15/17] COPY run.sh /run.sh                                                                                                                                                                                                                                                                  0.6s 
+ => [16/17] RUN chmod a+x /run.sh                                                                                                                                                                                                                                                                1.6s 
+ => exporting to image                                                                                                                                                                                                                                                                          17.4s 
+ => => exporting layers                                                                                                                                                                                                                                                                         10.8s 
+ => => exporting manifest sha256:2390f1dac9ce46c3eb279238b6e35093cdd13b4938a3e739217787a34d195f2b                                                                                                                                                                                                0.2s
+ => => exporting config sha256:d9c88b9988efee8a0572fbffd5392d686687597df09bdb7e0515adc40fd6ad08                                                                                                                                                                                                  0.2s
+ => => exporting attestation manifest sha256:e59bbbb31d8baf61364780da9d5a462c52785d725a6f358e209b1288a738eb9b                                                                                                                                                                                    0.4s
+ => => exporting manifest list sha256:1907c4cddb746a92aa0ab2ba53377c6f10da8c783be601bb9da326c09f64c7c6                                                                                                                                                                                           0.2s
+ => => naming to docker.io/library/byrd-health:rc1                                                                                                                                                                                                                                               0.0s
+ => => unpacking to docker.io/library/byrd-health:rc1   
+
 ### 1.2 Verify image exists
 
 ```bash
@@ -46,6 +81,12 @@ docker images byrd-health:rc1
 ```
 
 **Expected:** Image listed with size and creation time.
+
+PS C:\Users\kyler\OneDrive\Documents\Code\projects\byrd-health> docker images byrd-health:rc1
+>> 
+                                                                                                                                                                                                                                                                                  i Info →   U  In Use
+IMAGE             ID             DISK USAGE   CONTENT SIZE   EXTRA
+byrd-health:rc1   1907c4cddb74        637MB          135MB     
 
 ---
 
@@ -63,6 +104,8 @@ If using a local add-on repository:
 **Evidence to capture:**
 - Screenshot of the add-on appearing in the store
 - Screenshot of the installation completing (green checkmark)
+ 
+ Appears in store and installs.
 
 ### 2.2 Review Configuration
 
@@ -83,6 +126,7 @@ notify_ovulation_detected: true
 **Evidence to capture:**
 - Screenshot of the Configuration tab with default values
 
+  all default values and options present.
 ---
 
 ## Step 3: Start the Add-on

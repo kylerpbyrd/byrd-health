@@ -1,11 +1,10 @@
 import asyncio
+
 import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
 from data_service.models import Base
 from data_service.service import DataService
-from data_service.repositories import ProfileRepository
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 
 @pytest.fixture(scope="session")

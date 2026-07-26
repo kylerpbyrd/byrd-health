@@ -1,14 +1,12 @@
 import asyncio
+from collections.abc import AsyncGenerator
 from datetime import date, time
-from typing import AsyncGenerator
 
 import pytest
 import pytest_asyncio
+from data_service.models import Base
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
-from data_service.models import Base
-from data_service.service import DataService
 
 
 @pytest.fixture(scope="session")

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import asyncio
 import logging
-import struct
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -131,7 +129,7 @@ class BluetoothAdapter:
             value = self._parse_temperature_response(raw)
             self._latest_value = value
             return value
-        except (BleakError, asyncio.TimeoutError) as exc:
+        except (TimeoutError, BleakError) as exc:
             logger.warning(
                 "BLE read failed for %s: %s – attempting reconnect",
                 self._name,

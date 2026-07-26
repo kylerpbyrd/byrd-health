@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import os
+
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
@@ -21,7 +22,7 @@ class ProfileEncryption:
 
     @staticmethod
     def _derive_key(secret_key: str, profile_uuid: str) -> bytes:
-        material = f"{secret_key}:{profile_uuid}".encode("utf-8")
+        material = f"{secret_key}:{profile_uuid}".encode()
         return hashlib.sha256(material).digest()
 
     def encrypt(self, plaintext: str | float | None) -> str | None:

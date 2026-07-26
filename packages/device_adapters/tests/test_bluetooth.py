@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from device_adapters.adapters.bluetooth import (
     BluetoothAdapter,
     _parse_ieee11073_float,
@@ -177,6 +175,7 @@ def test_connect_success_when_bleak_available(mock_client: MagicMock) -> None:
         {"bleak": mock_bleak, "bleak.exc": mock_bleak},
     ):
         import importlib
+
         import device_adapters.adapters.bluetooth as bt_mod
 
         importlib.reload(bt_mod)
@@ -237,6 +236,7 @@ def test_reconnect_on_read_failure(mock_client: MagicMock) -> None:
         {"bleak": mock_bleak, "bleak.exc": mock_bleak},
     ):
         import importlib
+
         import device_adapters.adapters.bluetooth as bt_mod
 
         importlib.reload(bt_mod)

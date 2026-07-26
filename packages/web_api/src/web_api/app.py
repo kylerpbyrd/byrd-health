@@ -1,9 +1,9 @@
 import os
 import re
-from collections.abc import Callable
+from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,17 +21,18 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     import logging
     _log = logging.getLogger(__name__)
 
+    from device_adapters.registry import DeviceRegistry
+    from ha_bridge.bridge import HABridge
+    from ha_bridge.config import read_ha_config
+
     from .dependencies import (
-        _engine,
         _async_sessionmaker,
+        _engine,
         set_device_registry,
         set_ha_bridge,
         set_ws_broker,
     )
     from .websocket import WebSocketBroker
-    from device_adapters.registry import DeviceRegistry
-    from ha_bridge.bridge import HABridge
-    from ha_bridge.config import read_ha_config
 
     broker = WebSocketBroker()
     set_ws_broker(broker)
@@ -67,7 +68,8 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     try:
         from data_service.service import DataService
-        from .analysis import run_cycle_analysis, enrich_insights_for_publishing
+
+        from .analysis import enrich_insights_for_publishing, run_cycle_analysis
 
         async with _async_sessionmaker() as session:
             data_svc = DataService(session)
@@ -112,7 +114,7 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await _engine.dispose()
 
 
-def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
+def create_app(lifespan: Callable[..., Any] | None = None) -> FastAPI:
     effective_lifespan = lifespan if lifespan is not None else _lifespan
     app = FastAPI(
         title="Byrd Health API",
@@ -173,7 +175,8 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
             if not os.path.isfile(index_path):
                 raise HTTPException(status_code=404)
 
-            html = open(index_path).read()
+            with open(index_path) as f:
+                html = f.read()
             prefix = get_application_prefix(request)
             if prefix:
                 head_match = re.search(r"<head[^>]*>", html, re.IGNORECASE)

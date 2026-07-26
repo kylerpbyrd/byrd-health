@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException
 
@@ -33,7 +33,7 @@ async def read_all_devices():
                 "type": "device_reading",
                 "payload": {
                     "profile_slug": "default",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "data": readings,
                 },
             }

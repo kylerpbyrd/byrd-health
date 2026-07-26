@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from typing import Optional, Union
 
 from fertility_engine.coverline import compute_coverline
 from fertility_engine.models import OvulationResult
@@ -12,7 +11,7 @@ _EXTRA_C: float = 0.1
 _MAX_GAP: int = 2
 
 
-def _to_date(value: Union[str, date]) -> date:
+def _to_date(value: str | date) -> date:
     """Coerce a string or date object to a date."""
     if isinstance(value, date):
         return value

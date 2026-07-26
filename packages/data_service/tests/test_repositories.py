@@ -1,17 +1,13 @@
 from datetime import date, time
 
-import pytest
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from data_service.repositories import (
-    ProfileRepository,
     CycleRepository,
     EntryRepository,
-    InsightsRepository,
     ExportRepository,
+    InsightsRepository,
+    ProfileRepository,
 )
-from data_service.models import Profile, Temperature, FertilitySigns, Symptom, ComputedInsights
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TestProfileRepository:

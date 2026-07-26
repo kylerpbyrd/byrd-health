@@ -1,17 +1,13 @@
-import calendar as cal_module
 from datetime import date, timedelta
-from typing import Optional
 from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
 
 from data_service.models import Profile
 from data_service.service import DataService
-from fertility_engine import get_cycle_phase, FertileWindowResult
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fertility_engine import FertileWindowResult, get_cycle_phase
 
 from ..dependencies import get_active_profile, get_data_service
-from ..schemas.responses import CalendarResponse, CalendarDayItem, CalendarCycleItem
+from ..schemas.responses import CalendarCycleItem, CalendarDayItem, CalendarResponse
 
 router = APIRouter(
     prefix="/api/v1/fertility/calendar",
@@ -45,7 +41,7 @@ def _export_phase(engine_phase: str) -> str:
 @router.get("/", response_model=CalendarResponse)
 async def get_calendar(
     month: str = Query(..., pattern=r"^\d{4}-\d{2}$"),
-    profile_id: Optional[UUID] = Query(None),
+    profile_id: UUID | None = Query(None),
     data_svc: DataService = Depends(get_data_service),
     active_profile: Profile = Depends(get_active_profile),
 ) -> CalendarResponse:
@@ -114,7 +110,7 @@ async def get_calendar(
             if not t.is_discarded and grid_start <= t.date <= grid_end:
                 temp_map[t.date] = t.temp_value
 
-        sign_map: dict[date, dict[str, Optional[str]]] = {}
+        sign_map: dict[date, dict[str, str | None]] = {}
         for s in signs:
             if grid_start <= s.date <= grid_end:
                 sign_map[s.date] = {
@@ -137,7 +133,7 @@ async def get_calendar(
     while current <= grid_end:
         in_current_month = current.month == month_num and current.year == year
 
-        found_cycle_id: Optional[UUID] = None
+        found_cycle_id: UUID | None = None
         for c_id, c_data in cycle_data_map.items():
             c_obj = c_data["cycle"]
             c_end = c_obj.end_date or date(2099, 12, 31)
@@ -145,12 +141,12 @@ async def get_calendar(
                 found_cycle_id = c_id
                 break
 
-        cycle_day: Optional[int] = None
-        phase: Optional[str] = None
-        temp: Optional[float] = None
-        flow: Optional[str] = None
-        mucus: Optional[str] = None
-        opk: Optional[str] = None
+        cycle_day: int | None = None
+        phase: str | None = None
+        temp: float | None = None
+        flow: str | None = None
+        mucus: str | None = None
+        opk: str | None = None
         is_period_start = False
         is_ovulation_day = False
         is_fertile = False

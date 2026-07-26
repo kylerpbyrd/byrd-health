@@ -1,5 +1,4 @@
 import pytest
-
 from device_adapters.adapters.esphome import ESPHomeAdapter, ESPHomeConfig
 from device_adapters.protocol import DeviceAdapter
 

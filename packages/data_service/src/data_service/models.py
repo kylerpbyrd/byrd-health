@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from uuid import UUID, uuid4
 from datetime import date, datetime, time
+from uuid import UUID, uuid4
+
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Float, Boolean, ForeignKey, Text, UniqueConstraint, func
 
 
 class Base(DeclarativeBase):
@@ -24,7 +25,7 @@ class Profile(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime | None] = mapped_column(onupdate=func.now(), default=None)
 
-    cycles: Mapped[list["Cycle"]] = relationship(
+    cycles: Mapped[list[Cycle]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
 
@@ -44,17 +45,17 @@ class Cycle(Base):
     cycle_length: Mapped[int | None] = mapped_column(Integer, nullable=True)
     notes: Mapped[str] = mapped_column(Text, default="")
 
-    profile: Mapped["Profile"] = relationship(back_populates="cycles")
-    temperatures: Mapped[list["Temperature"]] = relationship(
+    profile: Mapped[Profile] = relationship(back_populates="cycles")
+    temperatures: Mapped[list[Temperature]] = relationship(
         back_populates="cycle", cascade="all, delete-orphan"
     )
-    fertility_signs: Mapped[list["FertilitySigns"]] = relationship(
+    fertility_signs: Mapped[list[FertilitySigns]] = relationship(
         back_populates="cycle", cascade="all, delete-orphan"
     )
-    symptoms: Mapped[list["Symptom"]] = relationship(
+    symptoms: Mapped[list[Symptom]] = relationship(
         back_populates="cycle", cascade="all, delete-orphan"
     )
-    computed_insight: Mapped["ComputedInsights | None"] = relationship(
+    computed_insight: Mapped[ComputedInsights | None] = relationship(
         back_populates="cycle", cascade="all, delete-orphan", uselist=False
     )
 
@@ -78,7 +79,7 @@ class Temperature(Base):
 
     __table_args__ = (UniqueConstraint("cycle_id", "date"),)
 
-    cycle: Mapped["Cycle"] = relationship(back_populates="temperatures")
+    cycle: Mapped[Cycle] = relationship(back_populates="temperatures")
 
     def __repr__(self) -> str:
         return f"<Temperature(id={self.id}, date={self.date})>"
@@ -102,7 +103,7 @@ class FertilitySigns(Base):
 
     __table_args__ = (UniqueConstraint("cycle_id", "date"),)
 
-    cycle: Mapped["Cycle"] = relationship(back_populates="fertility_signs")
+    cycle: Mapped[Cycle] = relationship(back_populates="fertility_signs")
 
     def __repr__(self) -> str:
         return f"<FertilitySigns(id={self.id}, date={self.date})>"
@@ -119,7 +120,7 @@ class Symptom(Base):
     symptom_type: Mapped[str] = mapped_column(Text, nullable=False)
     severity: Mapped[int] = mapped_column(Integer, default=1)
 
-    cycle: Mapped["Cycle"] = relationship(back_populates="symptoms")
+    cycle: Mapped[Cycle] = relationship(back_populates="symptoms")
 
     def __repr__(self) -> str:
         return f"<Symptom(id={self.id}, date={self.date})>"
@@ -146,7 +147,7 @@ class ComputedInsights(Base):
     engine_version: Mapped[str] = mapped_column(String(16), default="1.0.0")
     computed_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    cycle: Mapped["Cycle"] = relationship(back_populates="computed_insight")
+    cycle: Mapped[Cycle] = relationship(back_populates="computed_insight")
 
     def __repr__(self) -> str:
         return f"<ComputedInsights(id={self.id}, cycle_id={self.cycle_id})>"

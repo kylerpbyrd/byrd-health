@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 from datetime import datetime, timedelta
 
@@ -83,7 +84,13 @@ class HANotifier:
 class TempReminderScheduler:
     """Schedules a daily temp reminder notification."""
 
-    def __init__(self, notifier: HANotifier, reminder_time: str, temp_unit: str = "F", profile_slug: str = "default"):
+    def __init__(
+        self,
+        notifier: HANotifier,
+        reminder_time: str,
+        temp_unit: str = "F",
+        profile_slug: str = "default",
+    ):
         self._notifier = notifier
         self._reminder_time = reminder_time
         self._temp_unit = temp_unit
@@ -111,10 +118,8 @@ class TempReminderScheduler:
         self._running = False
         if self._task:
             self._task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._task
-            except asyncio.CancelledError:
-                pass
             self._task = None
         logger.info("Temp reminder scheduler stopped")
 

@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -13,38 +13,38 @@ class TemperatureRecord(BaseModel):
 
 class FertilitySignsRecord(BaseModel):
     date: date
-    cervical_mucus: Optional[str] = None
-    opk_result: Optional[str] = None
+    cervical_mucus: str | None = None
+    opk_result: str | None = None
 
 
 class OvulationResult(BaseModel):
     detected: bool
-    ovulation_date: Optional[date] = None
-    shift_start_date: Optional[date] = None
-    coverline: Optional[float] = None
+    ovulation_date: date | None = None
+    shift_start_date: date | None = None
+    coverline: float | None = None
     method: str = "none"
     confidence: Literal["confirmed", "possible", "none"] = "none"
     consecutive_elevated: int = 0
 
 
 class FertileWindowResult(BaseModel):
-    fertile_start: Optional[date] = None
-    fertile_end: Optional[date] = None
-    post_ovulatory_infertile: Optional[date] = None
+    fertile_start: date | None = None
+    fertile_end: date | None = None
+    post_ovulatory_infertile: date | None = None
     calendar_rule_day: int
     mucus_triggered: bool = False
 
 
 class CycleInsights(BaseModel):
-    coverline: Optional[float] = None
-    ovulation_date: Optional[date] = None
+    coverline: float | None = None
+    ovulation_date: date | None = None
     ovulation_confirmed: bool = False
     ovulation_confidence: Literal["confirmed", "possible", "none"] = "none"
     ovulation_method: str = "none"
-    fertile_start_date: Optional[date] = None
-    fertile_end_date: Optional[date] = None
-    post_ovulatory_infertile_date: Optional[date] = None
-    luteal_length: Optional[int] = None
+    fertile_start_date: date | None = None
+    fertile_end_date: date | None = None
+    post_ovulatory_infertile_date: date | None = None
+    luteal_length: int | None = None
     luteal_phase_short: bool = False
     pregnancy_indicator: bool = False
     consecutive_elevated_temps: int = 0

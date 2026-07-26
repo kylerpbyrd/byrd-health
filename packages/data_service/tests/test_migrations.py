@@ -1,4 +1,3 @@
-import pytest
 from data_service.migrations.versions import _001_initial_schema
 
 

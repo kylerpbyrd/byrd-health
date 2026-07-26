@@ -1,10 +1,9 @@
-from typing import Optional
 
 THRESHOLD_F: float = 0.1
 THRESHOLD_C: float = 0.05
 
 
-def compute_coverline(pre_shift_temps: list[float], unit: str = "F") -> Optional[float]:
+def compute_coverline(pre_shift_temps: list[float], unit: str = "F") -> float | None:
     if not pre_shift_temps:
         return None
     sample = pre_shift_temps[-6:]
@@ -12,7 +11,7 @@ def compute_coverline(pre_shift_temps: list[float], unit: str = "F") -> Optional
     return round(max(sample) + threshold, 2)
 
 
-def estimate_baseline(temps: list[float], unit: str = "F") -> Optional[float]:
+def estimate_baseline(temps: list[float], unit: str = "F") -> float | None:
     if not temps:
         return None
     sample = sorted(temps)[:6]
