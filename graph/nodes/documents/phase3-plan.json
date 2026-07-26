@@ -1,0 +1,10 @@
+{
+  "id": "document:phase3-plan",
+  "type": "document",
+  "label": "Phase 3 Implementation Plan",
+  "description": "Detailed Phase 3 milestones, agent assignments, risk register, and execution order.",
+  "source": "docs/PHASE3_PLAN.md",
+  "references": ["adr:adr-0011", "adr:adr-0012", "milestone:phase-3"],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

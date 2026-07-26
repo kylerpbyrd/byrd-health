@@ -1,0 +1,14 @@
+{
+  "id": "adr:adr-0011",
+  "type": "adr",
+  "label": "ADR-0011 — Device Adapter Pattern",
+  "description": "Protocol-based DeviceAdapter interface with DeviceRegistry. Each device type gets its own adapter implementing a common interface. Core platform remains device-agnostic.",
+  "source": "docs/adr/ADR-0011-device-adapter-pattern.md",
+  "status": "accepted",
+  "phase": 3,
+  "governs": ["service:device-adapters"],
+  "references": ["adr:adr-0006", "adr:adr-0001"],
+  "approved_date": "2026-07-25",
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

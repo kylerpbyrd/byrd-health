@@ -12,6 +12,7 @@ dependencies = [
     "python-multipart",
     "fertility-engine",
     "data-service",
+    "device-adapters",
 ]
 
 [project.optional-dependencies]

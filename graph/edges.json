@@ -340,5 +340,101 @@
     "target": "service:web-api",
     "relationship": "GOVERNED_BY",
     "description": "IngressMiddleware and get_application_prefix() implement the ingress path handling specified in ADR-0006"
+  },
+  {
+    "source": "adr:adr-0011",
+    "target": "adr:adr-0006",
+    "relationship": "REFERENCES",
+    "description": "Device Adapter Pattern extends HA Bridge isolation pattern to device integrations"
+  },
+  {
+    "source": "adr:adr-0011",
+    "target": "adr:adr-0001",
+    "relationship": "REFERENCES",
+    "description": "Device Adapter Pattern follows service boundary principles from platform architecture"
+  },
+  {
+    "source": "adr:adr-0011",
+    "target": "service:device-adapters",
+    "relationship": "GOVERNED_BY",
+    "description": "ADR-0011 defines the protocol and registry architecture for device adapters"
+  },
+  {
+    "source": "adr:adr-0012",
+    "target": "adr:adr-0006",
+    "relationship": "REFERENCES",
+    "description": "WebSocket architecture implements real-time relay specified in ADR-0006 §2.1"
+  },
+  {
+    "source": "adr:adr-0012",
+    "target": "adr:adr-0001",
+    "relationship": "REFERENCES",
+    "description": "WebSocket architecture follows platform architecture (API Gateway includes WebSocket)"
+  },
+  {
+    "source": "adr:adr-0012",
+    "target": "adr:adr-0011",
+    "relationship": "REFERENCES",
+    "description": "Device adapters broadcast readings through WebSocket broker"
+  },
+  {
+    "source": "adr:adr-0012",
+    "target": "service:web-api",
+    "relationship": "GOVERNED_BY",
+    "description": "ADR-0012 defines the WebSocket broker, message protocol, and endpoint for web_api"
+  },
+  {
+    "source": "agent:backend-engineer",
+    "target": "service:device-adapters",
+    "relationship": "IMPLEMENTS",
+    "description": "Backend Engineer implements device adapter infrastructure in Phase 3"
+  },
+  {
+    "source": "agent:home-assistant-engineer",
+    "target": "service:device-adapters",
+    "relationship": "IMPLEMENTS",
+    "description": "HA Engineer implements ESPHome and Bluetooth adapters"
+  },
+  {
+    "source": "document:session-handoff",
+    "target": "milestone:phase-2",
+    "relationship": "REFERENCES",
+    "description": "Session handoff documents Phase 2 completion"
+  },
+  {
+    "source": "document:session-handoff",
+    "target": "milestone:phase-3",
+    "relationship": "REFERENCES",
+    "description": "Session handoff identifies Phase 3 as next priority"
+  },
+  {
+    "source": "document:phase3-plan",
+    "target": "adr:adr-0011",
+    "relationship": "REFERENCES",
+    "description": "Phase 3 plan is governed by ADR-0011 (Device Adapter Pattern)"
+  },
+  {
+    "source": "document:phase3-plan",
+    "target": "adr:adr-0012",
+    "relationship": "REFERENCES",
+    "description": "Phase 3 plan is governed by ADR-0012 (WebSocket Architecture)"
+  },
+  {
+    "source": "document:phase3-plan",
+    "target": "milestone:phase-3",
+    "relationship": "REFERENCES",
+    "description": "Phase 3 plan defines the milestone breakdown for Phase 3"
+  },
+  {
+    "source": "milestone:phase-3",
+    "target": "adr:adr-0011",
+    "relationship": "GOVERNED_BY",
+    "description": "Phase 3 implementation governed by ADR-0011 device adapter pattern"
+  },
+  {
+    "source": "milestone:phase-3",
+    "target": "adr:adr-0012",
+    "relationship": "GOVERNED_BY",
+    "description": "Phase 3 implementation governed by ADR-0012 WebSocket architecture"
   }
 ]

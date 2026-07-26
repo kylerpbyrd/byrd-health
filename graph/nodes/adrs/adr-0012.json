@@ -1,0 +1,14 @@
+{
+  "id": "adr:adr-0012",
+  "type": "adr",
+  "label": "ADR-0012 — WebSocket Architecture",
+  "description": "In-memory WebSocketBroker pub/sub using FastAPI native WebSocket. Real-time device readings and analysis updates pushed to frontend. Works through HA Ingress proxy natively.",
+  "source": "docs/adr/ADR-0012-websocket-architecture.md",
+  "status": "accepted",
+  "phase": 3,
+  "governs": ["service:web-api"],
+  "references": ["adr:adr-0006", "adr:adr-0001", "adr:adr-0011"],
+  "approved_date": "2026-07-25",
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

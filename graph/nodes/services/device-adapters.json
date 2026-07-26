@@ -2,17 +2,19 @@
   "id": "service:device-adapters",
   "type": "service",
   "label": "Device Adapters",
-  "description": "Pluggable device integration adapters. Abstract interface for Bluetooth thermometers, ESPHome devices, wearables. Implemented in Phase 3.",
-  "source": "ADR-0001",
+  "description": "Pluggable device integration adapters. Protocol-based DeviceAdapter interface with DeviceRegistry. HA Sensor adapter implemented. ESPHome and Bluetooth adapters planned.",
+  "source": "ADR-0011",
   "phase": 3,
-  "status": "planned",
+  "status": "active",
   "owner": "backend-engineer",
+  "governed_by": ["adr:adr-0011"],
   "properties": {
     "language": "Python 3.12+",
     "pattern": "Adapter",
-    "ha_dependency": false,
-    "adapters_planned": ["HA Sensor", "ESPHome", "Bluetooth BLE", "Manual Entry"]
+    "ha_dependency": true,
+    "adapters_implemented": ["HA Sensor"],
+    "adapters_planned": ["ESPHome", "Bluetooth BLE", "Manual Entry"]
   },
   "created_at": "2026-07-23T00:00:00Z",
-  "updated_at": "2026-07-23T00:00:00Z"
+  "updated_at": "2026-07-25T00:00:00Z"
 }

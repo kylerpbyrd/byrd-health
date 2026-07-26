@@ -39,6 +39,7 @@ indent-style = "space"
 
 [tool.mypy]
 strict = true
+explicit_package_bases = true
 python_version = "3.12"
 
 [tool.pytest.ini_options]

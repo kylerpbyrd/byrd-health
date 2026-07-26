@@ -20,9 +20,24 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     import logging
     _log = logging.getLogger(__name__)
 
-    from .dependencies import _engine, _async_sessionmaker, set_ha_bridge
+    from .dependencies import (
+        _engine,
+        _async_sessionmaker,
+        set_device_registry,
+        set_ha_bridge,
+        set_ws_broker,
+    )
+    from .websocket import WebSocketBroker
+    from device_adapters.registry import DeviceRegistry
     from ha_bridge.bridge import HABridge
     from ha_bridge.config import read_ha_config
+
+    broker = WebSocketBroker()
+    set_ws_broker(broker)
+    _log.info("WebSocket broker started")
+
+    registry = DeviceRegistry()
+    set_device_registry(registry)
 
     async with _engine.begin() as conn:
         from data_service.models import Base
@@ -66,6 +81,9 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     await bridge.stop_polling()
     set_ha_bridge(None)
+    set_device_registry(None)
+    set_ws_broker(None)
+    _log.info("WebSocket broker stopped")
     await _engine.dispose()
 
 
@@ -89,12 +107,14 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
 
     app.add_middleware(IngressMiddleware)
 
-    from .routers import profiles, entries, cycles, insights
+    from .routers import cycles, devices, entries, insights, profiles, ws
 
     app.include_router(profiles.router)
     app.include_router(entries.router)
     app.include_router(cycles.router)
     app.include_router(insights.router)
+    app.include_router(ws.router)
+    app.include_router(devices.router)
 
     @app.get("/api/health")
     async def health_check() -> dict[str, str]:

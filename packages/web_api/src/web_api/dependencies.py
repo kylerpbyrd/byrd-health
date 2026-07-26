@@ -11,23 +11,44 @@ from data_service.service import DataService
 
 from .config import settings
 
-from ha_bridge.bridge import HABridge
+from .ha_protocol import HABridgeProtocol
+from .websocket import WebSocketBroker
 
 _engine = create_async_engine(settings.database_url, echo=settings.debug)
 
-_ha_bridge: HABridge | None = None
+_ha_bridge: HABridgeProtocol | None = None
+_ws_broker: WebSocketBroker | None = None
+_device_registry = None  # DeviceRegistry | None (lazy import to avoid circular deps)
 
 
-def get_ha_bridge(requested: bool = False) -> HABridge | None:
+def get_ha_bridge(requested: bool = False) -> HABridgeProtocol | None:
     if requested and _ha_bridge is None:
         import logging
         logging.getLogger(__name__).warning("HA Bridge requested but not initialized")
     return _ha_bridge
 
 
-def set_ha_bridge(bridge: HABridge | None) -> None:
+def set_ha_bridge(bridge: HABridgeProtocol | None) -> None:
     global _ha_bridge
     _ha_bridge = bridge
+
+
+def get_ws_broker() -> WebSocketBroker | None:
+    return _ws_broker
+
+
+def set_ws_broker(broker: WebSocketBroker | None) -> None:
+    global _ws_broker
+    _ws_broker = broker
+
+
+def get_device_registry():
+    return _device_registry
+
+
+def set_device_registry(registry) -> None:
+    global _device_registry
+    _device_registry = registry
 
 _async_sessionmaker = async_sessionmaker(
     _engine,

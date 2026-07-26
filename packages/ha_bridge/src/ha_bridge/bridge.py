@@ -49,6 +49,18 @@ class HABridge:
     async def stop_polling(self) -> None:
         await self._poller.stop()
 
+    async def publish_entities(self, profile_slug: str) -> None:
+        logger.warning("publish_entities(%s) called without profile data; use publish_insights for now", profile_slug)
+
+    async def publish_all_profiles(self) -> None:
+        logger.warning("publish_all_profiles() called without data access; publish from lifespan for now")
+
+    async def startup(self) -> None:
+        logger.debug("HABridge startup (noop)")
+
+    async def shutdown(self) -> None:
+        await self.stop_polling()
+
     def get_ingress_middleware(self, app: object) -> IngressMiddleware:
         return IngressMiddleware(app)  # type: ignore[arg-type]
 

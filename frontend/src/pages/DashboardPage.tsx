@@ -1,4 +1,6 @@
 import { useDashboard, useChartData, useTodayEntry } from "@/hooks/useDashboard";
+import { useWebSocket } from "@/hooks/useWebSocket";
+import { queryClient } from "@/lib/query-client";
 import { PhaseBanner } from "@/components/PhaseBanner";
 import { StatTile } from "@/components/StatTile";
 import { WarningBanner } from "@/components/WarningBanner";
@@ -8,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatTileSkeleton, ChartSkeleton, CardSkeleton } from "@/components/Skeleton";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { formatShortDate } from "@/lib/utils";
 import { Thermometer } from "lucide-react";
 import type { ChartData } from "@/types/fertility";
@@ -40,6 +43,16 @@ export default function DashboardPage() {
   const { data: chartData } = useChartData();
   const { data: todayEntry } = useTodayEntry();
   const navigate = useNavigate();
+
+  const { isConnected } = useWebSocket({
+    onAnalysisComplete: () => {
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["chart"] });
+    },
+    onDeviceReading: (reading) => {
+      toast.info(`New reading: ${reading.payload.data.temperature}°`);
+    },
+  });
 
   if (isLoading) {
     return (
@@ -75,6 +88,16 @@ export default function DashboardPage() {
         cycleDay={data.cycle_day}
         avgCycleLength={data.avg_cycle_length}
       />
+
+      <div className="mb-4 flex flex-col items-center gap-2 sm:flex-row sm:justify-between sm:items-start">
+        <div className="flex-1" />
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span
+            className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+          />
+          {isConnected ? "Live" : "Offline"}
+        </div>
+      </div>
 
       {data.last_temp && (
         <div className="mb-4 text-center">

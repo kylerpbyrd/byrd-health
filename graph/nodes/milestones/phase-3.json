@@ -1,0 +1,39 @@
+{
+  "id": "milestone:phase-3",
+  "type": "milestone",
+  "label": "Phase 3 — Device Integration & Real-Time",
+  "description": "Automatic data ingestion from external devices (Bluetooth thermometers, ESPHome) and real-time WebSocket updates. No cloud dependencies.",
+  "source": "docs/PHASE3_PLAN.md, docs/PHASE3_EXECUTION_PLAN.md",
+  "status": "complete",
+  "sub_milestones": [
+    "P3-M1: Device Adapter Infrastructure",
+    "P3-M2: WebSocket Infrastructure",
+    "P3-M3: ESPHome Integration",
+    "P3-M4: Bluetooth Thermometer Integration",
+    "P3-M5: Frontend Real-Time"
+  ],
+  "exit_criteria": [
+    "At least one device adapter functional end-to-end",
+    "WebSocket endpoint serves real-time device readings",
+    "Frontend dashboard updates live without manual refresh",
+    "Device registry configurable via add-on options",
+    "No new cloud dependencies introduced"
+  ],
+  "deliverables": [
+    "packages/device_adapters/ — 3 adapters (HA Sensor, ESPHome, Bluetooth)",
+    "WebSocketBroker + /api/v1/fertility/ws endpoint",
+    "Device REST endpoints (GET /devices, POST /devices/read, GET /devices/{id}/status)",
+    "useWebSocket hook with auto-reconnect",
+    "Live dashboard + device status badge",
+    "Auto-fill entry form from device readings",
+    "docs/research/bt-thermometers.md",
+    "74 new tests (20+21+14+19) across P3-M1 through P3-M5",
+    "All 225 existing tests still pass"
+  ],
+  "agents": ["backend-engineer", "frontend-engineer", "ha-engineer", "qa-engineer"],
+  "governed_by": ["adr:adr-0011", "adr:adr-0012"],
+  "predecessor": "milestone:phase-2",
+  "successor": "milestone:phase-4",
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

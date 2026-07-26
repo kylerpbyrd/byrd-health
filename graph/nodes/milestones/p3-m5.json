@@ -1,0 +1,29 @@
+{
+  "id": "milestone:p3-m5",
+  "type": "milestone",
+  "label": "P3-M5 — Frontend Real-Time",
+  "description": "WebSocket client hook with auto-reconnect, live dashboard updates, device status indicator, auto-fill entry form from device readings. All 65 existing tests pass.",
+  "source": "docs/PHASE3_EXECUTION_PLAN.md",
+  "status": "complete",
+  "parent": "milestone:phase-3",
+  "deliverables": [
+    "frontend/src/hooks/useWebSocket.ts",
+    "Live/Offline status badge on dashboard",
+    "analysis_complete triggers dashboard refetch",
+    "device_reading auto-fills entry form",
+    "EntryForm device temp indicator",
+    "All 65 existing tests pass"
+  ],
+  "agents": ["frontend-engineer"],
+  "acceptance_criteria": [
+    "WebSocket connects through HA Ingress",
+    "Auto-reconnect with exponential backoff",
+    "Dashboard refetches on analysis_complete",
+    "Entry form pre-fills from device reading",
+    "User edit prevents overwrite (useRef guard)",
+    "npm test and npm run build succeed"
+  ],
+  "predecessor": "milestone:p3-m2",
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

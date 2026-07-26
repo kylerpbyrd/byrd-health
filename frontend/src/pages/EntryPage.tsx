@@ -2,12 +2,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { EntryForm } from "@/components/EntryForm";
+import { useWebSocket } from "@/hooks/useWebSocket";
 import type { EntryFormData } from "@/types/fertility";
 import { createEntry } from "@/lib/api";
 
 export default function EntryPage() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deviceTemp, setDeviceTemp] = useState<number | null>(null);
+  const [deviceName, setDeviceName] = useState<string>("");
+
+  useWebSocket({
+    onDeviceReading: (reading) => {
+      setDeviceTemp(reading.payload.data.temperature);
+      setDeviceName(reading.payload.data.device_type);
+    },
+  });
 
   const handleSubmit = async (data: EntryFormData) => {
     setIsSubmitting(true);
@@ -31,7 +41,12 @@ export default function EntryPage() {
         ← Dashboard
       </button>
 
-      <EntryForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+      <EntryForm
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        deviceTemp={deviceTemp}
+        deviceName={deviceName}
+      />
     </div>
   );
 }

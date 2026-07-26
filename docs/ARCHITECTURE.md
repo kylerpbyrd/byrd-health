@@ -75,10 +75,21 @@ Database access layer providing CRUD operations and schema management.
 - **Models:** Profile, Cycle, TemperatureRecord, FertilitySigns, Symptom, ComputedInsights
 - **Key files:** `src/data_service/models.py`, `src/data_service/repositories.py`, `src/data_service/service.py`
 
-### Future Services (Phase 2-3)
+### HA Bridge (`packages/ha_bridge/`) — Complete
 
-- **HA Bridge** — Publishes entities to Home Assistant, polls sensors, registers Lovelace card
-- **Device Adapters** — Bluetooth thermometers, ESPHome, wearable integrations
+Publishes entities to Home Assistant, polls sensors, registers Lovelace card.
+
+- **Technology:** Python 3.12+, aiohttp for HA API
+- **Entities:** 9 per profile (temperature, coverline, ovulation, fertility status, cycle day, mucus, OPK, fertile window start/end)
+- **Isolation:** HA Bridge is the ONLY service aware of Home Assistant per ADR-0006
+
+### Device Adapters (`packages/device_adapters/`) — In Progress (Phase 3)
+
+Pluggable device integration using the Adapter Pattern defined in ADR-0011.
+
+- **Technology:** Python 3.12+, protocol-based interface
+- **Adapters planned:** HA Sensor, ESPHome, Bluetooth BLE
+- **Governed by:** ADR-0011, ADR-0012 (WebSocket for real-time push)
 
 ---
 
@@ -109,13 +120,13 @@ All processing is local. No health data leaves the device.
 
 ## Phase Roadmap
 
-| Phase | Name | Scope |
-|---|---|---|
-| **0** | Discovery & Architecture | Legacy analysis, migration plan, ADRs (complete) |
-| **1** | Platform Foundation | Fertility Engine, Data Service, Web API, Frontend (in progress) |
-| **2** | Fertility Service | HA Bridge, encryption at rest, legacy migration |
-| **3** | Device Integration | Bluetooth thermometers, ESPHome, wearable adapters |
-| **4** | Platform Expansion | Sleep, nutrition, medication modules; ByrdOS integration |
+| Phase | Name | Scope | Status |
+|---|---|---|---|
+| **0** | Discovery & Architecture | Legacy analysis, migration plan, ADRs | Complete |
+| **1** | Platform Foundation | Fertility Engine, Data Service, Web API, Frontend | Complete |
+| **2** | Fertility Service | HA Bridge, encryption at rest, frontend polish, docs | Complete — RC1 |
+| **3** | Device Integration | Bluetooth thermometers, ESPHome, wearable adapters, WebSocket | In Progress |
+| **4** | Platform Expansion | Sleep, nutrition, medication modules; ByrdOS integration | Planned |
 
 ---
 
@@ -135,6 +146,8 @@ All major decisions are formalized as ADRs in [`docs/adr/`](adr/):
 | [ADR-0008](adr/ADR-0008-security-and-privacy-model.md) | Encryption at rest deferred to Phase 2 |
 | [ADR-0009](adr/ADR-0009-testing-strategy.md) | pytest, Vitest, mypy strict, CI pipeline |
 | [ADR-0010](adr/ADR-0010-graphify-knowledge-architecture.md) | Graphify canonical knowledge graph |
+| [ADR-0011](adr/ADR-0011-device-adapter-pattern.md) | Protocol-based device adapter pattern with DeviceRegistry |
+| [ADR-0012](adr/ADR-0012-websocket-architecture.md) | In-memory WebSocketBroker pub/sub via FastAPI native WebSocket |
 
 ---
 

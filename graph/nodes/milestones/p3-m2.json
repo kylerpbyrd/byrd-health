@@ -1,0 +1,29 @@
+{
+  "id": "milestone:p3-m2",
+  "type": "milestone",
+  "label": "P3-M2 — WebSocket Infrastructure",
+  "description": "In-memory WebSocketBroker pub/sub, /ws endpoint, device REST endpoints. 21 new tests, 0 regressions.",
+  "source": "docs/PHASE3_EXECUTION_PLAN.md",
+  "status": "complete",
+  "parent": "milestone:phase-3",
+  "deliverables": [
+    "WebSocketBroker (connect, disconnect, broadcast)",
+    "WebSocket endpoint at /api/v1/fertility/ws",
+    "Device REST endpoints (GET /devices, POST /devices/read, GET /devices/{id}/status)",
+    "Broker and registry wired into app lifespan",
+    "21 tests passing"
+  ],
+  "agents": ["backend-engineer"],
+  "acceptance_criteria": [
+    "WebSocket connection succeeds",
+    "Broadcast delivers to all connected clients",
+    "Dead connections cleaned up",
+    "Device endpoints functional",
+    "All existing tests pass (0 regressions)",
+    "IngressMiddleware passes WebSocket through unchanged"
+  ],
+  "predecessor": "milestone:p3-m1",
+  "successor": "milestone:p3-m5",
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

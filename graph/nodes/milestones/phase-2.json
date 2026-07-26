@@ -1,0 +1,30 @@
+{
+  "id": "milestone:phase-2",
+  "type": "milestone",
+  "label": "Phase 2 — Fertility Service",
+  "description": "HA Bridge wiring, encryption at rest, frontend polish, documentation, legacy migration. Release Candidate 1 deployed on Home Assistant.",
+  "source": "docs/MILESTONE_GUIDE.md, docs/SESSION_HANDOFF.md",
+  "status": "complete",
+  "deliverables": [
+    "HA Bridge wired — 9 entities per profile published",
+    "AES-256-GCM encryption at rest",
+    "ErrorBoundary, sonner toasts, skeleton loaders, accessibility",
+    "User guide, feature guide, troubleshooting, developer guide",
+    "160 Python + 65 frontend = 225 tests passing",
+    "IngressMiddleware + get_application_prefix()",
+    "RC1 deployed on Home Assistant"
+  ],
+  "agents": ["backend-engineer", "frontend-engineer", "ha-engineer", "security-engineer", "qa-engineer", "documentation-engineer"],
+  "acceptance_criteria": [
+    "HA add-on deploys and starts successfully",
+    "All 9 entities published on startup and after entry creation",
+    "Sensitive fields encrypted at rest (temps, signs, symptoms, notes)",
+    "Frontend accessible through HA Ingress",
+    "225 tests passing",
+    "Documentation complete for users and developers"
+  ],
+  "predecessor": "milestone:phase-1",
+  "successor": "milestone:phase-3",
+  "created_at": "2026-07-23T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

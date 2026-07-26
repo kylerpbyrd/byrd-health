@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -112,11 +112,33 @@ function RadioGroup({
 interface EntryFormProps {
   onSubmit: (data: EntryFormData) => void;
   isSubmitting?: boolean;
+  deviceTemp?: number | null;
+  deviceName?: string;
 }
 
-export function EntryForm({ onSubmit, isSubmitting = false }: EntryFormProps) {
+export function EntryForm({
+  onSubmit,
+  isSubmitting = false,
+  deviceTemp,
+  deviceName,
+}: EntryFormProps) {
   const [date, setDate] = useState(TODAY);
   const [tempValue, setTempValue] = useState("");
+  const userEditedTemp = useRef(false);
+  const prevDeviceTemp = useRef<number | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (
+      deviceTemp != null &&
+      deviceTemp !== prevDeviceTemp.current &&
+      !userEditedTemp.current &&
+      tempValue === ""
+    ) {
+      setTempValue(String(deviceTemp));
+    }
+    prevDeviceTemp.current = deviceTemp;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceTemp]);
   const [timeTaken, setTimeTaken] = useState("");
   const [isDiscarded, setIsDiscarded] = useState(false);
   const [discardReason, setDiscardReason] = useState("");
@@ -178,14 +200,24 @@ export function EntryForm({ onSubmit, isSubmitting = false }: EntryFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="temp-value">Basal Body Temperature (°F)</Label>
+            <Label htmlFor="temp-value">
+              Basal Body Temperature (°F)
+              {deviceName && deviceTemp != null && (
+                <span className="ml-2 text-xs font-normal text-muted-foreground">
+                  From device: {deviceName}
+                </span>
+              )}
+            </Label>
             <Input
               id="temp-value"
               type="number"
               step="0.01"
               placeholder="e.g. 97.40"
               value={tempValue}
-              onChange={(e) => setTempValue(e.target.value)}
+              onChange={(e) => {
+                userEditedTemp.current = true;
+                setTempValue(e.target.value);
+              }}
               className="text-center text-3xl font-bold h-16"
               inputMode="decimal"
               aria-label="Temperature in Fahrenheit"

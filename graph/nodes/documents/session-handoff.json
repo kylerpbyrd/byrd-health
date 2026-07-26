@@ -1,0 +1,10 @@
+{
+  "id": "document:session-handoff",
+  "type": "document",
+  "label": "Session Handoff (2026-07-26)",
+  "description": "Phase 2 completion handoff — RC1 deployed on HA, 225 tests passing, known issues documented, Phase 3 plan ready for approval.",
+  "source": "docs/SESSION_HANDOFF.md",
+  "references": ["milestone:phase-2", "milestone:phase-3"],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}

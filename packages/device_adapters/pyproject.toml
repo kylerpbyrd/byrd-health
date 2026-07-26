@@ -1,0 +1,23 @@
+[project]
+name = "device-adapters"
+version = "0.1.0"
+description = "Pluggable device integration adapters for Byrd Health"
+requires-python = ">=3.12"
+dependencies = [
+    "ha-bridge",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0", "pytest-asyncio>=0.24"]
+
+[build-system]
+requires = ["setuptools>=75.8.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"

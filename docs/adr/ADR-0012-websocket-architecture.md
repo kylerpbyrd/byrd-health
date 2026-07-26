@@ -2,9 +2,10 @@
 
 | Key          | Value                                          |
 |--------------|------------------------------------------------|
-| **Status**   | Proposed                                       |
+| **Status**   | Accepted                                       |
 | **Date**     | 2026-07-26                                     |
 | **Deciders** | Lead Architect                                 |
+| **Approved** | 2026-07-25                                     |
 | **Replaces** | None                                           |
 | **Scope**    | Real-time communication architecture           |
 

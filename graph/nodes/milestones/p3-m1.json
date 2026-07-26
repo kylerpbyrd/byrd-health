@@ -1,0 +1,28 @@
+{
+  "id": "milestone:p3-m1",
+  "type": "milestone",
+  "label": "P3-M1 — Device Adapter Infrastructure",
+  "description": "Scaffolded packages/device_adapters/ with DeviceAdapter protocol, DeviceRegistry, and HASensorAdapter wrapping existing SensorPoller. 20 new tests, 0 regressions.",
+  "source": "docs/PHASE3_EXECUTION_PLAN.md",
+  "status": "complete",
+  "parent": "milestone:phase-3",
+  "deliverables": [
+    "packages/device_adapters/ package scaffolded",
+    "DeviceAdapter protocol (runtime_checkable)",
+    "DeviceRegistry (register, unregister, read_all)",
+    "HASensorAdapter wrapping SensorPoller",
+    "20 tests passing"
+  ],
+  "agents": ["backend-engineer"],
+  "acceptance_criteria": [
+    "Package is pip-installable",
+    "All 20 new tests pass",
+    "All 160 existing tests pass (0 regressions)",
+    "No existing files modified",
+    "HA sensor adapter works alongside existing HABridge"
+  ],
+  "predecessor": "milestone:phase-2",
+  "successor": "milestone:p3-m2",
+  "created_at": "2026-07-25T00:00:00Z",
+  "updated_at": "2026-07-25T00:00:00Z"
+}
