@@ -70,9 +70,17 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             await _asyncio.to_thread(_alembic_cmd.upgrade, _cfg, "head")
             _log.info("Database migrations applied successfully")
         else:
-            _log.warning("alembic.ini not found at %s, skipping migrations", _alembic_ini)
+            _log.warning("alembic.ini not found at %s, falling back to create_all", _alembic_ini)
+            async with _engine.begin() as conn:
+                from data_service.models import Base
+                await conn.run_sync(Base.metadata.create_all)
+            _log.info("Database tables created via create_all fallback")
     except Exception:
-        _log.exception("Database migration failed, continuing...")
+        _log.exception("Alembic migration failed, falling back to create_all")
+        async with _engine.begin() as conn:
+            from data_service.models import Base
+            await conn.run_sync(Base.metadata.create_all)
+        _log.info("Database tables created via create_all fallback")
 
     bridge_config = read_ha_config()
     bridge = HABridge(bridge_config)
