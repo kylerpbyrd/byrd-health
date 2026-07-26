@@ -63,6 +63,10 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
         if _os.path.isfile(_alembic_ini):
             _cfg = _AlembicConfig(_alembic_ini)
+            # Override script_location with absolute path (alembic resolves relative to CWD, not ini dir)
+            _migrations_dir = _os.path.join(_os.path.dirname(_alembic_ini), "src", "data_service", "migrations")
+            if _os.path.isdir(_migrations_dir):
+                _cfg.set_main_option("script_location", _migrations_dir)
             await _asyncio.to_thread(_alembic_cmd.upgrade, _cfg, "head")
             _log.info("Database migrations applied successfully")
         else:
