@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useCycles } from "@/hooks/useCycles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/Skeleton";
 import { formatDate } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 
 export default function HistoryPage() {
   const { data: cycles, isLoading, isError } = useCycles();
@@ -24,15 +25,23 @@ export default function HistoryPage() {
         </CardHeader>
         <CardContent>
           {isLoading && (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <div className="space-y-3 py-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-lg border p-4">
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              ))}
             </div>
           )}
 
           {isError && (
-            <p className="py-8 text-center text-muted-foreground">
-              Unable to load cycle history.
-            </p>
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+              <CalendarDays className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground max-w-md">
+                No cycles found. Start logging entries to track your fertility patterns over time.
+              </p>
+            </div>
           )}
 
           {!isLoading && !isError && cycles && (

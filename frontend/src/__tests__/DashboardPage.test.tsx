@@ -86,7 +86,7 @@ function renderWithProviders(ui: React.ReactElement) {
 describe("DashboardPage", () => {
   it("renders the phase banner", async () => {
     renderWithProviders(<DashboardPage />);
-    const banner = await screen.findByRole("banner");
+    const banner = await screen.findByRole("status");
     expect(banner).toBeInTheDocument();
   });
 

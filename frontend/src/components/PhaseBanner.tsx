@@ -20,7 +20,7 @@ export function PhaseBanner({ phase, cycleDay, avgCycleLength }: PhaseBannerProp
   return (
     <div
       className={`mb-6 rounded-lg p-4 text-white ${phaseColors[phase]}`}
-      role="banner"
+      role="status"
       aria-label={`Current phase: ${cyclePhaseLabel(phase)}`}
     >
       <div className="flex items-center justify-between">

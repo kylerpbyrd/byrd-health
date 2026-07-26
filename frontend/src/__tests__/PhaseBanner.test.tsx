@@ -46,7 +46,7 @@ describe("PhaseBanner", () => {
 
   it("has correct ARIA role and label", () => {
     render(<PhaseBanner phase="menstruation" cycleDay={3} avgCycleLength={28} />);
-    const banner = screen.getByRole("banner");
+    const banner = screen.getByRole("status");
     expect(banner).toHaveAttribute("aria-label", "Current phase: Menstruation");
   });
 });

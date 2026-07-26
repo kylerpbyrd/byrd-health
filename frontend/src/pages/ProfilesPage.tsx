@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, CheckCircle } from "lucide-react";
+import { Loader2, Trash2, CheckCircle, Users } from "lucide-react";
 
 export default function ProfilesPage() {
   const { data: profiles, isLoading, isError } = useProfiles();
@@ -67,9 +67,12 @@ export default function ProfilesPage() {
           )}
 
           {isError && (
-            <p className="py-8 text-center text-muted-foreground">
-              Unable to load profiles.
-            </p>
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+              <Users className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground max-w-md">
+                No profiles yet. Create one to begin tracking.
+              </p>
+            </div>
           )}
 
           {!isLoading && !isError && profiles && (
@@ -107,6 +110,7 @@ export default function ProfilesPage() {
                       onClick={() => deleteProfile.mutate(profile.id)}
                       disabled={deleteProfile.isPending}
                       className="text-destructive hover:text-destructive"
+                      aria-label={`Delete ${profile.name}`}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

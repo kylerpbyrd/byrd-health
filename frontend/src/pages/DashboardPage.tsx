@@ -6,9 +6,10 @@ import { BBTChart } from "@/components/BBTChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { StatTileSkeleton, ChartSkeleton, CardSkeleton } from "@/components/Skeleton";
 import { useNavigate } from "react-router-dom";
 import { formatShortDate } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Thermometer } from "lucide-react";
 import type { ChartData } from "@/types/fertility";
 
 function formatWindow(start: string | null, end: string | null): string {
@@ -42,16 +43,23 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => <StatTileSkeleton key={i} />)}
+        </div>
+        <ChartSkeleton />
+        <CardSkeleton />
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="py-20 text-center text-muted-foreground">
-        Unable to load dashboard data.
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <Thermometer className="h-12 w-12 text-muted-foreground mb-4" />
+        <p className="text-muted-foreground max-w-md">
+          No data yet. Create a profile and log your first temperature reading to get started.
+        </p>
       </div>
     );
   }
