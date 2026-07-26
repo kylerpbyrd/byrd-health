@@ -157,12 +157,20 @@ class EntryRepository:
             return self._encryption.encrypt(value)
         return str(value) if isinstance(value, float) else value
 
-    def _decrypt_field(self, value: str | None) -> str | None:
+    def _decrypt_field(self, value: str | float | None) -> str | float | None:
         if value is None:
             return None
-        if self._encryption:
-            return self._encryption.decrypt(value)
-        return value
+        if not self._encryption:
+            return value
+        # Legacy: database may contain plaintext values (float or short strings)
+        # from before encryption was enabled. Skip decryption for non-encrypted data.
+        if isinstance(value, (int, float)):
+            return value
+        try:
+            return self._encryption.decrypt(str(value))
+        except Exception:
+            # Value is not valid encrypted ciphertext — return as plaintext
+            return value
 
     def _decrypt_temp_value(self, t: Temperature) -> None:
         decrypted = self._decrypt_field(t.temp_value)
