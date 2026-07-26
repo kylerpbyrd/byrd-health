@@ -95,12 +95,14 @@ testpaths = [
     "packages/data_service",
     "packages/web_api",
     "packages/ha_bridge",
+    "packages/device_adapters",
 ]
 pythonpath = [
     "packages/fertility_engine/src",
     "packages/data_service/src",
     "packages/web_api/src",
     "packages/ha_bridge/src",
+    "packages/device_adapters/src",
 ]
 norecursedirs = [
     "frontend",

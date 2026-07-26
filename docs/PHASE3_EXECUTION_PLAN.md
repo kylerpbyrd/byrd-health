@@ -74,6 +74,8 @@ Tasks are ordered by priority. Within the same priority level, tasks may run in 
 | 3A.4 | Fix adapter export issues | Backend Engineer | 🟡 | None |
 | 3A.5 | Frontend/API Contract Verification | Frontend Engineer + QA Engineer | 🟡 | None |
 | 3A.6 | WebSocket Authentication Architecture Review | Security Engineer | 🟡 | None |
+| 3A.7 | WebSocket Contract Alignment — Backend | Backend Engineer | 🔴 Critical | `docs/specs/WEBSOCKET_PROTOCOL.md` |
+| 3A.8 | WebSocket Contract Alignment — Frontend | Frontend Engineer | 🔴 Critical | `docs/specs/WEBSOCKET_PROTOCOL.md` (can run parallel to 3A.7) |
 
 ### 4.2 Task Details
 
@@ -206,6 +208,90 @@ Run `python -m pytest` from repository root. All tests must pass across all pack
 - [ ] Trust model documented
 - [ ] Recommendations captured (for Phase 4 or future ADR)
 - [ ] No auth changes implemented unless explicitly approved
+
+---
+
+#### 3A.7 — WebSocket Contract Alignment: Backend
+
+**Dependency:** `docs/specs/WEBSOCKET_PROTOCOL.md` (canonical protocol)
+
+**Objective:** Align the backend WebSocket broadcasts with the canonical protocol defined in the spec document.
+
+**Current drift:**
+- `routers/devices.py:31-40` broadcasts `data` as a flat `dict[str, float]` (e.g. `{"sensor.bbt": 97.5}`) — the spec requires `device_id`, `device_type`, and `temperature` as individual fields, one message per adapter
+- `routers/entries.py` runs analysis after entry creation but does NOT broadcast `analysis_complete`
+- `routers/insights.py` runs reanalysis but does NOT broadcast `analysis_complete`
+
+**Action (Backend Engineer):**
+
+1. **Refactor `routers/devices.py` `read_all_devices()` broadcast** — After `registry.read_all()` returns, iterate the registered adapters and send one `device_reading` message per adapter with the canonical envelope (`version`, `type`, `timestamp`, `payload`). Use `adapter.device_id`, `adapter.device_type`, and the temperature value from `readings[adapter.device_id]`.
+
+2. **Add `analysis_complete` broadcast in `routers/entries.py`** — After the HA publish block (~line 158), also broadcast via `get_ws_broker()` if available. Use the canonical envelope with `profile_slug` from the active profile.
+
+3. **Add `analysis_complete` broadcast in `routers/insights.py`** — After the HA publish block (~line 142), also broadcast via `get_ws_broker()` if available.
+
+4. **Add the `make_message()` helper** in `websocket.py` (or a new `protocol.py` sibling) to ensure all broadcasts use the same envelope structure.
+
+5. **Update WebSocket tests** (`test_websocket.py`, `test_devices.py`) to assert messages match the canonical envelope shape.
+
+**Deliverable:** Backend broadcasts conform to `docs/specs/WEBSOCKET_PROTOCOL.md`. All three emission points active.
+
+**Acceptance:**
+- [ ] `POST /devices/read` broadcasts one `device_reading` per adapter with canonical envelope
+- [ ] `POST /entries/` broadcasts `analysis_complete` after successful entry + analysis
+- [ ] `POST /insights/reanalyze` broadcasts `analysis_complete` after successful reanalysis
+- [ ] All messages include `version`, `type`, `timestamp`, and correct `payload`
+- [ ] Existing device tests updated; new tests cover broadcast shapes
+
+---
+
+#### 3A.8 — WebSocket Contract Alignment: Frontend
+
+**Dependency:** `docs/specs/WEBSOCKET_PROTOCOL.md` (canonical protocol), 3A.7 (backend must emit correct shapes first or in parallel)
+
+**Objective:** Align the frontend WebSocket client types and message handlers with the canonical protocol.
+
+**Current drift:**
+- `useWebSocket.ts` types define `DeviceReading` and `AnalysisComplete` with ad-hoc shapes that predate the canonical spec
+- The message handler at line 72-80 parses by `msg.type` but doesn't check `version` or use a proper envelope type
+
+**Action (Frontend Engineer):**
+
+1. **Define canonical types** — Add `WSEnvelope`, `DeviceReadingPayload`, `AnalysisCompletePayload` to `useWebSocket.ts` matching the spec document exactly.
+
+2. **Update message parsing** — Parse the outer envelope first: extract `version` (skip if unknown), then `type` (ignore if unknown), then dispatch by type with correctly typed `payload`.
+
+3. **Remove dead types** — The old `DeviceReading` and `AnalysisComplete` interfaces (with non-canonical shapes) should be replaced by the spec-conformant types.
+
+4. **Verify DashboardPage** — The dashboard's `onDeviceReading` and `onAnalysisComplete` callbacks in `DashboardPage.tsx:47-54` must work with the new payload shapes.
+
+5. **Verify EntryPage** — The entry page's `onDeviceReading` callback in `EntryPage.tsx:15-20` must correctly extract `temperature` and `device_type` from the new payload.
+
+6. **Write/fix frontend tests** — If any frontend tests exist for `useWebSocket`, update them to use canonical shapes.
+
+**Deliverable:** Frontend types and handlers conform to `docs/specs/WEBSOCKET_PROTOCOL.md`. Old ad-hoc types removed.
+
+**Acceptance:**
+- [ ] `WSEnvelope`, `DeviceReadingPayload`, `AnalysisCompletePayload` match spec document
+- [ ] Message handler checks `version` before dispatching
+- [ ] Unknown `type` values are silently ignored (no crash)
+- [ ] Dashboard and EntryPage callbacks work with canonical shapes
+- [ ] `npm run build` passes with no type errors
+- [ ] No dead protocol definitions remain (old `DeviceReading`/`AnalysisComplete` removed)
+
+---
+
+#### WebSocket Authentication Decision (Phase 3)
+
+Per the Security Engineer's architecture review (3A.6), the following decision is recorded:
+
+**Phase 3 deployment is Home Assistant Ingress only.** HA Ingress provides proxy-level authentication for WebSocket connections via the `ingress_session` cookie. This is adequate for the single-household, single-profile Phase 3 deployment model.
+
+**Standalone Docker (`docker run -p 8000:8000`) is development-only** and not a supported production deployment in Phase 3. The release documentation must state this clearly.
+
+**Standalone authentication** (API key, bearer token, shared middleware) is deferred to a future ADR and belongs to the standalone/ByrdOS roadmap, not the Phase 3 HA release.
+
+No WebSocket auth implementation occurs in Phase 3.
 
 ---
 
@@ -355,21 +441,23 @@ Phase 3 is complete when:
 
 1. **Pipeline:** At least one complete end-to-end device pipeline (sensor → adapter → registry → persistence → analysis → HA publication → WebSocket broadcast → dashboard refresh → notification) functions successfully.
 
-2. **WebSocket:** Endpoint at `/api/v1/fertility/ws` serves real-time messages through HA Ingress without manual configuration.
+2. **WebSocket Protocol:** Frontend and backend implement the same documented WebSocket protocol (`docs/specs/WEBSOCKET_PROTOCOL.md`). All message types are verified during runtime validation. No dead protocol definitions remain.
 
-3. **Frontend:** Dashboard updates live via WebSocket (no manual refresh required). Live/Offline indicator reflects actual connection state.
+3. **WebSocket Endpoint:** `/api/v1/fertility/ws` serves real-time messages through HA Ingress without manual configuration.
 
-4. **Tests:** Complete test suite passes from repository root (all 5 packages, ~315+ tests).
+4. **Frontend:** Dashboard updates live via WebSocket (no manual refresh required). Live/Offline indicator reflects actual connection state.
 
-5. **Contracts:** Frontend/API contract audit complete; no unaddressed drift.
+5. **Tests:** Complete test suite passes from repository root (all 5 packages, ~315+ tests).
 
-6. **Security:** WebSocket trust model documented; no unauthenticated access path in production configuration.
+6. **Contracts:** Frontend/API contract audit complete; no unaddressed drift. All 6 contracts verified.
 
-7. **Privacy:** No new cloud dependencies introduced. All processing remains local.
+7. **Security:** WebSocket trust model documented; HA Ingress-only deployment decision recorded; standalone mode explicitly documented as development-only.
 
-8. **VS-2:** Release Engineer certifies VS-2 PASS on live HA instance.
+8. **Privacy:** No new cloud dependencies introduced. All processing remains local.
 
-9. **Graphify:** Knowledge graph synchronized to reflect Phase 3 completion.
+9. **VS-2:** Release Engineer certifies VS-2 PASS on live HA instance.
+
+10. **Graphify:** Knowledge graph synchronized to reflect Phase 3 completion.
 
 ---
 
@@ -377,24 +465,26 @@ Phase 3 is complete when:
 
 | Agent | Phase | Tasks |
 |---|---|---|
-| **Frontend Engineer** | 3A, 3B | 3A.1 (kill switch), 3A.5 (contract audit — frontend side), 3B (frontend validation) |
+| **Frontend Engineer** | 3A, 3B | 3A.1 (kill switch), 3A.5 (contract audit — frontend side), 3A.8 (WS contract — frontend), 3B (frontend validation) |
 | **QA Engineer** | 3A, 3B | 3A.2 (pytest config), 3A.3 (test suite), 3A.5 (contract audit — API side), 3B (VS-2 suite) |
-| **Backend Engineer** | 3A | 3A.4 (adapter exports) |
+| **Backend Engineer** | 3A | 3A.4 (adapter exports), 3A.7 (WS contract — backend) |
 | **Security Engineer** | 3A | 3A.6 (WS auth review) |
 | **Release Engineer** | 3C | VS-2 validation, release certification |
 | **Graphify Engineer** | 3C | Graphify synchronization |
-| **Architect** | All | Oversight, ADR updates, milestone handoff |
+| **Architect** | All | Oversight, protocol spec, ADR updates, milestone handoff |
 
 ---
 
 ## 9. Blocking Gates
 
 | Gate | Blocks | Condition |
-|---|---|---|
+|---|---|---|---|
 | VS-1 PASS | Phase 3 | Phase 2 RC1 validated ✅ |
 | ADR-0011/0012 | Phase 3 | ADRs accepted ✅ |
 | Q1-Q3 | Phase 3-B | Quick wins closed ✅ |
-| Phase 3-A complete | Phase 3-B | All 6 gap remediation tasks done |
+| Phase 3-A.1–3A.6 complete | 3A.7–3A.8 | Gap remediation done ✅ |
+| `docs/specs/WEBSOCKET_PROTOCOL.md` | 3A.7, 3A.8 | Canonical protocol committed ✅ |
+| Phase 3-A complete (3A.7 + 3A.8) | Phase 3-B | Contract alignment done on both sides |
 | VS-2 PASS | Phase 3-C | Release Engineer certifies runtime validation |
 | Phase 3-C complete | Phase 4 | Release handoff + Graphify sync complete |
 
@@ -404,9 +494,10 @@ Phase 3 is complete when:
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| Kill switch removal exposes WebSocket Ingress incompatibility | Low | Medium | Rollback to kill switch with config-based toggle; debug Ingress passthrough |
-| Contract audit reveals breaking mismatches | Low | High | Fix mismatches in 3A.5 before 3B begins |
-| WebSocket auth review requires immediate implementation | Low | High | Document findings; implement only if unauthenticated access to health data is possible in production |
+| Kill switch removal exposes WebSocket Ingress incompatibility | Low | Medium | Verified: kill switch removed, hook connects on mount. Ingress passthrough confirmed by architecture review. |
+| Contract audit reveals breaking mismatches | **Confirmed** | **High** | Contract 6 (WebSocket payload) failed. Mitigated by 3A.7 + 3A.8 (canonical protocol alignment). |
+| WebSocket auth review requires immediate implementation | Low | High | Reviewed. Decision: HA Ingress only for Phase 3. Standalone auth deferred to standalone/ByrdOS ADR. |
+| Contract alignment introduces regressions in device or WebSocket tests | Medium | Medium | Full test suite re-run after 3A.7 and 3A.8. Backward-compatible where possible. |
 | VS-2 resilience scenarios unreliable over local network | Medium | Medium | Manual orchestration + relaxed timing assertions |
 | Graphify sync reveals inventory gaps needing new node files | High | Low | Accept incremental sync; create nodes for known entities, defer unknown to Phase 4 |
 | Device pipeline has timing-dependent failures (analysis slow, entity publish delayed) | Medium | Medium | Measure pipeline latency; add wait tolerances to VS-2 assertions |
