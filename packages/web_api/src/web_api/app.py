@@ -40,47 +40,10 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     registry = DeviceRegistry()
     set_device_registry(registry)
 
-    # Run database migrations via Alembic
-    try:
-        from alembic.config import Config as _AlembicConfig
-        from alembic import command as _alembic_cmd
-
-        import asyncio as _asyncio
-        import os as _os
-
-        _os.environ["DATABASE_URL"] = settings.database_url
-
-        _alembic_ini = _os.path.join(
-            _os.path.dirname(_os.path.abspath(__file__)),
-            "..", "..", "..", "..", "..",
-            "packages", "data_service", "alembic.ini",
-        )
-        _alembic_ini = _os.path.normpath(_alembic_ini)
-
-        # Container fallback: files are at /app/packages/ not /packages/
-        if not _os.path.isfile(_alembic_ini):
-            _alembic_ini = "/app/packages/data_service/alembic.ini"
-
-        if _os.path.isfile(_alembic_ini):
-            _cfg = _AlembicConfig(_alembic_ini)
-            # Override script_location with absolute path (alembic resolves relative to CWD, not ini dir)
-            _migrations_dir = _os.path.join(_os.path.dirname(_alembic_ini), "src", "data_service", "migrations")
-            if _os.path.isdir(_migrations_dir):
-                _cfg.set_main_option("script_location", _migrations_dir)
-            await _asyncio.to_thread(_alembic_cmd.upgrade, _cfg, "head")
-            _log.info("Database migrations applied successfully")
-        else:
-            _log.warning("alembic.ini not found at %s, falling back to create_all", _alembic_ini)
-            async with _engine.begin() as conn:
-                from data_service.models import Base
-                await conn.run_sync(Base.metadata.create_all)
-            _log.info("Database tables created via create_all fallback")
-    except Exception:
-        _log.exception("Alembic migration failed, falling back to create_all")
-        async with _engine.begin() as conn:
-            from data_service.models import Base
-            await conn.run_sync(Base.metadata.create_all)
-        _log.info("Database tables created via create_all fallback")
+    # Create database tables (migrations for upgrades are managed via alembic)
+    async with _engine.begin() as conn:
+        from data_service.models import Base
+        await conn.run_sync(Base.metadata.create_all)
 
     bridge_config = read_ha_config()
     bridge = HABridge(bridge_config)

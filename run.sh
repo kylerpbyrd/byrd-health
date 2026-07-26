@@ -42,11 +42,7 @@ if [ -n "${HA_SENSOR_ENTITY}" ]; then
     bashio::log.info "  HA sensor entity : ${HA_SENSOR_ENTITY}"
 fi
 
-# Run database migrations
-export DATABASE_URL="${BYRD_DATABASE_URL}"
-cd /app/packages/data_service
-python -m alembic upgrade head || bashio::log.warning "Database migration failed, continuing..."
-cd /
+# Database tables are created via create_all in the app lifespan
 
 # Start the FastAPI app with uvicorn
 exec uvicorn web_api.app:create_app --factory --host 0.0.0.0 --port 8000
