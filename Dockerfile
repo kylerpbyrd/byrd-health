@@ -7,7 +7,7 @@ LABEL \
   io.hass.arch="aarch64|amd64|armhf|armv7"
 
 # Install Python
-RUN apk add --no-cache python3 py3-pip nodejs npm
+RUN apk add --no-cache python3 py3-pip nodejs npm openssl
 
 # Create virtual environment
 RUN python3 -m venv /opt/venv

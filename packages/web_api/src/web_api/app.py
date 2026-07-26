@@ -57,6 +57,10 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         )
         _alembic_ini = _os.path.normpath(_alembic_ini)
 
+        # Container fallback: files are at /app/packages/ not /packages/
+        if not _os.path.isfile(_alembic_ini):
+            _alembic_ini = "/app/packages/data_service/alembic.ini"
+
         if _os.path.isfile(_alembic_ini):
             _cfg = _AlembicConfig(_alembic_ini)
             await _asyncio.to_thread(_alembic_cmd.upgrade, _cfg, "head")
