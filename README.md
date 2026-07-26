@@ -1,78 +1,135 @@
 # Byrd Health
 
-Privacy-first personal health intelligence platform.
+Privacy-first, self-hosted fertility intelligence platform. Deployed as a Home Assistant Add-on. Architected for future ByrdOS migration.
 
-## Status
+**Status:** Phase 2 — Production Release Candidate
 
-**Phase 1 — Platform Foundation (in progress)**
+---
 
-Four core services are being built: Fertility Engine, Data Service, Web API, and Web Frontend. No Home Assistant integration yet — pure platform only.
+## Quick Start (Home Assistant)
+
+1. Add the Byrd Health repository to your Home Assistant Add-on Store
+2. Install **Byrd Health — Fertility Tracker**
+3. Start the add-on and open the Web UI
+4. Create a profile and log your first temperature
+
+[Full Installation Guide →](docs/USER_GUIDE.md)
 
 ---
 
 ## Architecture
 
-Byrd Health is a **service-oriented platform** with four Phase 1 packages:
+```
+┌──────────────────────────────────────────────────────────┐
+│                    Byrd Health Platform                    │
+│                                                           │
+│  ┌──────────────┐  ┌──────────────┐                      │
+│  │ Web Frontend │  │  HA Bridge   │                      │
+│  │ (React SPA)  │  │  (Entities)  │                      │
+│  └──────┬───────┘  └──────┬───────┘                      │
+│         │                 │                               │
+│         ▼                 ▼                               │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │                Web API (FastAPI)                     │ │
+│  └──────────┬──────────────────────┬───────────────────┘ │
+│             │                      │                      │
+│             ▼                      ▼                      │
+│  ┌──────────────────┐  ┌──────────────────────────────┐  │
+│  │ Fertility Engine │  │       Data Service            │  │
+│  │  (Pure Python)   │  │  (SQLAlchemy + Encryption)    │  │
+│  └──────────────────┘  └──────────────┬───────────────┘  │
+│                                       │                   │
+│                                       ▼                   │
+│                           ┌──────────────────────┐       │
+│                           │  SQLite (encrypted)  │       │
+│                           └──────────────────────┘       │
+└──────────────────────────────────────────────────────────┘
+```
 
-| Package | Description | Technology |
-|---|---|---|
-| `fertility_engine` | Sympto-thermal fertility algorithms | Pure Python, Pydantic |
-| `data_service` | Database models, migrations, CRUD | SQLAlchemy 2.0 + Alembic |
-| `web_api` | REST + WebSocket API gateway | FastAPI + Uvicorn |
-| `web_frontend` | User interface and charting | React + TypeScript + Recharts |
-
-Future services (Phase 2-3): HA Bridge, Device Adapters.
+**Five packages, clean boundaries:**
+- `fertility_engine` — Sympto-thermal algorithms (zero dependencies)
+- `data_service` — Database layer with AES-256-GCM encryption
+- `web_api` — FastAPI REST gateway with Ingress support
+- `ha_bridge` — Home Assistant entity publishing (isolated)
+- `frontend` — React + TypeScript + Tailwind SPA
 
 ---
 
-## Quick Start
+## Features
 
-**Prerequisites:** Python 3.12+, Node 20+
+- Basal body temperature tracking (F/C)
+- Cycle phase detection (menstrual, pre-ovulatory, fertile, luteal)
+- Ovulation detection with 3-day temperature shift confirmation
+- Fertile window prediction using sympto-thermal method
+- BBT chart with coverline, phase shading, and ovulation markers
+- Multi-profile support
+- 9 Home Assistant entities per profile
+- Data export (JSON)
+- Encrypted at rest (AES-256-GCM, per-profile keys)
+- Privacy-first — all data stored locally, never leaves the device
+
+[Full Feature Guide →](docs/FEATURES.md)
+
+---
+
+## Development
 
 ```bash
-# Clone
-git clone <repo-url>
-cd byrd-health
+# Prerequisites: Python 3.12+, Node 20+
 
-# Python environment
-python -m venv .venv
-.venv\Scripts\activate
+# Install Python packages
+pip install -e packages/fertility_engine
+pip install -e packages/data_service
+pip install -e packages/web_api
+pip install -e packages/ha_bridge
 
-# Install packages
-pip install -e packages/fertility_engine -e packages/data_service -e packages/web_api
+# Start backend
+uvicorn web_api.app:create_app --factory --reload --port 8000
 
-# Install frontend dependencies
-cd frontend && npm install
-
-# Run backend
-cd packages/web_api && uvicorn src.web_api.app:create_app --reload
-
-# Run frontend (separate terminal)
-cd frontend && npm run dev
+# Start frontend (separate terminal)
+cd frontend && npm install && npm run dev
 ```
 
-Access at **http://localhost:5173**
+Access at **http://localhost:5173** (frontend dev server proxies `/api` to backend).
+
+[Developer Guide →](docs/DEVELOPER_GUIDE.md)
+
+---
+
+## Testing
+
+```bash
+# All 160 Python tests (root-level)
+pytest
+
+# 65 frontend tests
+cd frontend && npm test
+```
 
 ---
 
 ## Documentation
 
-| Document | Description |
+| Document | Audience |
 |---|---|
-| [PHASE1_PLAN.md](docs/PHASE1_PLAN.md) | Phase 1 implementation milestones |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Platform architecture overview |
-| [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | Developer setup and workflows |
-| [LEGACY_REVIEW.md](docs/LEGACY_REVIEW.md) | Legacy application analysis |
-| [ARCHITECTURE_RECOMMENDATIONS.md](docs/ARCHITECTURE_RECOMMENDATIONS.md) | Detailed architecture recommendations |
-| [adr/](docs/adr/) | Architecture Decision Records (10 ADRs) |
+| [User Guide](docs/USER_GUIDE.md) | End users installing on Home Assistant |
+| [Feature Guide](docs/FEATURES.md) | Users learning sympto-thermal tracking |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Users with common issues |
+| [Architecture](docs/ARCHITECTURE.md) | Developers understanding the platform |
+| [Developer Guide](docs/DEVELOPER_GUIDE.md) | Developers setting up locally |
+| [Milestone Guide](docs/MILESTONE_GUIDE.md) | Project roadmap and progress |
+| [Phase 3 Plan](docs/PHASE3_PLAN.md) | Device integration roadmap |
+| [ADR Index](docs/adr/) | Architecture Decision Records (12) |
+| [Changelog](CHANGELOG.md) | Version history |
 
 ---
 
-## Development Philosophy
+## Privacy
 
-Byrd Health follows:
+All health data is stored locally in an encrypted SQLite database. Data never leaves your device. No cloud dependencies. No telemetry. No accounts. You own your data.
 
-- Architecture-first development.
-- Agent-assisted engineering.
-- Graphify knowledge management.
-- Privacy-first design.
+---
+
+## License
+
+MIT
