@@ -46,6 +46,15 @@ RC1 passes all automated checks (code audit, unit tests, Docker build). The rele
 | **Release Candidate** | Not Started | — | — |
 | **Production** | Not Started | — | — |
 
+An automated VS-1 validation script exists at `tools/validate-vs1.ts`. Run it against a live HA instance:
+
+```bash
+BYRD_INGRESS_URL="http://192.168.1.44:8123/api/hassio_ingress/<TOKEN>/" \
+  npx playwright test tools/validate-vs1.ts
+```
+
+See `docs/releases/AUTOMATED_VALIDATION_SETUP.md` for full setup instructions.
+
 ---
 
 ## Confidence Summary
