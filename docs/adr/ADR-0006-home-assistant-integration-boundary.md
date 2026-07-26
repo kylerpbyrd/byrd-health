@@ -67,6 +67,10 @@ Enforced by:
 3. **Package structure** — `ha_bridge/` is a separate Python package; core packages do not list it as a dependency
 4. **Protocol-based dependency** — Core code depends on `HABridgeProtocol`, not the concrete HA implementation
 
+**Implementation Note — Composition Root Exception (2026-07-26):**
+
+The application composition root (`packages/web_api/src/web_api/app.py`) imports and instantiates the concrete `HABridge` class. This is an accepted exception to the isolation contract. Composition roots are responsible for wiring concrete infrastructure dependencies. All application services, routers, and business logic continue to depend only on `HABridgeProtocol`. This pattern is consistent with standard dependency injection practice and does not weaken the isolation boundary.
+
 ### 2.4 Entity Design (preserved from legacy)
 
 Same 9 entities per profile (`bbt_{slug}_{metric}`). These are proven in production and HA users have automations built on them.
