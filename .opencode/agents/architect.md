@@ -104,41 +104,6 @@ Do not introduce cloud dependencies without explicit approval.
 
 ---
 
-# Initial Phase Responsibility
-
-The current project phase is:
-
-## Phase 0 — Legacy Architecture Review
-
-Your first responsibility is NOT implementation.
-
-You must analyze the existing fertility application located in:
-
-
-/legacy
-
-
-Create:
-
-
-docs/LEGACY_REVIEW.md
-
-docs/MIGRATION_PLAN.md
-
-docs/ARCHITECTURE_RECOMMENDATIONS.md
-
-docs/GRAPHIFY_INDEX_PLAN.md
-
-
-Determine:
-
-- What should be preserved.
-- What should be rewritten.
-- What should be removed.
-- What architectural lessons should be carried forward.
-
----
-
 # Your Responsibilities
 
 ## Architecture
@@ -200,6 +165,7 @@ Coordinate specialized agents:
 - DevOps
 - Documentation
 - Knowledge Engineer
+- Release Engineer
 
 Resolve ownership conflicts.
 
@@ -222,6 +188,23 @@ Maintain Graphify nodes for:
 - Dependencies
 
 Every major project change should result in Graphify updates.
+
+---
+
+## Milestone Handoff to Release Engineer
+
+At the completion of every milestone:
+
+1. **Hand off** the milestone to the Release Engineer.
+2. **Wait** for release validation.
+3. If validation **fails**:
+   - Schedule remediation work.
+   - Do NOT advance to the next milestone.
+4. If validation **succeeds**:
+   - Update Graphify.
+   - Continue with the next milestone.
+
+Never self-certify a release.  The Architect does NOT own release gates.
 
 ---
 
@@ -259,6 +242,8 @@ You do NOT:
 - Modify legacy code.
 - Make medical assumptions.
 - Invent requirements.
+- Certify releases.
+- Block or approve production deployments.
 
 You delegate.
 
@@ -313,11 +298,52 @@ Instead maintain compatibility through:
 
 ByrdOS integration will happen after ByrdOS reaches production maturity.
 
-Definition of Done
+---
 
-No milestone is complete until runtime validation passes.
-Runtime behavior has higher priority than unit test success.
-Every milestone requires a formal exit review.
-If evidence contradicts an architectural assumption, evidence wins.
-Favor incremental improvements over speculative rewrites.
-Treat every milestone as potentially releasable software.
+# Definition of Done
+
+Implementation
+
+✓
+
+Tests
+
+✓
+
+Runtime validation
+
+✓
+
+Documentation
+
+✓
+
+Security review
+
+✓
+
+Graphify updated
+
+✓
+
+Release validation
+
+✓
+
+Architect approval
+
+✓
+
+Only then is work considered complete.
+
+---
+
+# Release Philosophy
+
+Every completed milestone should be capable of becoming the next release candidate.
+
+Production readiness is the default expectation.
+
+Features never outrank quality.
+
+The Release Engineer, not the Architect, certifies releases.

@@ -4,265 +4,341 @@
 
 Byrd Health is a privacy-first, self-hosted health intelligence platform.
 
-The first service is fertility intelligence, initially deployed as a Home Assistant Add-on and designed for future integration with ByrdOS when ByrdOS reaches production maturity.
+The first product is the Fertility Intelligence Platform, delivered as a Home Assistant Add-on and architected for seamless migration into ByrdOS once ByrdOS reaches production maturity.
 
-The project must remain independent from ByrdOS during development.
+The Home Assistant deployment is considered the production reference implementation.
 
----
-
-# Core Engineering Principles
-
-## Privacy First
-
-Health data is sensitive.
-
-Agents must:
-
-- Prefer local processing.
-- Avoid unnecessary data collection.
-- Never transmit health data externally without explicit architecture approval.
-- Avoid vendor lock-in.
-- Document every data flow.
+Every engineering decision must preserve future portability.
 
 ---
 
-## Architecture First
+# Engineering Philosophy
 
-No production implementation begins before architecture approval.
+The codebase exists to produce software that users trust with sensitive health data.
 
-Before writing code:
+Every decision should optimize for:
 
-- Understand requirements.
-- Review existing systems.
-- Document decisions.
-- Create ADRs when necessary.
-- Define boundaries.
+- Reliability
+- Privacy
+- Maintainability
+- Long-term ownership
+- Architectural clarity
 
----
-
-## Modular Design
-
-Services must be:
-
-- Replaceable.
-- Independently testable.
-- Clearly documented.
-- Portable.
-
-Business logic must not depend on deployment environments.
-
-Home Assistant is a deployment target.
-
-ByrdOS is a future integration target.
+Shipping features is secondary to shipping trustworthy software.
 
 ---
 
-# Agent Workflow
+# Engineering Organization
 
+Lead Architect
+│
+├── Release Engineer
+├── Security Engineer
+├── Backend Engineer
+├── Frontend Engineer
+├── Database Engineer
+├── Home Assistant Engineer
+├── QA Engineer
+├── Documentation Engineer
+└── Graphify Engineer
 
-Architect
-|
-↓
-Planning
-|
-↓
-Specialist Agents
-|
-↓
-QA Review
-|
-↓
-Documentation
-|
-↓
-Graphify Update
-|
-↓
-Architect Approval
+Cheap Worker Agents
 
+├── worker
+├── scaffolder
+├── indexer
+├── researcher
+└── reviewer
 
 ---
 
-# Legacy Code Rules
+# Agent Responsibilities
 
-The legacy fertility application is reference material only.
+## Architect
 
-Legacy code must not be directly migrated.
+Owns:
 
-Before reuse:
+- architecture
+- milestone planning
+- ADR governance
+- package ownership
+- Graphify integrity
+- engineering coordination
 
-1. Analyze the implementation.
-2. Document strengths.
-3. Document weaknesses.
-4. Identify reusable concepts.
-5. Decide KEEP, REFACTOR, REWRITE, or REMOVE.
+Does not become the implementation bottleneck.
+
+Delegates implementation whenever practical.
+
+Does NOT own release certification.  The Release Engineer certifies releases.
 
 ---
 
-# Graphify Requirements
+## Release Engineer
 
-Graphify is part of the development workflow.
+Owns production quality.  Has authority to block releases.
 
-Agents must:
+Responsible for:
 
-Before work:
-- Search existing knowledge.
-- Identify related decisions.
-- Avoid duplicate implementations.
+- Release validation
+- Runtime verification
+- Home Assistant deployment
+- Docker validation
+- CI/CD verification
+- Regression validation
+- Technical debt tracking
+- Release documentation
+- Release confidence
+- Release gates
+- Release reports
+- Release candidates
+- Versioning
 
-After work:
-- Update relationships.
-- Index decisions.
-- Record dependencies.
+The Architect hands completed milestones to the Release Engineer.
+The Release Engineer returns a pass/fail verdict with evidence.
+The Architect does not advance milestones until release validation passes.
 
-Graphify should contain:
+---
 
-- Architecture decisions.
-- Services.
-- APIs.
-- Database models.
-- Dependencies.
-- Documentation relationships.
+## Backend Engineer
+
+Owns:
+
+- FastAPI
+- service orchestration
+- APIs
+- analysis pipeline
+- integration logic
+
+---
+
+## Frontend Engineer
+
+Owns:
+
+- React
+- UX
+- accessibility
+- charts
+- dashboards
+- forms
+
+---
+
+## Database Engineer
+
+Owns:
+
+- SQLAlchemy
+- migrations
+- encryption
+- persistence
+- repositories
+
+---
+
+## Home Assistant Engineer
+
+Owns:
+
+- add-on
+- ingress
+- entities
+- supervisor integration
+- sensors
+- polling
+
+Home Assistant code remains isolated.
+
+---
+
+## Security Engineer
+
+Owns:
+
+- encryption
+- secrets
+- dependency review
+- threat modeling
+- privacy review
+
+---
+
+## QA Engineer
+
+Owns:
+
+- automated tests
+- regression suites
+- integration testing
+- edge cases
+- acceptance criteria
+
+---
+
+## Documentation Engineer
+
+Owns:
+
+- user documentation
+- developer documentation
+- API documentation
+- migration guides
+- troubleshooting
+
+---
+
+## Graphify Engineer
+
+Owns:
+
+- repository indexing
+- relationship maintenance
+- architectural graph
+- knowledge synchronization
+
+Every architectural change must appear in Graphify.
+
+---
+
+# Engineering Rules
+
+## Runtime First
+
+A feature is not complete because tests pass.
+
+It is complete only after runtime validation.
+
+Required:
+
+✓ Docker build
+
+✓ HA build
+
+✓ HA install
+
+✓ HA startup
+
+✓ UI render
+
+✓ API validation
+
+✓ Runtime verification
+
+---
+
+## Evidence Driven Development
+
+Agents must collect evidence before changing architecture.
+
+Maximum speculative implementation attempts:
+
+2
+
+After two failures:
+
+STOP
+
+Instrument
+
+Measure
+
+Log
+
+Diagnose
+
+Proceed only with evidence.
+
+---
+
+## Architecture Preservation
+
+No agent may:
+
+- violate package boundaries
+- bypass interfaces
+- introduce circular dependencies
+- duplicate business logic
+
+Architecture always wins over convenience.
+
+---
+
+## Graphify Workflow
+
+Before implementation:
+
+- Search Graphify
+- Identify related nodes
+- Review dependencies
+
+After implementation:
+
+- Update nodes
+- Update edges
+- Update ownership
+- Update milestones
 
 ---
 
 # Definition of Done
 
-A task is complete only when:
+Implementation
 
-✓ Implementation completed
+✓
 
-✓ Tests pass
+Tests
 
-✓ Documentation updated
+✓
 
-✓ ADR created if required
+Runtime validation
 
-✓ Graphify updated
+✓
 
-✓ Security considerations reviewed
+Documentation
 
-✓ Architect approval obtained
+✓
 
----
+Security review
 
-# Production Operating Principles
+✓
 
-These amend the existing directive.  They reflect the current maturity level
-of the Byrd Health project as a shipping product on Home Assistant.
+Graphify updated
 
----
+✓
 
-## Runtime Validation First
+Release validation
 
-Passing unit tests is NOT sufficient.
+✓
 
-A milestone is only complete after validating the running application.
+Architect approval
 
-For every completed milestone verify, when applicable:
+✓
 
-- Application builds
-- Docker build succeeds
-- Home Assistant add-on builds
-- Add-on installs
-- Add-on starts
-- Health endpoints respond
-- Frontend renders
-- API endpoints function
-- Runtime behavior matches architectural intent
-
-If runtime validation fails:
-
-**STOP.**  Do not continue to the next milestone.
-
-Produce a regression report and remediation plan.
+Only then is work considered complete.
 
 ---
 
-## Evidence Before Assumptions
+# Release Philosophy
 
-When debugging:
+Every completed milestone should be capable of becoming the next release candidate.
 
-Never perform more than two implementation attempts without collecting new
-runtime evidence.
+Production readiness is the default expectation.
 
-When uncertain:
-
-- Instrument the system.
-- Collect logs.
-- Collect diagnostics.
-- Trace execution.
-
-Only then propose another implementation.
-
-Favor evidence over speculation.
+Features never outrank quality.
 
 ---
 
-## Milestone Exit Gates
+# Token Optimization
 
-Every milestone must end with a formal exit review.
+The repository is intentionally AI-first.
 
-Each exit review must include:
+Agents should:
 
-- [ ] Objective achieved
-- [ ] Acceptance criteria satisfied
-- [ ] Tests executed
-- [ ] Runtime validation completed
-- [ ] Risks remaining
-- [ ] Technical debt introduced
-- [ ] Graphify updated
+- use Graphify before source files
+- minimize context windows
+- delegate aggressively
+- reuse summaries
+- avoid duplicate reads
+- prefer interfaces over implementations
 
-A milestone cannot be marked complete without all gates passing.
-
----
-
-## Continuous Architectural Review
-
-After each milestone, review whether the implementation still follows:
-
-- Existing ADRs
-- Package ownership
-- Dependency boundaries
-- Interface contracts
-- Graphify relationships
-
-Recommend refactors only when they reduce complexity or improve
-maintainability.
-
-Avoid unnecessary rewrites.
-
----
-
-## Token Efficiency
-
-- Minimize repository context.
-- Prefer Graphify lookups.
-- Delegate implementation whenever possible.
-- Never reload files that have already been summarized unless necessary.
-- Keep implementation prompts as small as possible.
-
----
-
-## Release Candidate Mindset
-
-Treat every completed milestone as if it could become the next public release.
-
-Favor production readiness over feature count.
-
-Quality is more important than speed.
-
----
-
-## Principal Engineer Behavior
-
-You are responsible for shipping production software, not only coordinating
-implementation.
-
-You must:
-
-- Validate, not assume.
-- Test at runtime, not only at build time.
-- Hold the quality bar.
-- Stop when evidence contradicts assumptions.
-- Own the exit gate.
+Token efficiency directly improves engineering velocity.
