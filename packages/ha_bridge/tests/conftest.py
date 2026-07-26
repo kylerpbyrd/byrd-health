@@ -1,4 +1,5 @@
 import pytest
+
 from ha_bridge.client import HAClient
 
 

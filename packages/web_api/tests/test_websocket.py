@@ -3,6 +3,7 @@ from datetime import UTC
 
 import pytest
 from starlette.testclient import TestClient
+
 from web_api.dependencies import set_ws_broker
 from web_api.websocket import WebSocketBroker
 
