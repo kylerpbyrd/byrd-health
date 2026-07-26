@@ -25,8 +25,31 @@ export default function EntryPage() {
       await createEntry(data);
       toast.success("Entry saved successfully!");
       setTimeout(() => navigate("/"), 1500);
-    } catch {
-      toast.error("Failed to save entry. Please try again.");
+    } catch (error) {
+      console.error("Entry submission failed:", error);
+
+      const err = error as any;
+      if (typeof err?.status === "number") {
+        const body = err.message || "";
+        console.error("Response body:", body);
+
+        switch (err.status) {
+          case 422:
+            toast.error("Validation error. Check your temperature value.");
+            break;
+          case 404:
+            toast.error("No active profile found. Please create a profile first.");
+            break;
+          case 500:
+            toast.error("Server error. Check add-on logs.");
+            break;
+          default:
+            toast.error(`Failed to save entry. (${err.status})`);
+        }
+      } else {
+        console.error("Network error:", err.message);
+        toast.error("Cannot reach server. Check add-on is running.");
+      }
     } finally {
       setIsSubmitting(false);
     }

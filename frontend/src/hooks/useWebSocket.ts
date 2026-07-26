@@ -33,6 +33,12 @@ function getWebSocketUrl(): string {
 }
 
 export function useWebSocket(options: UseWebSocketOptions = {}) {
+  // DEBUG: Kill switch until POST debugging is complete.
+  // Set window.__ENABLE_WS__ = true in the browser console to re-enable.
+  if (!(window as unknown as { __ENABLE_WS__?: boolean }).__ENABLE_WS__) {
+    return { isConnected: false, lastMessage: null };
+  }
+
   const { onDeviceReading, onAnalysisComplete } = options;
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<WSMessage | null>(null);

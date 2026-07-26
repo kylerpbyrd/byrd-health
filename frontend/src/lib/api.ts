@@ -196,7 +196,13 @@ export async function createEntry(data: EntryFormData): Promise<EntryResponse> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    let body = "";
+    try { body = await res.text(); } catch { /* ignore body read failure */ }
+    const error = new Error(`HTTP ${res.status}: ${body}`);
+    (error as any).status = res.status;
+    throw error;
+  }
   return res.json();
 }
 
