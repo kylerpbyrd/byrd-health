@@ -166,6 +166,8 @@ class EntryRepository:
     def _decrypt_temp_value(self, t: Temperature) -> None:
         decrypted = self._decrypt_field(t.temp_value)
         t.temp_value = float(decrypted) if decrypted else 0.0
+        t.discard_reason = self._decrypt_field(t.discard_reason) or ""
+        t.notes = self._decrypt_field(t.notes)
 
     def _decrypt_signs_fields(self, s: FertilitySigns) -> None:
         for field in ("menstrual_flow", "cervical_mucus", "cervical_position",
@@ -196,13 +198,14 @@ class EntryRepository:
 
         encrypted_temp = self._encrypt_field(temp_value)
         encrypted_notes = self._encrypt_field(notes) if notes else None
+        encrypted_reason = self._encrypt_field(discard_reason) if discard_reason else None
 
         if temp:
             temp.temp_value = encrypted_temp
             if time_taken is not None:
                 temp.time_taken = time_taken
             temp.is_discarded = is_discarded
-            temp.discard_reason = discard_reason
+            temp.discard_reason = encrypted_reason
             temp.notes = encrypted_notes
         else:
             temp = Temperature(
@@ -211,7 +214,7 @@ class EntryRepository:
                 temp_value=encrypted_temp,
                 time_taken=time_taken,
                 is_discarded=is_discarded,
-                discard_reason=discard_reason,
+                discard_reason=encrypted_reason,
                 notes=encrypted_notes,
             )
             self.session.add(temp)
@@ -290,7 +293,6 @@ class EntryRepository:
         temp = result.scalar_one_or_none()
         if temp:
             self._decrypt_temp_value(temp)
-            temp.notes = self._decrypt_field(temp.notes)
         return temp
 
     async def get_signs(
@@ -406,6 +408,8 @@ class ExportRepository:
             return
         decrypted = self._encryption.decrypt(t.temp_value)
         t.temp_value = float(decrypted) if decrypted else 0.0
+        t.discard_reason = self._encryption.decrypt(t.discard_reason) if t.discard_reason else ""
+        t.notes = self._encryption.decrypt(t.notes) if t.notes else None
 
     def _decrypt_signs_fields(self, s: FertilitySigns) -> None:
         for field in ("menstrual_flow", "cervical_mucus", "cervical_position",
@@ -456,7 +460,6 @@ class ExportRepository:
 
             for t in temps:
                 self._decrypt_temp_value(t)
-                t.notes = self._encryption.decrypt(t.notes) if self._encryption and t.notes else t.notes
 
             for s in signs_list:
                 self._decrypt_signs_fields(s)

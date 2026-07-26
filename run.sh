@@ -12,7 +12,16 @@ POLL_INTERVAL=$(bashio::config 'poll_interval_minutes' '15')
 export BBT_TEMP_UNIT="${TEMP_UNIT}"
 export BBT_HA_SENSOR_ENTITY="${HA_SENSOR_ENTITY}"
 export BBT_POLL_INTERVAL="${POLL_INTERVAL}"
-export BYRD_SECRET_KEY="${BYRD_SECRET_KEY:-byrd-health-dev-key-change-me}"
+# Encryption key: use env var if set, otherwise read persisted key, otherwise generate
+if [ -z "${BYRD_SECRET_KEY}" ]; then
+    if [ -f /data/.byrd_key ]; then
+        export BYRD_SECRET_KEY="$(cat /data/.byrd_key)"
+    else
+        export BYRD_SECRET_KEY="$(openssl rand -hex 32)"
+        echo "${BYRD_SECRET_KEY}" > /data/.byrd_key
+        bashio::log.info "Generated new encryption key in /data/.byrd_key"
+    fi
+fi
 export BYRD_DATABASE_URL="sqlite+aiosqlite:///data/byrd_health.db"
 
 bashio::log.info "Starting Byrd Health Fertility Tracker v2.0.0"
