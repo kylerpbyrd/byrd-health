@@ -240,7 +240,7 @@ class EntryRepository:
         **kwargs: str,
     ) -> FertilitySigns:
         encrypted_kwargs = {
-            key: self._encrypt_field(value) if value else None
+            key: self._encrypt_field(value) if value is not None else None
             for key, value in kwargs.items()
         }
 
@@ -260,7 +260,7 @@ class EntryRepository:
         await self.session.flush()
 
         for key, value in kwargs.items():
-            setattr(signs, key, value if value else None)
+            setattr(signs, key, value if value is not None else None)
         return signs
 
     async def upsert_symptoms(
