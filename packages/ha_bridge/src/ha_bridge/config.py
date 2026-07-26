@@ -17,6 +17,8 @@ def _bool_env(key: str, default: bool = True) -> bool:
 
 
 def read_ha_config() -> HABridgeConfig:
+    from ha_bridge.bridge import HABridgeConfig
+
     return HABridgeConfig(
         temp_unit=os.environ.get("BBT_TEMP_UNIT", "F"),
         ha_sensor_entity=os.environ.get("BBT_HA_SENSOR_ENTITY", ""),
