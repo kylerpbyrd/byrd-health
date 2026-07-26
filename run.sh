@@ -23,9 +23,10 @@ export BBT_NOTIFY_FERTILE="${NOTIFY_FERTILE_WINDOW}"
 export BBT_NOTIFY_PERIOD="${NOTIFY_PERIOD_PREDICTION}"
 export BBT_NOTIFY_OVULATION="${NOTIFY_OVULATION_DETECTED}"
 # Encryption key: use env var if set, otherwise read persisted key, otherwise generate
-if [ -z "${BYRD_SECRET_KEY}" ]; then
+if [ -z "${BYRD_SECRET_KEY:-}" ]; then
     if [ -f /data/.byrd_key ]; then
         export BYRD_SECRET_KEY="$(cat /data/.byrd_key)"
+        bashio::log.info "Loaded encryption key from /data/.byrd_key"
     else
         export BYRD_SECRET_KEY="$(openssl rand -hex 32)"
         echo "${BYRD_SECRET_KEY}" > /data/.byrd_key
