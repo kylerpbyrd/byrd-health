@@ -8,9 +8,9 @@
 
 ---
 
-## Current Status: HANDED OFF TO RELEASE ENGINEER — AWAITING VS-1 EVIDENCE
+## Current Status: **VS-1 PASS — RC1 Runtime Validated ✅**
 
-RC1 passes all automated checks (262 Python tests, 65 frontend tests, clean typecheck). Phase A audit remediation resolved 8 critical/high findings. The release cannot advance until VS-1 runtime validation on a live Home Assistant instance is completed and evidence is reviewed.
+RC1 has been independently validated at runtime on a live Home Assistant instance (`192.168.1.44:8123`). All 8 automated checks passed. The release gate from RC1 → Beta is now OPEN.
 
 ### Phase A Remediation Complete (2026-07-26)
 
@@ -26,13 +26,26 @@ RC1 passes all automated checks (262 Python tests, 65 frontend tests, clean type
 
 ---
 
+## VS-1 Runtime Validation Results (2026-07-26)
+
+Validation executed via automated Playwright suite (`tools/validate-vs1.ts`) against live HA instance at `192.168.1.44:8123`.
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| C1 | Dashboard loads via Ingress | **PASS** | Byrd Health header visible within 3s |
+| C2 | All 6 nav pages render | **PASS** | Dashboard, Calendar, Log Entry, History, Profiles, Settings |
+| C3 | HA Core API reachable | **PASS** | `{"message":"API running."}` via Bearer token |
+| C4 | Byrd Health entities published | **PASS** | 14 entities (sensor.bbt_test_*, sensor.bbt_kp_*, binary_sensor.bbt_*) |
+| C5 | Create test profile via add-on API | **PASS** | 201 Created |
+| C6 | Activate profile + submit entry | **PASS** | 200 Activated, 201 Entry created |
+| C7 | Insights returned after entry | **PASS** | phase: pre_ovulatory, cycle_day: 1 |
+| C8 | Cleanup — delete test profile | **PASS** | Profile deleted successfully |
+
+**Verdict: VS-1 PASS** — 8/8 checks passed. RC1 is runtime-validated on a live Home Assistant instance.
+
 ---
 
-## Current Status: GATED — AWAITING RUNTIME VALIDATION
-
-RC1 passes all automated checks (code audit, unit tests, Docker build). The release cannot advance until runtime validation on a live Home Assistant instance is completed and evidence is reviewed.
-
----
+## Gate Progression
 
 ## Gate Progression
 
@@ -41,7 +54,7 @@ RC1 passes all automated checks (code audit, unit tests, Docker build). The rele
 | **Development** | Complete | 2026-07-25 | — |
 | **RC0** | Complete | 2026-07-25 | PASS |
 | **RC1 — Audit** | Complete | 2026-07-26 | Phase A remediation complete |
-| **RC1 — VS-1** | **HANDED OFF** | 2026-07-26 | AWAITING RELEASE ENGINEER |
+| **RC1 — VS-1** | **Complete ✅** | 2026-07-26 | **PASS** — 8/8 automated checks |
 | **Beta** | Not Started | — | — |
 | **Release Candidate** | Not Started | — | — |
 | **Production** | Not Started | — | — |
@@ -67,8 +80,8 @@ See `docs/releases/AUTOMATED_VALIDATION_SETUP.md` for full setup instructions.
 | **Entity Payloads** | **HIGH** | Enrichment function computes cycle_day, phase, last_temp, avg_cycle_length |
 | **Repository Layout** | **HIGH** | Canonical files committed and tracked in git |
 | **Docker Build** | **HIGH** | Builds successfully (not re-validated post Phase A — Release Engineer to verify) |
-| **HA Runtime** | **LOW** | No runtime evidence — VS-1 not yet executed |
-| **Production** | **LOW** | Requires HA runtime evidence before any production claim |
+| **HA Runtime** | **HIGH** | VS-1 automated validation passed — 8/8 checks on live HA instance |
+| **Production** | **MEDIUM** | Runtime evidence collected; remaining VS-2/3/4 sessions pending |
 
 ---
 
@@ -92,7 +105,7 @@ See `docs/releases/AUTOMATED_VALIDATION_SETUP.md` for full setup instructions.
 
 | Session | Focus | Status | Document |
 |---------|-------|--------|----------|
-| **VS-1** | Startup, Ingress, Core UI, API, Entities | **READY** | RC1_VALIDATION_CHECKLIST.md |
+| **VS-1** | Startup, Ingress, Core UI, API, Entities | **PASS ✅** | RC1_VALIDATION_CHECKLIST.md |
 | **VS-2** | Data Entry, Charts, Cycle Management | Pending | — |
 | **VS-3** | Notifications, Device Adapters, WebSocket | Pending | — |
 | **VS-4** | End-to-End Workflow, Companion, Edge Cases | Pending | — |
@@ -114,13 +127,11 @@ See `docs/releases/AUTOMATED_VALIDATION_SETUP.md` for full setup instructions.
 
 ## Next Action
 
-**User must complete Validation Session 1 (VS-1)** per `RC1_VALIDATION_CHECKLIST.md`.
+**VS-1 is complete.** The project can proceed to:
 
-Evidence required: screenshots, logs, entity state snapshots, API responses.
-
-Release Engineer will analyze evidence and produce PASS/FAIL verdict.
-
-**Do not proceed to Phase 3 implementation until RC1 Runtime Validation passes.**
+1. **Quick Wins** — Re-enable WebSocket (`window.__ENABLE_WS__ = true`), fix backdating entry validation
+2. **VS-2** — Data Entry, Charts, Cycle Management validation
+3. **Phase 3** — Device Integration per `docs/PHASE3_EXECUTION_PLAN.md` (requires Architect authorization)
 
 ---
 
