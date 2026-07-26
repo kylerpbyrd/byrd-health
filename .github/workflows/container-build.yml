@@ -24,8 +24,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install -e ".[dev]"
+      - name: Install test dependencies
+        run: pip install pytest pytest-asyncio pytest-cov
+
+      - name: Install packages (dependency order)
+        run: |
+          pip install packages/fertility_engine
+          pip install packages/data_service
+          pip install packages/ha_bridge
+          pip install packages/device_adapters
+          pip install packages/web_api
 
       - name: Run tests
         run: pytest packages/ -x -q
