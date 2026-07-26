@@ -19,8 +19,9 @@ COPY packages/ /app/packages/
 # Install Python packages in dependency order (fertility_engine has no internal deps)
 RUN pip install --no-cache-dir /app/packages/fertility_engine
 RUN pip install --no-cache-dir /app/packages/data_service
-RUN pip install --no-cache-dir /app/packages/web_api
 RUN pip install --no-cache-dir /app/packages/ha_bridge
+RUN pip install --no-cache-dir /app/packages/device_adapters
+RUN pip install --no-cache-dir /app/packages/web_api
 
 # Copy and build frontend
 COPY frontend/ /app/frontend/
@@ -29,6 +30,9 @@ RUN npm install && npm run build
 
 # Copy frontend build output to static serving location
 RUN mkdir -p /app/static && cp -r /app/frontend/dist/* /app/static/
+
+# Copy Lovelace card JS module to static directory
+COPY packages/ha_bridge/src/ha_bridge/card/ha-card.js /app/static/ha-card.js
 
 # Copy startup script
 COPY run.sh /run.sh

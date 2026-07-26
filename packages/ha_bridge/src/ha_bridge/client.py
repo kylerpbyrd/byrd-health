@@ -13,10 +13,16 @@ _DEFAULT_TIMEOUT = 5.0
 class HAClient:
     """Async HTTP client for Home Assistant Supervisor REST API."""
 
-    def __init__(self, base_url: str = _HA_API_BASE, token: str | None = None) -> None:
+    def __init__(
+        self,
+        base_url: str = _HA_API_BASE,
+        token: str | None = None,
+        timeout: float = _DEFAULT_TIMEOUT,
+    ) -> None:
         self._base_url = base_url
         self._token = token if token is not None else os.environ.get("SUPERVISOR_TOKEN", "")
-        self._client = httpx.AsyncClient(timeout=httpx.Timeout(_DEFAULT_TIMEOUT))
+        self._timeout = timeout
+        self._client = httpx.AsyncClient(timeout=httpx.Timeout(timeout))
 
     async def close(self) -> None:
         await self._client.aclose()
@@ -77,4 +83,31 @@ class HAClient:
 
     async def delete_lovelace_resource(self, resource_id: str) -> bool:
         result = await self._request("DELETE", f"/lovelace/resources/{resource_id}")
+        return result is not None
+
+    async def get_supervisor_addon_info(self) -> dict[str, Any] | None:
+        _supervisor_base = "http://supervisor"
+        url = f"{_supervisor_base}/addons/self/info"
+        headers = {
+            "Authorization": f"Bearer {self._token}",
+        }
+        try:
+            response = await self._client.get(url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("data") if isinstance(data, dict) else None
+            logger.debug("Supervisor /addons/self/info → HTTP %d", response.status_code)
+            return None
+        except Exception as exc:
+            logger.debug("Failed to query supervisor add-on info: %s", exc)
+            return None
+
+    async def get_ingress_url(self) -> str | None:
+        info = await self.get_supervisor_addon_info()
+        if info and isinstance(info, dict):
+            return info.get("ingress_url") or None
+        return None
+
+    async def call_service(self, domain: str, service: str, data: dict[str, Any] | None = None) -> bool:
+        result = await self._request("POST", f"/services/{domain}/{service}", data)
         return result is not None

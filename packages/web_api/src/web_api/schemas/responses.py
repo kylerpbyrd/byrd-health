@@ -189,3 +189,38 @@ class ExportResponse(BaseModel):
     exported_at: str
     profile: ProfileResponse
     cycles: list[CycleExportItem]
+
+
+class CalendarDayItem(BaseModel):
+    date: str
+    cycle_day: Optional[int] = None
+    phase: Optional[str] = None
+    temp: Optional[float] = None
+    flow: Optional[str] = None
+    mucus: Optional[str] = None
+    opk: Optional[str] = None
+    is_period_start: bool = False
+    is_ovulation_day: bool = False
+    is_fertile: bool = False
+    is_today: bool = False
+    has_entry: bool = False
+    in_current_month: bool = False
+
+
+class CalendarCycleItem(BaseModel):
+    id: UUID
+    start_date: date
+    end_date: Optional[date] = None
+    phase_dates: dict[str, list[str]] = {}
+
+
+class CalendarProfileInfo(BaseModel):
+    slug: str
+    temp_unit: str
+
+
+class CalendarResponse(BaseModel):
+    month: str
+    profile: CalendarProfileInfo
+    days: list[CalendarDayItem]
+    cycles_in_range: list[CalendarCycleItem]

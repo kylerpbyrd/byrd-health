@@ -23,10 +23,20 @@ options:
   temp_unit: "F"
   ha_sensor_entity: ""
   poll_interval_minutes: 15
+  notify_temp_reminder: true
+  notify_temp_reminder_time: "07:00"
+  notify_fertile_window: true
+  notify_period_prediction: true
+  notify_ovulation_detected: true
 schema:
   temp_unit: "list(F|C)"
   ha_sensor_entity: "str?"
   poll_interval_minutes: "int(1,60)?"
+  notify_temp_reminder: "bool"
+  notify_temp_reminder_time: "str?"
+  notify_fertile_window: "bool"
+  notify_period_prediction: "bool"
+  notify_ovulation_detected: "bool"
 map:
   - config:rw
 init: false

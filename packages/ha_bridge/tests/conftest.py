@@ -14,6 +14,9 @@ class MockHAClient(HAClient):
         self._should_fail: bool = False
         self._delete_calls: list[str] = []
         self._create_resource_calls: list[dict] = []
+        self.service_calls: list[dict] = []
+        self._ingress_url: str | None = None
+        self._supervisor_info: dict | None = None
 
     async def _request(self, method: str, path: str, payload: dict | None = None) -> object:
         if self._should_fail:
@@ -38,6 +41,21 @@ class MockHAClient(HAClient):
     async def delete_lovelace_resource(self, resource_id: str) -> bool:
         self._delete_calls.append(resource_id)
         return True
+
+    async def call_service(self, domain: str, service: str, data: dict | None = None) -> bool:
+        self.service_calls.append({"domain": domain, "service": service, "data": data})
+        return True
+
+    async def get_supervisor_addon_info(self) -> dict | None:
+        return self._supervisor_info
+
+    async def get_ingress_url(self) -> str | None:
+        if self._ingress_url is not None:
+            return self._ingress_url
+        info = self._supervisor_info
+        if info and isinstance(info, dict):
+            return info.get("ingress_url") or None
+        return None
 
 
 @pytest.fixture

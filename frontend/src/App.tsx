@@ -11,6 +11,7 @@ const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const EntryPage = lazy(() => import("@/pages/EntryPage"));
 const HistoryPage = lazy(() => import("@/pages/HistoryPage"));
 const CycleDetailPage = lazy(() => import("@/pages/CycleDetailPage"));
+const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 const ProfilesPage = lazy(() => import("@/pages/ProfilesPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 
@@ -47,6 +48,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/entry" element={<EntryPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/history" element={<HistoryPage />} />
                 <Route path="/history/:cycleId" element={<CycleDetailPage />} />
                 <Route path="/profiles" element={<ProfilesPage />} />

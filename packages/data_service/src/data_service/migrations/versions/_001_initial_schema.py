@@ -68,7 +68,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("date", sa.Date(), nullable=False),
-        sa.Column("temp_value", sa.Float(), nullable=False),
+        sa.Column("temp_value", sa.Text(), nullable=False),
         sa.Column("time_taken", sa.Time(), nullable=True),
         sa.Column("is_discarded", sa.Boolean(), server_default=sa.text("0"), nullable=False),
         sa.Column("discard_reason", sa.Text(), server_default="", nullable=False),

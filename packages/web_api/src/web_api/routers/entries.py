@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from data_service.models import Profile
 from data_service.service import DataService
 
-from ..analysis import run_cycle_analysis
+from ..analysis import run_cycle_analysis, enrich_insights_for_publishing
 from ..dependencies import get_active_profile, get_data_service
 from ..schemas.responses import EntryResponse, SignsResponse, SymptomResponse, TempResponse
 
@@ -149,12 +149,15 @@ async def create_entry(
         from ..dependencies import get_ha_bridge
         bridge = get_ha_bridge()
         if bridge:
+            enriched = await enrich_insights_for_publishing(
+                data_svc, cycle.id, profile.id, insights_result
+            )
             await bridge.publish_insights(
                 slug=profile.slug,
                 name=profile.name,
                 temp_unit=profile.temp_unit,
-                insights=insights_result,
-                next_period=insights_result.get("next_period_date"),
+                insights=enriched,
+                next_period=enriched.get("next_period_date"),
             )
     except Exception:
         import logging

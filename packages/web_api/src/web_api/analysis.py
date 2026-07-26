@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime as dt
 from typing import Any, Literal, Optional, cast
 from uuid import UUID
 
@@ -7,7 +7,11 @@ from fertility_engine import (
     ProfileSettings,
     TemperatureRecord,
     analyze_cycle,
+    get_current_cycle_day,
+    get_cycle_phase,
+    predict_next_period,
 )
+from fertility_engine.models import FertileWindowResult
 from data_service.service import DataService
 
 
@@ -68,3 +72,78 @@ async def run_cycle_analysis(
     await data_svc.session.commit()
 
     return insights.model_dump()
+
+
+async def enrich_insights_for_publishing(
+    data_svc: DataService,
+    cycle_id: UUID,
+    profile_id: UUID,
+    insights_result: dict[str, Any],
+) -> dict[str, Any]:
+    cycle = await data_svc.cycles.get_by_id(cycle_id)
+    if not cycle:
+        return insights_result
+
+    past_lengths = await data_svc.cycles.get_past_lengths(profile_id)
+
+    cycle_day = get_current_cycle_day(cycle.start_date)
+    avg_cycle_length = (
+        round(sum(past_lengths) / len(past_lengths)) if past_lengths else None
+    )
+
+    entries = data_svc.entries_for(profile_id)
+    signs = await entries.get_signs_for_cycle(cycle_id)
+    flow_days = [
+        s.date.isoformat()
+        for s in signs
+        if s.menstrual_flow in {"spotting", "light", "medium", "heavy"}
+    ]
+
+    fw = FertileWindowResult(
+        fertile_start=insights_result.get("fertile_start_date"),
+        fertile_end=insights_result.get("fertile_end_date"),
+        post_ovulatory_infertile=insights_result.get("post_ovulatory_infertile_date"),
+        calendar_rule_day=8,
+        mucus_triggered=False,
+    )
+
+    phase = get_cycle_phase(
+        current_date=dt.date.today(),
+        cycle_start=cycle.start_date,
+        flow_days=flow_days,
+        fertile_window=fw,
+        ovulation_date=insights_result.get("ovulation_date"),
+        ovulation_confirmed=insights_result.get("ovulation_confirmed", False),
+        post_ov_infertile=insights_result.get("post_ovulatory_infertile_date"),
+    )
+
+    temps = await entries.get_temps_for_cycle(cycle_id)
+    last_temp = None
+    for t in reversed(temps):
+        if not t.is_discarded:
+            last_temp = t.temp_value
+            break
+
+    next_period = None
+    ovulation_date = insights_result.get("ovulation_date")
+    ovulation_confirmed = insights_result.get("ovulation_confirmed", False)
+    if avg_cycle_length:
+        avg_luteal = insights_result.get("luteal_length") or 14
+        next_period = predict_next_period(
+            cycle_start_date=cycle.start_date,
+            ovulation_date=ovulation_date,
+            ovulation_confirmed=ovulation_confirmed,
+            average_luteal_length=avg_luteal,
+            average_cycle_length=avg_cycle_length,
+        )
+
+    enriched = dict(insights_result)
+    enriched["cycle_day"] = cycle_day
+    enriched["phase"] = phase
+    enriched["last_temp"] = last_temp
+    enriched["avg_cycle_length"] = avg_cycle_length
+    enriched["next_period_date"] = (
+        next_period.isoformat() if isinstance(next_period, date) else None
+    )
+
+    return enriched

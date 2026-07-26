@@ -58,6 +58,29 @@ async def update_profile(
     body: ProfileUpdateSchema,
     data_svc: DataService = Depends(get_data_service),
 ) -> ProfileResponse:
+    if body.temp_unit is not None:
+        profile = await data_svc.profiles.get_by_id(profile_id)
+        if profile is None:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        if body.temp_unit != profile.temp_unit:
+            entries = data_svc.entries_for(profile_id)
+            cycles = await data_svc.cycles.get_by_profile(profile_id)
+            has_temps = False
+            for c in cycles:
+                temps = await entries.get_temps_for_cycle(c.id)
+                if temps:
+                    has_temps = True
+                    break
+            if has_temps:
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        f"Cannot change temperature unit from {profile.temp_unit} "
+                        f"to {body.temp_unit} while temperature records exist. "
+                        "Delete all temperature entries before switching units."
+                    ),
+                )
+
     profile = await data_svc.profiles.update_settings(
         profile_id,
         name=body.name,

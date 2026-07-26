@@ -4,6 +4,7 @@ import { Activity } from "lucide-react";
 
 const navItems = [
   { to: "/", label: "Dashboard" },
+  { to: "/calendar", label: "Calendar" },
   { to: "/entry", label: "Log Entry" },
   { to: "/history", label: "History" },
   { to: "/profiles", label: "Profiles" },

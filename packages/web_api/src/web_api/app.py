@@ -2,11 +2,12 @@ import os
 import re
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any, AsyncGenerator, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
@@ -39,18 +40,55 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     registry = DeviceRegistry()
     set_device_registry(registry)
 
-    async with _engine.begin() as conn:
-        from data_service.models import Base
+    # Run database migrations via Alembic
+    try:
+        from alembic.config import Config as _AlembicConfig
+        from alembic import command as _alembic_cmd
 
-        await conn.run_sync(Base.metadata.create_all)
+        import asyncio as _asyncio
+        import os as _os
+
+        _os.environ["DATABASE_URL"] = settings.database_url
+
+        _alembic_ini = _os.path.join(
+            _os.path.dirname(_os.path.abspath(__file__)),
+            "..", "..", "..", "..", "..",
+            "packages", "data_service", "alembic.ini",
+        )
+        _alembic_ini = _os.path.normpath(_alembic_ini)
+
+        if _os.path.isfile(_alembic_ini):
+            _cfg = _AlembicConfig(_alembic_ini)
+            await _asyncio.to_thread(_alembic_cmd.upgrade, _cfg, "head")
+            _log.info("Database migrations applied successfully")
+        else:
+            _log.warning("alembic.ini not found at %s, skipping migrations", _alembic_ini)
+    except Exception:
+        _log.exception("Database migration failed, continuing...")
 
     bridge_config = read_ha_config()
     bridge = HABridge(bridge_config)
     set_ha_bridge(bridge)
+    await bridge.startup()
+
+    # Wire HA sensor entity as device adapter if configured
+    if bridge_config.ha_sensor_entity:
+        try:
+            from device_adapters.adapters.ha_sensor import HASensorAdapter
+            adapter = HASensorAdapter(
+                entity_id=bridge_config.ha_sensor_entity,
+                client=bridge.client,
+                poll_interval_seconds=bridge_config.poll_interval_seconds,
+            )
+            registry.register(adapter)
+            await adapter.connect()
+            _log.info("HA sensor adapter registered: %s", bridge_config.ha_sensor_entity)
+        except Exception:
+            _log.exception("Failed to register HA sensor adapter")
 
     try:
         from data_service.service import DataService
-        from .analysis import run_cycle_analysis
+        from .analysis import run_cycle_analysis, enrich_insights_for_publishing
 
         async with _async_sessionmaker() as session:
             data_svc = DataService(session)
@@ -66,20 +104,28 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                     cycle_start_date=cycle.start_date,
                     cycle_end_date=cycle.end_date,
                 )
+                enriched = await enrich_insights_for_publishing(
+                    data_svc, cycle.id, profile.id, insights
+                )
                 await bridge.publish_insights(
                     slug=profile.slug,
                     name=profile.name,
                     temp_unit=profile.temp_unit,
-                    insights=insights,
-                    next_period=insights.get("next_period_date"),
+                    insights=enriched,
+                    next_period=enriched.get("next_period_date"),
                 )
             _log.info("Published HA entities for %d profile(s)", len(profiles))
     except Exception:
         _log.exception("Failed to publish initial HA entities")
 
+    try:
+        await bridge.register_dashboard_card("ha-card.js")
+    except Exception:
+        _log.exception("Failed to register Lovelace dashboard card")
+
     yield
 
-    await bridge.stop_polling()
+    await bridge.shutdown()
     set_ha_bridge(None)
     set_device_registry(None)
     set_ws_broker(None)
@@ -107,7 +153,7 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
 
     app.add_middleware(IngressMiddleware)
 
-    from .routers import cycles, devices, entries, insights, profiles, ws
+    from .routers import calendar, cycles, devices, entries, insights, profiles, ws
 
     app.include_router(profiles.router)
     app.include_router(entries.router)
@@ -115,10 +161,24 @@ def create_app(lifespan: Optional[Callable[..., Any]] = None) -> FastAPI:
     app.include_router(insights.router)
     app.include_router(ws.router)
     app.include_router(devices.router)
+    app.include_router(calendar.router)
 
     @app.get("/api/health")
     async def health_check() -> dict[str, str]:
         return {"status": "ok"}
+
+    _card_paths = [
+        Path(__file__).resolve().parent.parent.parent.parent.parent
+        / "packages" / "ha_bridge" / "src" / "ha_bridge" / "card" / "ha-card.js",
+        Path(STATIC_DIR) / "ha-card.js",
+    ]
+
+    @app.get("/ha-card.js")
+    async def serve_card() -> FileResponse:
+        for p in _card_paths:
+            if p.is_file():
+                return FileResponse(str(p), media_type="application/javascript")
+        raise HTTPException(status_code=404, detail="Card module not found")
 
     # Serve frontend static files and SPA fallback (after all API routes)
     if os.path.isdir(STATIC_DIR):

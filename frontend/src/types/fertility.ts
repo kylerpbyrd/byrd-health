@@ -216,3 +216,36 @@ export interface CycleExportItem {
   symptoms: SymptomEntry[];
   insights: InsightsDataResponse | null;
 }
+
+export interface CalendarDay {
+  date: string;
+  cycle_day: number | null;
+  phase: string | null;
+  temp: number | null;
+  flow: string | null;
+  mucus: string | null;
+  opk: string | null;
+  is_period_start: boolean;
+  is_ovulation_day: boolean;
+  is_fertile: boolean;
+  is_today: boolean;
+  has_entry: boolean;
+  in_current_month: boolean;
+}
+
+export interface CalendarCycleInRange {
+  id: string;
+  start_date: string;
+  end_date: string | null;
+  phase_dates: Record<string, string[]>;
+}
+
+export interface CalendarResponse {
+  month: string;
+  profile: {
+    slug: string;
+    temp_unit: string;
+  };
+  days: CalendarDay[];
+  cycles_in_range: CalendarCycleInRange[];
+}

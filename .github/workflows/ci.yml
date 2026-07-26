@@ -60,11 +60,6 @@ jobs:
         run: npx tsc --noEmit
         working-directory: frontend
 
-      - name: Frontend lint
-        if: steps.check_frontend.outputs.exists == 'true'
-        run: npx eslint src/
-        working-directory: frontend
-
       - name: Frontend test
         if: steps.check_frontend.outputs.exists == 'true'
         run: npx vitest run

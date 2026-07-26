@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "project": "byrd-health",
-  "last_updated": "2026-07-25T00:00:00Z",
+  "last_updated": "2026-07-26T14:30:00Z",
   "nodes": {
     "services": [
       "fertility-engine",
@@ -69,7 +69,12 @@
       "debug-report",
       "repair-plan",
       "session-handoff",
-      "phase3-plan"
+      "phase3-plan",
+      "audit-7-26",
+      "audit-response"
+    ],
+    "functions": [
+      "enrich-insights-for-publishing"
     ],
     "concepts": [
       "privacy-first",

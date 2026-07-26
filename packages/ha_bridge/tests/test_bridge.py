@@ -190,3 +190,32 @@ async def test_bridge_get_ingress_middleware():
 
     mw = bridge.get_ingress_middleware(dummy_app)
     assert isinstance(mw, IngressMiddleware)
+
+
+async def test_register_dashboard_card_with_ingress_url(mock_client):
+    mock_client._ingress_url = "/api/hassio_ingress/abc123"
+    mock_client._lovelace_resources = []
+    bridge = HABridge(HABridgeConfig(), mock_client)
+    await bridge.register_dashboard_card("ha-card.js")
+    assert len(mock_client._create_resource_calls) == 1
+    assert mock_client._create_resource_calls[0]["url"] == "/api/hassio_ingress/abc123/ha-card.js"
+
+
+async def test_register_dashboard_card_fallback_to_local(mock_client):
+    mock_client._ingress_url = None
+    mock_client._supervisor_info = None
+    mock_client._lovelace_resources = []
+    bridge = HABridge(HABridgeConfig(), mock_client)
+    await bridge.register_dashboard_card("ha-card.js")
+    assert len(mock_client._create_resource_calls) == 1
+    assert mock_client._create_resource_calls[0]["url"] == "/local/ha-card.js"
+
+
+async def test_register_dashboard_card_from_supervisor_info(mock_client):
+    mock_client._ingress_url = None
+    mock_client._supervisor_info = {"ingress_url": "/api/hassio_ingress/xyz789"}
+    mock_client._lovelace_resources = []
+    bridge = HABridge(HABridgeConfig(), mock_client)
+    await bridge.register_dashboard_card("ha-card.js")
+    assert len(mock_client._create_resource_calls) == 1
+    assert mock_client._create_resource_calls[0]["url"] == "/api/hassio_ingress/xyz789/ha-card.js"

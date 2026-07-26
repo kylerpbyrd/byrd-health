@@ -11,6 +11,7 @@ import type {
   InsightsResponse,
   EntryResponse,
   EntryItem,
+  CalendarResponse,
 } from "@/types/fertility";
 
 const INGRESS = (window as any).__INGRESS_PATH__ || "";
@@ -181,8 +182,7 @@ export async function createEntry(data: EntryFormData): Promise<EntryResponse> {
     cervical_firmness: data.cervical_firmness,
     cervical_opening: data.cervical_opening,
     opk_result: data.opk_result,
-    symptoms: data.symptoms,
-    symptom_severity: data.symptom_severity,
+    symptoms: data.symptoms.map(s => ({ symptom_type: s, severity: data.symptom_severity })),
     is_period_start: data.is_period_start,
     notes: data.notes,
   };
@@ -240,6 +240,19 @@ export async function activateProfile(profileId: string): Promise<void> {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
+export async function updateProfile(
+  profileId: string,
+  data: { name?: string; temp_unit?: string; interpretation_method?: string }
+): Promise<Profile> {
+  const res = await fetch(`${API_BASE}/profiles/${profileId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
 export async function exportData(): Promise<Blob> {
   const profiles: Profile[] = await fetchProfiles();
   const activeProfile = profiles.find((p) => p.is_active);
@@ -263,10 +276,18 @@ export async function reanalyzeInsights(): Promise<InsightsResponse> {
   return res.json();
 }
 
-export async function createCycle(): Promise<CycleDetailResponse> {
+export async function createCycle(startDate: string): Promise<CycleDetailResponse> {
   const res = await fetch(`${API_BASE}/cycles/`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ start_date: startDate }),
   });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function fetchCalendar(month: string): Promise<CalendarResponse> {
+  const res = await fetch(`${API_BASE}/calendar/?month=${month}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }

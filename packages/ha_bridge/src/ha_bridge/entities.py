@@ -43,6 +43,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Cycle Day",
                 "unit_of_measurement": "days",
                 "icon": "mdi:calendar-today",
+                "unique_id": f"byrd_health_{slug}_cycle_day",
             },
         ),
         (
@@ -51,6 +52,7 @@ async def publish_profile_entities(
             {
                 "friendly_name": f"BBT {name} Cycle Phase",
                 "icon": "mdi:water-circle",
+                "unique_id": f"byrd_health_{slug}_cycle_phase",
             },
         ),
         (
@@ -60,6 +62,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Fertile Window",
                 "icon": "mdi:seed",
                 "device_class": "presence",
+                "unique_id": f"byrd_health_{slug}_fertile_window",
             },
         ),
         (
@@ -69,6 +72,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Ovulation Confirmed",
                 "icon": "mdi:check-circle",
                 "device_class": "presence",
+                "unique_id": f"byrd_health_{slug}_ovulation_confirmed",
             },
         ),
         (
@@ -78,6 +82,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Ovulation Date",
                 "icon": "mdi:calendar-star",
                 "device_class": "date",
+                "unique_id": f"byrd_health_{slug}_ovulation_date",
             },
         ),
         (
@@ -87,6 +92,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Next Period Date",
                 "icon": "mdi:calendar-arrow-right",
                 "device_class": "date",
+                "unique_id": f"byrd_health_{slug}_next_period_date",
             },
         ),
     ]
@@ -100,6 +106,7 @@ async def publish_profile_entities(
                 "unit_of_measurement": f"°{temp_unit}",
                 "icon": "mdi:thermometer",
                 "device_class": "temperature",
+                "unique_id": f"byrd_health_{slug}_last_temp",
             },
         ))
 
@@ -111,6 +118,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Luteal Length",
                 "unit_of_measurement": "days",
                 "icon": "mdi:timer-sand",
+                "unique_id": f"byrd_health_{slug}_luteal_length",
             },
         ))
 
@@ -122,6 +130,7 @@ async def publish_profile_entities(
                 "friendly_name": f"BBT {name} Avg Cycle Length",
                 "unit_of_measurement": "days",
                 "icon": "mdi:chart-timeline-variant",
+                "unique_id": f"byrd_health_{slug}_avg_cycle_length",
             },
         ))
 
