@@ -312,3 +312,12 @@ Instead maintain compatibility through:
 - Documented integration points.
 
 ByrdOS integration will happen after ByrdOS reaches production maturity.
+
+Definition of Done
+
+No milestone is complete until runtime validation passes.
+Runtime behavior has higher priority than unit test success.
+Every milestone requires a formal exit review.
+If evidence contradicts an architectural assumption, evidence wins.
+Favor incremental improvements over speculative rewrites.
+Treat every milestone as potentially releasable software.

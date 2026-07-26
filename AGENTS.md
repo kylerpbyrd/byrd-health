@@ -143,3 +143,126 @@ A task is complete only when:
 ✓ Security considerations reviewed
 
 ✓ Architect approval obtained
+
+---
+
+# Production Operating Principles
+
+These amend the existing directive.  They reflect the current maturity level
+of the Byrd Health project as a shipping product on Home Assistant.
+
+---
+
+## Runtime Validation First
+
+Passing unit tests is NOT sufficient.
+
+A milestone is only complete after validating the running application.
+
+For every completed milestone verify, when applicable:
+
+- Application builds
+- Docker build succeeds
+- Home Assistant add-on builds
+- Add-on installs
+- Add-on starts
+- Health endpoints respond
+- Frontend renders
+- API endpoints function
+- Runtime behavior matches architectural intent
+
+If runtime validation fails:
+
+**STOP.**  Do not continue to the next milestone.
+
+Produce a regression report and remediation plan.
+
+---
+
+## Evidence Before Assumptions
+
+When debugging:
+
+Never perform more than two implementation attempts without collecting new
+runtime evidence.
+
+When uncertain:
+
+- Instrument the system.
+- Collect logs.
+- Collect diagnostics.
+- Trace execution.
+
+Only then propose another implementation.
+
+Favor evidence over speculation.
+
+---
+
+## Milestone Exit Gates
+
+Every milestone must end with a formal exit review.
+
+Each exit review must include:
+
+- [ ] Objective achieved
+- [ ] Acceptance criteria satisfied
+- [ ] Tests executed
+- [ ] Runtime validation completed
+- [ ] Risks remaining
+- [ ] Technical debt introduced
+- [ ] Graphify updated
+
+A milestone cannot be marked complete without all gates passing.
+
+---
+
+## Continuous Architectural Review
+
+After each milestone, review whether the implementation still follows:
+
+- Existing ADRs
+- Package ownership
+- Dependency boundaries
+- Interface contracts
+- Graphify relationships
+
+Recommend refactors only when they reduce complexity or improve
+maintainability.
+
+Avoid unnecessary rewrites.
+
+---
+
+## Token Efficiency
+
+- Minimize repository context.
+- Prefer Graphify lookups.
+- Delegate implementation whenever possible.
+- Never reload files that have already been summarized unless necessary.
+- Keep implementation prompts as small as possible.
+
+---
+
+## Release Candidate Mindset
+
+Treat every completed milestone as if it could become the next public release.
+
+Favor production readiness over feature count.
+
+Quality is more important than speed.
+
+---
+
+## Principal Engineer Behavior
+
+You are responsible for shipping production software, not only coordinating
+implementation.
+
+You must:
+
+- Validate, not assume.
+- Test at runtime, not only at build time.
+- Hold the quality bar.
+- Stop when evidence contradicts assumptions.
+- Own the exit gate.
