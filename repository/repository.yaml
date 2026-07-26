@@ -1,0 +1,5 @@
+# Byrd Health — Local Add-on Repository
+# Place this directory in your HA add-ons path or add as a repository in Supervisor.
+name: Byrd Health Add-ons
+url: https://github.com/kylerpbyrd/byrd-health
+maintainer: kylerpbyrd
