@@ -2,7 +2,6 @@
 import pytest
 from device_adapters.registry import DeviceRegistry
 from starlette.testclient import TestClient
-
 from web_api.dependencies import set_device_registry, set_ws_broker
 from web_api.websocket import WebSocketBroker
 
