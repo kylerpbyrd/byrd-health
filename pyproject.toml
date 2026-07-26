@@ -81,17 +81,13 @@ indent-style = "space"
 
 [tool.mypy]
 python_version = "3.12"
-exclude = ["packages/.*/tests", "packages/.*/build"]
+exclude = ["packages/.*/tests", "packages/.*/build", "packages/device_adapters/src/device_adapters/adapters/bluetooth.py"]
 warn_unused_ignores = false
 explicit_package_bases = true
 check_untyped_defs = true
 warn_return_any = true
 warn_unused_configs = true
 disable_error_code = ["arg-type", "assignment", "no-any-return", "union-attr", "misc"]
-
-[[tool.mypy.overrides]]
-module = "device_adapters.adapters.bluetooth"
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = [
