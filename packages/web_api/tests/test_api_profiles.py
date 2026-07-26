@@ -100,10 +100,14 @@ class TestProfileEndpoints:
         assert response.status_code == 404
 
     async def test_delete_profile(self, client):
-        await client.post(
+        keep_resp = await client.post(
             "/api/v1/fertility/profiles/",
             json={"name": "Keep", "temp_unit": "F"},
         )
+        keep_id = keep_resp.json()["id"]
+        # Ensure Keep is the active profile so Remove can be deleted
+        await client.post(f"/api/v1/fertility/profiles/{keep_id}/activate")
+
         create_resp = await client.post(
             "/api/v1/fertility/profiles/",
             json={"name": "Remove", "temp_unit": "F"},
