@@ -15,6 +15,11 @@ dev = [
     "pre-commit>=3.8",
 ]
 
+[tool.setuptools]
+# Root is a meta-package — no Python modules to install.
+# Actual packages live in packages/ with their own pyproject.toml.
+py-modules = []
+
 [tool.ruff]
 line-length = 110
 target-version = "py312"
