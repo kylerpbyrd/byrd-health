@@ -14,8 +14,8 @@ export default function EntryPage() {
 
   useWebSocket({
     onDeviceReading: (reading) => {
-      setDeviceTemp(reading.payload.data.temperature);
-      setDeviceName(reading.payload.data.device_type);
+      setDeviceTemp(reading.temperature);
+      setDeviceName(reading.device_type);
     },
   });
 

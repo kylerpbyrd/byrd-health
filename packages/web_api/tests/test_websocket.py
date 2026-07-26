@@ -44,11 +44,14 @@ class TestWebSocketBroadcast:
     def test_broadcast_to_single_client(self, ws_client, broker):
         with ws_client.websocket_connect("/api/v1/fertility/ws") as ws:
             message = {
+                "version": 1,
                 "type": "device_reading",
+                "timestamp": "2026-07-25T12:00:00Z",
                 "payload": {
                     "profile_slug": "default",
-                    "timestamp": "2026-07-25T12:00:00Z",
-                    "data": {"sensor.bbt": 97.5},
+                    "device_id": "sensor.bbt",
+                    "device_type": "ha_sensor",
+                    "temperature": 97.5,
                 },
             }
             loop = asyncio.get_event_loop()
@@ -61,11 +64,11 @@ class TestWebSocketBroadcast:
             with ws_client.websocket_connect("/api/v1/fertility/ws") as ws2:
                 with ws_client.websocket_connect("/api/v1/fertility/ws") as ws3:
                     message = {
+                        "version": 1,
                         "type": "analysis_complete",
+                        "timestamp": "2026-07-25T12:00:00Z",
                         "payload": {
                             "profile_slug": "default",
-                            "timestamp": "2026-07-25T12:00:00Z",
-                            "data": {"ovulation_detected": True},
                         },
                     }
                     loop = asyncio.get_event_loop()
@@ -86,11 +89,12 @@ class TestWebSocketBroadcast:
             assert broker.connection_count == 2
 
             message = {
+                "version": 1,
                 "type": "error",
+                "timestamp": "2026-07-25T12:00:00Z",
                 "payload": {
-                    "profile_slug": "default",
-                    "timestamp": "2026-07-25T12:00:00Z",
-                    "data": {"code": "TEST_ERROR"},
+                    "code": "TEST_ERROR",
+                    "message": "Test error",
                 },
             }
             loop = asyncio.get_event_loop()
@@ -105,38 +109,45 @@ class TestMessageProtocol:
     def test_message_has_required_fields(self, ws_client, broker):
         with ws_client.websocket_connect("/api/v1/fertility/ws") as ws:
             message = {
+                "version": 1,
                 "type": "device_reading",
+                "timestamp": "2026-07-25T12:00:00Z",
                 "payload": {
                     "profile_slug": "default",
-                    "timestamp": "2026-07-25T12:00:00Z",
-                    "data": {"sensor.bbt": 97.5},
+                    "device_id": "sensor.bbt",
+                    "device_type": "ha_sensor",
+                    "temperature": 97.5,
                 },
             }
             loop = asyncio.get_event_loop()
             loop.run_until_complete(broker.broadcast(message))
             received = ws.receive_json()
+            assert "version" in received
             assert "type" in received
+            assert "timestamp" in received
             assert "payload" in received
             assert received["type"] in {
                 "device_reading",
                 "analysis_complete",
                 "error",
             }
+            assert received["version"] == 1
             payload = received["payload"]
             assert "profile_slug" in payload
-            assert "timestamp" in payload
-            assert "data" in payload
+            assert "device_id" in payload
+            assert "device_type" in payload
+            assert "temperature" in payload
 
     def test_valid_message_types(self, ws_client, broker):
         valid_types = {"device_reading", "analysis_complete", "error"}
         for msg_type in valid_types:
             with ws_client.websocket_connect("/api/v1/fertility/ws") as ws:
                 message = {
+                    "version": 1,
                     "type": msg_type,
+                    "timestamp": "2026-07-25T12:00:00Z",
                     "payload": {
                         "profile_slug": "default",
-                        "timestamp": "2026-07-25T12:00:00Z",
-                        "data": {},
                     },
                 }
                 loop = asyncio.get_event_loop()
@@ -150,14 +161,49 @@ class TestMessageProtocol:
         with ws_client.websocket_connect("/api/v1/fertility/ws") as ws:
             now_iso = datetime.now(UTC).isoformat()
             message = {
+                "version": 1,
                 "type": "device_reading",
+                "timestamp": now_iso,
                 "payload": {
                     "profile_slug": "default",
-                    "timestamp": now_iso,
-                    "data": {},
+                    "device_id": "sensor.bbt",
+                    "device_type": "ha_sensor",
+                    "temperature": 97.5,
                 },
             }
             loop = asyncio.get_event_loop()
             loop.run_until_complete(broker.broadcast(message))
             received = ws.receive_json()
-            assert received["payload"]["timestamp"] == now_iso
+            assert received["timestamp"] == now_iso
+
+
+class TestMakeMessage:
+    def test_correct_envelope(self):
+        from web_api.websocket import make_message
+
+        msg = make_message("device_reading", {"temperature": 97.5})
+        assert msg["version"] == 1
+        assert msg["type"] == "device_reading"
+        assert "timestamp" in msg
+        assert msg["payload"] == {"temperature": 97.5}
+
+    def test_correct_types(self):
+        from web_api.websocket import make_message
+
+        msg = make_message("analysis_complete", {"profile_slug": "default"})
+        assert isinstance(msg["version"], int)
+        assert isinstance(msg["type"], str)
+        assert isinstance(msg["timestamp"], str)
+        assert isinstance(msg["payload"], dict)
+
+    def test_timestamp_is_iso8601(self):
+        from datetime import datetime
+
+        from web_api.websocket import make_message
+
+        msg = make_message("device_reading", {})
+        ts = msg["timestamp"]
+
+        parsed = datetime.fromisoformat(ts)
+        assert parsed.tzinfo is not None
+        assert "+" in ts or "Z" in ts or ts.endswith(":00")

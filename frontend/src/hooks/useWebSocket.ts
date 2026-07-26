@@ -1,28 +1,26 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-export interface DeviceReading {
-  type: "device_reading";
-  payload: {
-    profile_slug: string;
-    timestamp: string;
-    data: {
-      device_id: string;
-      device_type: string;
-      temperature: number;
-    };
-  };
+export interface WSEnvelope {
+  version: number;
+  type: string;
+  timestamp: string;
+  payload: Record<string, unknown>;
 }
 
-export interface AnalysisComplete {
-  type: "analysis_complete";
-  payload: { profile_slug: string; timestamp: string; data: Record<string, unknown> };
+export interface DeviceReadingPayload {
+  profile_slug: string;
+  device_id: string;
+  device_type: string;
+  temperature: number;
 }
 
-export type WSMessage = DeviceReading | AnalysisComplete;
+export interface AnalysisCompletePayload {
+  profile_slug: string;
+}
 
 interface UseWebSocketOptions {
-  onDeviceReading?: (reading: DeviceReading) => void;
-  onAnalysisComplete?: (msg: AnalysisComplete) => void;
+  onDeviceReading?: (reading: DeviceReadingPayload) => void;
+  onAnalysisComplete?: (msg: AnalysisCompletePayload) => void;
 }
 
 function getWebSocketUrl(): string {
@@ -35,7 +33,7 @@ function getWebSocketUrl(): string {
 export function useWebSocket(options: UseWebSocketOptions = {}) {
   const { onDeviceReading, onAnalysisComplete } = options;
   const [isConnected, setIsConnected] = useState(false);
-  const [lastMessage, setLastMessage] = useState<WSMessage | null>(null);
+  const [lastMessage, setLastMessage] = useState<WSEnvelope | null>(null);
 
   const optionsRef = useRef(options);
   optionsRef.current = options;
@@ -63,14 +61,18 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     ws.onmessage = (event: MessageEvent) => {
       if (!mountedRef.current) return;
       try {
-        const msg: WSMessage = JSON.parse(event.data as string);
+        const msg: WSEnvelope = JSON.parse(event.data as string);
+        if (msg.version !== 1) {
+          console.warn("Unsupported WebSocket protocol version:", msg.version);
+          return;
+        }
         setLastMessage(msg);
 
         if (msg.type === "device_reading" && onDeviceReading) {
-          onDeviceReading(msg);
+          onDeviceReading(msg.payload as unknown as DeviceReadingPayload);
         }
         if (msg.type === "analysis_complete" && onAnalysisComplete) {
-          onAnalysisComplete(msg);
+          onAnalysisComplete(msg.payload as unknown as AnalysisCompletePayload);
         }
       } catch {
         // Ignore unparseable messages

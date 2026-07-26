@@ -28,16 +28,23 @@ async def read_all_devices():
 
     broker = get_ws_broker()
     if broker is not None and readings:
-        await broker.broadcast(
-            {
-                "type": "device_reading",
-                "payload": {
-                    "profile_slug": "default",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                    "data": readings,
-                },
-            }
-        )
+        from ..websocket import make_message
+
+        adapters = registry.list_adapters()
+        for adapter_info in adapters:
+            device_id = adapter_info["device_id"]
+            if device_id in readings:
+                await broker.broadcast(
+                    make_message(
+                        "device_reading",
+                        {
+                            "profile_slug": "default",
+                            "device_id": device_id,
+                            "device_type": adapter_info["device_type"],
+                            "temperature": readings[device_id],
+                        },
+                    )
+                )
 
     return {"readings": readings}
 

@@ -3,7 +3,18 @@
 Architecture: ADR-0012
 """
 
+from datetime import UTC, datetime
+
 from fastapi import WebSocket
+
+
+def make_message(msg_type: str, payload: dict) -> dict:
+    return {
+        "version": 1,
+        "type": msg_type,
+        "timestamp": datetime.now(UTC).isoformat(),
+        "payload": payload,
+    }
 
 
 class WebSocketBroker:

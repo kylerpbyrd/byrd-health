@@ -126,10 +126,15 @@ class TestDeviceRead:
             assert response.status_code == 200
 
             msg = ws.receive_json()
+            assert msg["version"] == 1
             assert msg["type"] == "device_reading"
-            assert msg["payload"]["profile_slug"] == "default"
-            assert "timestamp" in msg["payload"]
-            assert msg["payload"]["data"]["sensor.bbt"] == 97.5
+            assert "timestamp" in msg
+
+            payload = msg["payload"]
+            assert payload["profile_slug"] == "default"
+            assert payload["device_id"] == "sensor.bbt"
+            assert payload["device_type"] == "ha_sensor"
+            assert payload["temperature"] == 97.5
 
 
 class TestDeviceStatus:

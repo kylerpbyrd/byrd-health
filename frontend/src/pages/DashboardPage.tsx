@@ -50,7 +50,7 @@ export default function DashboardPage() {
       queryClient.invalidateQueries({ queryKey: ["chart"] });
     },
     onDeviceReading: (reading) => {
-      toast.info(`New reading: ${reading.payload.data.temperature}°`);
+      toast.info(`New reading: ${reading.temperature}°`);
     },
   });
 

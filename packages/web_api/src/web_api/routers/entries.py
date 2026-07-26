@@ -160,6 +160,22 @@ async def create_entry(
         import logging
         logging.getLogger(__name__).warning("Failed to publish HA entities", exc_info=True)
 
+    try:
+        from ..dependencies import get_ws_broker
+        from ..websocket import make_message
+
+        broker = get_ws_broker()
+        if broker is not None:
+            await broker.broadcast(
+                make_message(
+                    "analysis_complete",
+                    {"profile_slug": profile.slug},
+                )
+            )
+    except Exception:
+        import logging
+        logging.getLogger(__name__).warning("Failed to broadcast analysis_complete via WebSocket", exc_info=True)
+
     return EntryResponse(
         temperature=TempResponse.model_validate(temp) if temp else None,
         signs=SignsResponse.model_validate(signs) if signs else None,

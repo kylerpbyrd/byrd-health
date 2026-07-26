@@ -144,4 +144,20 @@ async def reanalyze_insights(
         import logging
         logging.getLogger(__name__).warning("Failed to publish HA entities", exc_info=True)
 
+    try:
+        from ..dependencies import get_ws_broker
+        from ..websocket import make_message
+
+        broker = get_ws_broker()
+        if broker is not None:
+            await broker.broadcast(
+                make_message(
+                    "analysis_complete",
+                    {"profile_slug": profile.slug},
+                )
+            )
+    except Exception:
+        import logging
+        logging.getLogger(__name__).warning("Failed to broadcast analysis_complete via WebSocket", exc_info=True)
+
     return await _build_insights_response(data_svc, profile.id)
