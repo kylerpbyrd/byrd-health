@@ -190,6 +190,8 @@ Alternatively, find "Fertility Tracker" in the HA sidebar and click it.
 - Screenshot of the full dashboard page
 - The browser URL bar (showing the ingress path)
 
+webUI working properly
+
 ### 4.2 Check browser console
 
 Open browser DevTools (F12) → Console tab.
@@ -202,6 +204,18 @@ Open browser DevTools (F12) → Console tab.
 **Evidence to capture:**
 - Screenshot of the Console tab (filter to "All levels")
 - If errors present, screenshot each one expanded
+
+errors: [ha-button] size="small" is deprecated. Use size="s" instead. The long-form value will be removed in the next major version. size.js:14:13
+[ha-button] size="large" is deprecated. Use size="l" instead. The long-form value will be removed in the next major version. size.js:14:13
+Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content. hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24
+Firefox can’t establish a connection to the server at ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws. useWebSocket-S3PuCgVk.js:1:459
+The connection to ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws was interrupted while the page was loading. useWebSocket-S3PuCgVk.js:1:459
+Firefox can’t establish a connection to the server at ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws. useWebSocket-S3PuCgVk.js:1:459
+The connection to ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws was interrupted while the page was loading. useWebSocket-S3PuCgVk.js:1:459
+Firefox can’t establish a connection to the server at ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws. useWebSocket-S3PuCgVk.js:1:459
+The connection to ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws was interrupted while the page was loading. useWebSocket-S3PuCgVk.js:1:459
+Firefox can’t establish a connection to the server at ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws. useWebSocket-S3PuCgVk.js:1:459
+The connection to ws://192.168.1.44:8123/api/hassio_ingress/hIMAL9ekLW2VPDZSV3Pf_F-7hYvNuALxPdihfAcCQ24/api/v1/fertility/ws was interrupted while the page was loading. useWebSocket-S3PuCgVk.js:1:459
 
 ---
 
@@ -219,6 +233,8 @@ If no profiles or data exist yet:
 **Evidence to capture:**
 - Screenshot of the empty state
 
+working properly
+
 ### 5.2 Navigate to Profiles
 
 Click **Profiles** in the nav bar.
@@ -227,6 +243,8 @@ Click **Profiles** in the nav bar.
 - "No profiles yet" message with a users icon
 - An input field to create a new profile
 - "Create" button
+
+working properly
 
 ### 5.3 Create a profile
 
@@ -241,6 +259,8 @@ Click **Profiles** in the nav bar.
 **Evidence to capture:**
 - Screenshot of the profile list after creation
 
+working properly
+
 ### 5.4 Return to Dashboard
 
 Click **Dashboard** in the nav bar.
@@ -254,6 +274,8 @@ Click **Dashboard** in the nav bar.
 
 **Evidence to capture:**
 - Screenshot of the dashboard with the new profile active
+
+working properly.
 
 ---
 
@@ -274,6 +296,8 @@ Click each navigation item and verify the page renders without errors.
 **Evidence to capture:**
 - Screenshot of the Calendar page
 
+working properly
+
 ### 6.3 Log Entry (`/entry`)
 - Form should appear with:
   - Date field (pre-filled with today)
@@ -289,6 +313,8 @@ Click each navigation item and verify the page renders without errors.
 
 **Evidence to capture:**
 - Screenshot of the Entry page (full form)
+
+working properly
 
 ### 6.4 History (`/history`)
 - "Cycle History" card with table
