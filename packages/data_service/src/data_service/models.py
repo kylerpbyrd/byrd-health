@@ -31,6 +31,9 @@ class Profile(Base):
     pregnancies: Mapped[list["Pregnancy"]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
+    medications: Mapped[list["Medication"]] = relationship(
+        back_populates="profile", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Profile(id={self.id}, name={self.name!r})>"
@@ -183,3 +186,33 @@ class Pregnancy(Base):
 
     def __repr__(self) -> str:
         return f"<Pregnancy(id={self.id}, profile_id={self.profile_id}, lmp={self.lmp_date})>"
+
+
+class SymptomCatalog(Base):
+    __tablename__ = "symptom_catalog"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    name: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    category: Mapped[str] = mapped_column(String(80), nullable=False)
+    severity_scale: Mapped[int] = mapped_column(default=3)
+
+    def __repr__(self) -> str:
+        return f"<SymptomCatalog {self.name}>"
+
+
+class Medication(Base):
+    __tablename__ = "medications"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    profile_id: Mapped[UUID] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+    dosage: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    schedule: Mapped[str] = mapped_column(String(20), default="as_needed")
+    taken_at: Mapped[datetime] = mapped_column(default=func.now())
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=func.now())
+
+    profile: Mapped["Profile"] = relationship(back_populates="medications")
+
+    def __repr__(self) -> str:
+        return f"<Medication {self.name}>"

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .encryption import ProfileEncryption
-from .models import ComputedInsights, Cycle, FertilitySigns, Pregnancy, Profile, Symptom, Temperature
+from .models import ComputedInsights, Cycle, FertilitySigns, Medication, Pregnancy, Profile, Symptom, SymptomCatalog, Temperature
 
 
 class ProfileRepository:
@@ -492,6 +492,35 @@ class ExportRepository:
             "profile": profile,
             "cycles": cycles_data,
         }
+
+
+class SymptomCatalogRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def list_all(self, category: str | None = None):
+        query = select(SymptomCatalog)
+        if category:
+            query = query.where(SymptomCatalog.category == category)
+        result = await self.session.execute(query.order_by(SymptomCatalog.category, SymptomCatalog.name))
+        return result.scalars().all()
+
+
+class MedicationRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def create(self, profile_id: UUID, name: str, dosage: str | None = None, schedule: str = "as_needed", notes: str | None = None) -> Medication:
+        med = Medication(profile_id=profile_id, name=name, dosage=dosage, schedule=schedule, notes=notes)
+        self.session.add(med)
+        await self.session.commit()
+        return med
+
+    async def list_all(self, profile_id: UUID):
+        result = await self.session.execute(
+            select(Medication).where(Medication.profile_id == profile_id).order_by(Medication.taken_at.desc())
+        )
+        return result.scalars().all()
 
 
 class PregnancyRepository:

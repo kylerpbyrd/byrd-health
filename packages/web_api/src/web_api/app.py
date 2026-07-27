@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 from collections.abc import AsyncGenerator, Callable
@@ -36,6 +37,7 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     broker = WebSocketBroker()
     set_ws_broker(broker)
+    heartbeat_task = asyncio.create_task(broker.start_heartbeat())
     _log.info("WebSocket broker started")
 
     registry = DeviceRegistry()
@@ -106,6 +108,7 @@ async def _lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     yield
 
+    heartbeat_task.cancel()
     await bridge.shutdown()
     set_ha_bridge(None)
     set_device_registry(None)

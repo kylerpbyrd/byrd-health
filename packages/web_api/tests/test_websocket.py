@@ -207,3 +207,12 @@ class TestMakeMessage:
         parsed = datetime.fromisoformat(ts)
         assert parsed.tzinfo is not None
         assert "+" in ts or "Z" in ts or ts.endswith(":00")
+
+    def test_heartbeat_message(self):
+        from web_api.websocket import make_message
+
+        msg = make_message("heartbeat", {})
+        assert msg["version"] == 1
+        assert msg["type"] == "heartbeat"
+        assert "timestamp" in msg
+        assert msg["payload"] == {}

@@ -3,6 +3,7 @@
 Architecture: ADR-0012
 """
 
+import asyncio
 from datetime import UTC, datetime
 
 from fastapi import WebSocket
@@ -38,6 +39,12 @@ class WebSocketBroker:
             except Exception:
                 dead.add(ws)
         self._connections -= dead
+
+    async def start_heartbeat(self, interval: int = 30) -> None:
+        while True:
+            await asyncio.sleep(interval)
+            if self._connections:
+                await self.broadcast(make_message("heartbeat", {}))
 
     @property
     def connection_count(self) -> int:

@@ -5,8 +5,10 @@ from data_service.repositories import (
     EntryRepository,
     ExportRepository,
     InsightsRepository,
+    MedicationRepository,
     PregnancyRepository,
     ProfileRepository,
+    SymptomCatalogRepository,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -444,3 +446,69 @@ class TestPregnancyRepository:
         assert active is not None
         assert active.cycle_id == cycle1.id
         assert active.is_active == True
+
+
+class TestSymptomCatalogRepository:
+    async def test_list_all(self, async_session: AsyncSession):
+        from data_service.models import SymptomCatalog
+
+        sc1 = SymptomCatalog(name="Headache", category="pain", severity_scale=3)
+        sc2 = SymptomCatalog(name="Nausea", category="digestive", severity_scale=3)
+        sc3 = SymptomCatalog(name="Cramps", category="pain", severity_scale=3)
+        async_session.add_all([sc1, sc2, sc3])
+        await async_session.commit()
+
+        repo = SymptomCatalogRepository(async_session)
+        results = await repo.list_all()
+        assert len(results) == 3
+
+    async def test_list_all_filtered_by_category(self, async_session: AsyncSession):
+        from data_service.models import SymptomCatalog
+
+        sc1 = SymptomCatalog(name="Headache", category="pain")
+        sc2 = SymptomCatalog(name="Nausea", category="digestive")
+        sc3 = SymptomCatalog(name="Cramps", category="pain")
+        async_session.add_all([sc1, sc2, sc3])
+        await async_session.commit()
+
+        repo = SymptomCatalogRepository(async_session)
+        results = await repo.list_all(category="pain")
+        assert len(results) == 2
+        assert all(r.category == "pain" for r in results)
+
+
+class TestMedicationRepository:
+    async def test_create(self, async_session: AsyncSession):
+        profile_repo = ProfileRepository(async_session)
+        profile = await profile_repo.create("MedUser")
+        await async_session.commit()
+
+        repo = MedicationRepository(async_session)
+        med = await repo.create(
+            profile.id,
+            "Ibuprofen",
+            dosage="200mg",
+            schedule="as_needed",
+            notes="For pain",
+        )
+        assert med.profile_id == profile.id
+        assert med.name == "Ibuprofen"
+        assert med.dosage == "200mg"
+        assert med.schedule == "as_needed"
+        assert med.notes == "For pain"
+
+    async def test_list_all(self, async_session: AsyncSession):
+        profile_repo = ProfileRepository(async_session)
+        profile = await profile_repo.create("MedList")
+        await async_session.commit()
+
+        repo = MedicationRepository(async_session)
+        m1 = await repo.create(profile.id, "Aspirin", schedule="daily")
+        m2 = await repo.create(profile.id, "Ibuprofen")
+        await async_session.commit()
+
+        results = await repo.list_all(profile.id)
+        assert len(results) == 2
+        names = {r.name for r in results}
+        assert "Aspirin" in names
+        assert "Ibuprofen" in names

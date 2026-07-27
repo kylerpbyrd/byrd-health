@@ -6,9 +6,11 @@ from data_service.models import (
     ComputedInsights,
     Cycle,
     FertilitySigns,
+    Medication,
     Pregnancy,
     Profile,
     Symptom,
+    SymptomCatalog,
     Temperature,
 )
 from sqlalchemy import select
@@ -220,6 +222,74 @@ class TestComputedInsightsModel:
         async_session.add(ins2)
         with pytest.raises(Exception):
             await async_session.flush()
+
+
+class TestSymptomCatalogModel:
+    async def test_create_symptom_catalog(self, async_session: AsyncSession):
+        sc = SymptomCatalog(name="Headache", category="pain", severity_scale=3)
+        async_session.add(sc)
+        await async_session.flush()
+
+        assert sc.id is not None
+        assert isinstance(sc.id, UUID)
+        assert sc.name == "Headache"
+        assert sc.category == "pain"
+        assert sc.severity_scale == 3
+
+    async def test_symptom_catalog_unique_name(self, async_session: AsyncSession):
+        sc1 = SymptomCatalog(name="Nausea", category="digestive")
+        sc2 = SymptomCatalog(name="Nausea", category="mood")
+        async_session.add(sc1)
+        await async_session.flush()
+        async_session.add(sc2)
+        with pytest.raises(Exception):
+            await async_session.flush()
+
+
+class TestMedicationModel:
+    async def test_create_medication(self, async_session: AsyncSession):
+        profile = Profile(name="MedTest", slug="medtest")
+        async_session.add(profile)
+        await async_session.flush()
+
+        med = Medication(
+            profile_id=profile.id,
+            name="Ibuprofen",
+            dosage="200mg",
+            schedule="as_needed",
+            notes="For headaches",
+        )
+        async_session.add(med)
+        await async_session.flush()
+
+        assert med.id is not None
+        assert med.profile_id == profile.id
+        assert med.name == "Ibuprofen"
+        assert med.dosage == "200mg"
+        assert med.schedule == "as_needed"
+        assert med.notes == "For headaches"
+        assert med.taken_at is not None
+        assert med.created_at is not None
+
+    async def test_medication_profile_relationship(self, async_session: AsyncSession):
+        from sqlalchemy.orm import selectinload
+
+        profile = Profile(name="MedRel", slug="medrel")
+        async_session.add(profile)
+        await async_session.flush()
+
+        med = Medication(profile_id=profile.id, name="Aspirin")
+        async_session.add(med)
+        await async_session.flush()
+
+        result = await async_session.execute(
+            select(Profile)
+            .options(selectinload(Profile.medications))
+            .where(Profile.id == profile.id)
+        )
+        loaded = result.unique().scalar_one()
+        assert len(loaded.medications) == 1
+        assert loaded.medications[0].name == "Aspirin"
 
 
 class TestCascadeDeletes:

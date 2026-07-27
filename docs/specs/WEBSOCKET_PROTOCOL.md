@@ -86,7 +86,7 @@ The protocol is designed to accommodate additional types without breaking change
 | `notification` | 4 | HA notification event forwarded to frontend |
 | `entity_update` | 4 | HA entity state change relay |
 | `sync` | ByrdOS | Multi-device sync event |
-| `heartbeat` | 4 | Server keepalive (client already handles this via WebSocket ping/pong) |
+| `heartbeat` | 4B | Server keepalive every 30 seconds. Client may use to detect stale connections. |
 
 ---
 
@@ -150,6 +150,19 @@ The protocol is designed to accommodate additional types without breaking change
 |-------|------|-------------|
 | `code` | `string` | Machine-readable error code. |
 | `message` | `string` | Human-readable error description. |
+
+### 5.4 Heartbeat Payload
+
+```json
+{
+  "version": 1,
+  "type": "heartbeat",
+  "timestamp": "2026-07-26T12:00:00Z",
+  "payload": {}
+}
+```
+
+The `payload` is always an empty object. Clients should treat a missing heartbeat for >90 seconds as a potential connection loss.
 
 ---
 
