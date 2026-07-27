@@ -522,3 +522,21 @@ class PregnancyRepository:
             )
         )
         return result.scalar_one_or_none()
+
+    async def get_by_cycle(self, cycle_id: UUID) -> Pregnancy | None:
+        result = await self.session.execute(
+            select(Pregnancy).where(Pregnancy.cycle_id == cycle_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def update(self, pregnancy_id: UUID, **kwargs: Any) -> Pregnancy | None:
+        result = await self.session.execute(
+            select(Pregnancy).where(Pregnancy.id == pregnancy_id)
+        )
+        pregnancy = result.scalar_one_or_none()
+        if pregnancy:
+            for key, value in kwargs.items():
+                if hasattr(pregnancy, key) and value is not None:
+                    setattr(pregnancy, key, value)
+            await self.session.flush()
+        return pregnancy

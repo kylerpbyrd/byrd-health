@@ -163,3 +163,31 @@ class ExportCycle(BaseModel):
     insights: InsightsResponse | None
 
     model_config = {"from_attributes": True}
+
+
+class PregnancyCreate(BaseModel):
+    cycle_id: str
+    lmp_date: str
+    ovulation_date: str | None = None
+
+
+class PregnancyUpdate(BaseModel):
+    notes: str | None = None
+    is_active: bool | None = None
+
+
+class PregnancyResponse(BaseModel):
+    id: UUID
+    cycle_id: UUID
+    profile_id: UUID
+    lmp_date: date
+    due_date: date | None = None
+    current_week: int | None = None
+    trimester: int | None = None
+    days_remaining: int | None = None
+    is_active: bool = True
+    notes: str | None = None
+    created_at: datetime
+    updated_at: datetime | None = None
+
+    model_config = {"from_attributes": True}

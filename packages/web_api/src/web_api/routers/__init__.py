@@ -1,1 +1,1 @@
-from . import calendar, cycles, devices, entries, insights, profiles, ws
+from . import calendar, cycles, devices, entries, insights, pregnancy, profiles, ws

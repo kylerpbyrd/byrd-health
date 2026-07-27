@@ -136,7 +136,7 @@ def create_app(lifespan: Callable[..., Any] | None = None) -> FastAPI:
 
     app.add_middleware(IngressMiddleware)
 
-    from .routers import calendar, cycles, devices, entries, insights, profiles, ws
+    from .routers import calendar, cycles, devices, entries, insights, pregnancy, profiles, ws
 
     app.include_router(profiles.router)
     app.include_router(entries.router)
@@ -144,6 +144,7 @@ def create_app(lifespan: Callable[..., Any] | None = None) -> FastAPI:
     app.include_router(insights.router)
     app.include_router(ws.router)
     app.include_router(devices.router)
+    app.include_router(pregnancy.router)
     app.include_router(calendar.router)
 
     @app.get("/api/health")
