@@ -55,6 +55,7 @@ def test_full_pipeline_conservative_method(sample_temps, sample_signs):
         cycle_start_date=date(2026, 1, 1),
     )
 
+    assert insights.ovulation_method == "conservative"
     assert insights.engine_version == "1.0.0"
 
 

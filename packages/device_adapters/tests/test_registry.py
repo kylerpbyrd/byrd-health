@@ -38,7 +38,10 @@ def test_register_adds_adapter():
     registry = DeviceRegistry()
     adapter = MockAdapter("device-1")
     registry.register(adapter)
-    assert True
+    adapters = registry.list_adapters()
+    assert len(adapters) == 1
+    assert adapters[0]["device_id"] == "device-1"
+    assert adapters[0]["device_type"] == "mock"
 
 
 def test_register_rejects_duplicate():

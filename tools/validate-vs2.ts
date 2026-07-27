@@ -472,20 +472,11 @@ test.describe("VS-2 Integration Validation", () => {
 
   // ── C10: Stale connection cleanup ───────────────────────
 
-  test("C10: Stale connection cleanup", async () => {
+  test.skip("C10: Stale connection cleanup — MANUAL only: no HTTP endpoint exposes connection_count to query from tests", async () => {
     if (!INGRESS_URL) {
       console.log("SKIP: C10 — BYRD_INGRESS_URL not set");
       return;
     }
-    console.log("MANUAL: C10 — Stale WebSocket connection cleanup");
-    console.log("  Verification steps:");
-    console.log("  1. Open dashboard in two separate browser tabs (both via Ingress)");
-    console.log("  2. Verify both tabs show 'Live' indicator (green dot)");
-    console.log("  3. Close one tab");
-    console.log("  4. Verify the remaining tab stays connected (auto-reconnect is not triggered)");
-    console.log("  5. Optional: Check add-on logs for 'connection_count' — should drop from 2 to 1");
-    console.log("  Note: Cannot automate — no HTTP endpoint exposes connection_count to query from tests");
-    console.log("  PASS/FAIL: Manual inspection required");
   });
 
   // ════════════════════════════════════════════════════════════

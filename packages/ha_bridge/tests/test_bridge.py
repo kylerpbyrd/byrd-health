@@ -31,8 +31,11 @@ async def test_bridge_start_polling_adds_sensor(mock_client):
         results.append((entity_id, value))
 
     await bridge.start_polling(cb)
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.2)
     await bridge.stop_polling()
+
+    assert len(results) > 0
+    assert results[0] == ("sensor.temp", 98.6)
 
 
 async def test_bridge_can_stop_without_starting():

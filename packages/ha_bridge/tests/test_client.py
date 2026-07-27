@@ -1,9 +1,11 @@
 from ha_bridge.client import HAClient
 
 
-async def test_request_returns_json_on_success():
-    client = HAClient(token="fake-token")
-    await client.close()
+async def test_request_returns_json_on_success(mock_client):
+    result = await mock_client._request("GET", "/")
+    assert result is not None
+    assert isinstance(result, dict)
+    assert "success" in result
 
 
 async def test_request_returns_none_when_no_token():
