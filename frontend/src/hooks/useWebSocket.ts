@@ -54,12 +54,14 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
         ws.close();
         return;
       }
+      console.log("WebSocket opened, setting isConnected=true");
       setIsConnected(true);
       reconnectDelayRef.current = 1000;
     };
 
     ws.onmessage = (event: MessageEvent) => {
       if (!mountedRef.current) return;
+      const { onDeviceReading: onDR, onAnalysisComplete: onAC } = optionsRef.current;
       try {
         const msg: WSEnvelope = JSON.parse(event.data as string);
         if (msg.version !== 1) {
@@ -68,11 +70,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
         }
         setLastMessage(msg);
 
-        if (msg.type === "device_reading" && onDeviceReading) {
-          onDeviceReading(msg.payload as unknown as DeviceReadingPayload);
+        if (msg.type === "device_reading" && onDR) {
+          onDR(msg.payload as unknown as DeviceReadingPayload);
         }
-        if (msg.type === "analysis_complete" && onAnalysisComplete) {
-          onAnalysisComplete(msg.payload as unknown as AnalysisCompletePayload);
+        if (msg.type === "analysis_complete" && onAC) {
+          onAC(msg.payload as unknown as AnalysisCompletePayload);
         }
       } catch {
         // Ignore unparseable messages
@@ -81,6 +83,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
 
     ws.onclose = () => {
       if (!mountedRef.current) return;
+      console.log("WebSocket closed, setting isConnected=false");
       setIsConnected(false);
       wsRef.current = null;
 
@@ -98,7 +101,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
       ws.close();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onDeviceReading, onAnalysisComplete]);
+  }, []);
 
   useEffect(() => {
     mountedRef.current = true;

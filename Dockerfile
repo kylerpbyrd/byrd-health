@@ -4,7 +4,7 @@ FROM ghcr.io/home-assistant/base:latest
 LABEL \
   io.hass.version="2.0.0" \
   io.hass.type="addon" \
-  io.hass.arch="aarch64|amd64|armhf|armv7"
+  io.hass.arch="aarch64|amd64"
 
 # Install Python
 RUN apk add --no-cache python3 py3-pip nodejs npm openssl

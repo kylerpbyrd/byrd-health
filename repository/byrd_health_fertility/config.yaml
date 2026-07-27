@@ -8,8 +8,9 @@ description: >-
 url: "https://github.com/kylerpbyrd/byrd-health"
 image: ghcr.io/kylerpbyrd/byrd-health-fertility:main
 arch:
-  - amd64
   - aarch64
+  - amd64
+  # armhf and armv7 are not currently built
 startup: application
 boot: auto
 ingress: true

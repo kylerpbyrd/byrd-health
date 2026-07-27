@@ -7,10 +7,9 @@ description: >-
   the sympto-thermal method. Powered by Byrd Health.
 url: "https://github.com/kylerpbyrd/byrd-health"
 arch:
-  - amd64
   - aarch64
-  - armhf
-  - armv7
+  - amd64
+  # armhf and armv7 are not currently built
 startup: application
 boot: auto
 ingress: true
