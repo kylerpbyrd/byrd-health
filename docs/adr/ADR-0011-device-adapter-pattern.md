@@ -97,10 +97,12 @@ packages/
 The web_api adds device endpoints:
 
 ```
-GET  /api/v1/fertility/devices              # List registered devices
-POST /api/v1/fertility/devices/{id}/read    # Trigger a reading
-GET  /api/v1/fertility/devices/{id}/status  # Connection status
+GET  /api/v1/fertility/devices                  # List registered devices
+POST /api/v1/fertility/devices/read             # Trigger readings on all devices
+GET  /api/v1/fertility/devices/{device_id}/status  # Connection status
 ```
+
+> **Note:** The original ADR specified per-device read endpoints via `POST /api/v1/fertility/devices/{id}/read`. The implementation uses a bulk read-all pattern via `POST /api/v1/fertility/devices/read` for simplicity. A future enhancement could add per-device read (`GET /api/v1/fertility/devices/{device_id}` or `POST /api/v1/fertility/devices/{device_id}/read`) if needed.
 
 The entry form pre-fills temperature from the selected device.
 

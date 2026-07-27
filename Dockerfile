@@ -2,6 +2,8 @@ FROM ghcr.io/home-assistant/base:latest
 
 # Labels for HA Supervisor
 LABEL \
+  io.hass.name="Byrd Health Fertility Tracker" \
+  io.hass.description="Privacy-first fertility intelligence platform" \
   io.hass.version="2.0.0" \
   io.hass.type="addon" \
   io.hass.arch="aarch64|amd64"

@@ -1,7 +1,8 @@
 from datetime import date, datetime, time
+from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ProfileCreate(BaseModel):
@@ -23,9 +24,22 @@ class ProfileResponse(BaseModel):
     interpretation_method: str
     is_active: bool
     created_at: datetime
-    updated_at: datetime | None
+    updated_at: datetime | None = None
 
     model_config = {"from_attributes": True}
+
+    @model_validator(mode="before")
+    @classmethod
+    def _safe_from_orm(cls, data: Any) -> Any:
+        if isinstance(data, dict) or not hasattr(data, "__dict__"):
+            return data
+        result: dict[str, Any] = {}
+        for field_name in cls.model_fields:
+            try:
+                result[field_name] = getattr(data, field_name)
+            except Exception:
+                pass
+        return result
 
 
 class CycleCreate(BaseModel):
@@ -57,10 +71,10 @@ class TempResponse(BaseModel):
     cycle_id: UUID
     date: date
     temp_value: float
-    time_taken: time | None
+    time_taken: time | None = None
     is_discarded: bool
-    discard_reason: str
-    notes: str
+    discard_reason: str | None = ""
+    notes: str | None = ""
 
     model_config = {"from_attributes": True}
 
@@ -69,13 +83,13 @@ class SignsResponse(BaseModel):
     id: UUID
     cycle_id: UUID
     date: date
-    menstrual_flow: str
-    cervical_mucus: str
-    cervical_position: str
-    cervical_firmness: str
-    cervical_opening: str
-    opk_result: str
-    notes: str
+    menstrual_flow: str | None = ""
+    cervical_mucus: str | None = ""
+    cervical_position: str | None = ""
+    cervical_firmness: str | None = ""
+    cervical_opening: str | None = ""
+    opk_result: str | None = ""
+    notes: str | None = ""
 
     model_config = {"from_attributes": True}
 
@@ -98,22 +112,35 @@ class EntryResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class WarningItem(BaseModel):
+    type: str
+    message: str
+
+
 class InsightsResponse(BaseModel):
-    id: UUID
-    cycle_id: UUID
-    coverline: float | None
-    ovulation_date: date | None
-    ovulation_confirmed: bool
-    ovulation_method: str
-    fertile_start_date: date | None
-    fertile_end_date: date | None
-    post_ovulatory_infertile_date: date | None
-    luteal_length: int | None
-    luteal_phase_short: bool
-    pregnancy_indicator: bool
-    consecutive_elevated_temps: int
-    engine_version: str
-    computed_at: datetime
+    id: UUID | None = None
+    cycle_id: UUID | None = None
+    coverline: float | None = None
+    ovulation_date: date | None = None
+    ovulation_confirmed: bool = False
+    ovulation_method: str = ""
+    fertile_start_date: date | None = None
+    fertile_end_date: date | None = None
+    post_ovulatory_infertile_date: date | None = None
+    luteal_length: int | None = None
+    luteal_phase_short: bool = False
+    pregnancy_indicator: bool = False
+    consecutive_elevated_temps: int = 0
+    engine_version: str = "1.0.0"
+    computed_at: datetime | None = None
+    cycle_day: int = 1
+    phase: str = "pre_ovulatory"
+    ovulation_confidence: str = "none"
+    fertile_start: date | None = None
+    fertile_end: date | None = None
+    next_period_date: date | None = None
+    avg_cycle_length: int | None = None
+    warnings: list[WarningItem] = []
 
     model_config = {"from_attributes": True}
 

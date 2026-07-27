@@ -1,20 +1,20 @@
-from datetime import date, datetime, time
+from datetime import date
 from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
 
+from data_service.schemas import (
+    EntryResponse,
+    InsightsResponse,
+    ProfileResponse,
+    SignsResponse,
+    SymptomResponse,
+    TempResponse,
+    WarningItem,
+)
 
-class ProfileResponse(BaseModel):
-    id: UUID
-    name: str
-    slug: str
-    temp_unit: str
-    interpretation_method: str
-    is_active: bool
-    created_at: datetime
-
-    model_config = {"from_attributes": True}
+InsightsDataResponse = InsightsResponse
 
 
 class ProfileExportResponse(BaseModel):
@@ -34,55 +34,6 @@ class CycleExportItem(BaseModel):
     fertility_signs: list["SignsResponse"]
     symptoms: list["SymptomResponse"]
     insights: Optional["InsightsDataResponse"] = None
-
-
-class TempResponse(BaseModel):
-    id: UUID
-    cycle_id: UUID
-    date: date
-    temp_value: float
-    time_taken: time | None = None
-    is_discarded: bool
-    discard_reason: str | None = ""
-    notes: str | None = ""
-
-    model_config = {"from_attributes": True}
-
-
-class SignsResponse(BaseModel):
-    id: UUID
-    cycle_id: UUID
-    date: date
-    menstrual_flow: str | None = ""
-    cervical_mucus: str | None = ""
-    cervical_position: str | None = ""
-    cervical_firmness: str | None = ""
-    cervical_opening: str | None = ""
-    opk_result: str | None = ""
-    notes: str | None = ""
-
-    model_config = {"from_attributes": True}
-
-
-class SymptomResponse(BaseModel):
-    id: UUID
-    cycle_id: UUID
-    date: date
-    symptom_type: str
-    severity: int
-
-    model_config = {"from_attributes": True}
-
-
-class EntryResponse(BaseModel):
-    temperature: TempResponse | None = None
-    signs: SignsResponse | None = None
-    symptoms: list[SymptomResponse] = []
-
-
-class WarningItem(BaseModel):
-    type: str
-    message: str
 
 
 class CycleListItem(BaseModel):
@@ -111,46 +62,6 @@ class CycleDetailResponse(BaseModel):
     signs: list[SignsResponse] = []
     symptoms: list[SymptomResponse] = []
     insights: Optional["InsightsDataResponse"] = None
-
-
-class InsightsDataResponse(BaseModel):
-    id: UUID
-    cycle_id: UUID
-    coverline: float | None = None
-    ovulation_date: date | None = None
-    ovulation_confirmed: bool = False
-    ovulation_confidence: str = "none"
-    ovulation_method: str = ""
-    fertile_start_date: date | None = None
-    fertile_end_date: date | None = None
-    post_ovulatory_infertile_date: date | None = None
-    luteal_length: int | None = None
-    luteal_phase_short: bool = False
-    pregnancy_indicator: bool = False
-    consecutive_elevated_temps: int = 0
-    engine_version: str = "1.0.0"
-    computed_at: datetime | None = None
-
-    model_config = {"from_attributes": True}
-
-
-class InsightsResponse(BaseModel):
-    cycle_day: int
-    phase: str
-    coverline: float | None = None
-    ovulation_date: date | None = None
-    ovulation_confirmed: bool = False
-    ovulation_confidence: str = "none"
-    ovulation_method: str = ""
-    fertile_start: date | None = None
-    fertile_end: date | None = None
-    luteal_length: int | None = None
-    luteal_phase_short: bool = False
-    pregnancy_indicator: bool = False
-    next_period_date: date | None = None
-    avg_cycle_length: int | None = None
-    warnings: list[WarningItem] = []
-    engine_version: str = "1.0.0"
 
 
 class ChartDataResponse(BaseModel):

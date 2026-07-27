@@ -65,7 +65,7 @@ When encryption is implemented:
 Master Key (from HA secrets / ByrdOS keychain)
         │
         ▼
-    Key derivation (HKDF)
+    Key derivation (SHA-256 of `SECRET_KEY + profile UUID`)
         │
         ▼
     Profile Encryption Keys (per-profile, stored encrypted)
@@ -79,6 +79,8 @@ Master Key (from HA secrets / ByrdOS keychain)
 ```
 
 Encrypted columns use AES-256-GCM with per-row initialization vectors. Decryption happens in the Data Service layer. The API layer never handles encryption directly.
+
+> **Note:** A future enhancement could upgrade to HKDF for stronger key derivation. The current implementation uses SHA-256 (concatenating the master secret with the profile UUID) to derive per-profile encryption keys.
 
 ### 2.4 Privacy Principles
 
