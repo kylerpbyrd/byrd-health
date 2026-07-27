@@ -171,6 +171,31 @@ class PregnancyCreate(BaseModel):
     ovulation_date: str | None = None
 
 
+class SymptomCatalogResponse(BaseModel):
+    id: UUID
+    name: str
+    category: str
+    severity_scale: int
+    model_config = {"from_attributes": True}
+
+
+class MedicationCreate(BaseModel):
+    name: str
+    dosage: str | None = None
+    schedule: str = "as_needed"
+    notes: str | None = None
+
+
+class MedicationResponse(BaseModel):
+    id: UUID
+    name: str
+    dosage: str | None = None
+    schedule: str
+    taken_at: datetime
+    notes: str | None = None
+    model_config = {"from_attributes": True}
+
+
 class PregnancyUpdate(BaseModel):
     notes: str | None = None
     is_active: bool | None = None
