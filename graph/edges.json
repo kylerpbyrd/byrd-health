@@ -474,12 +474,6 @@
     "description": "ADR-0012 references the WebSocket protocol specification at docs/specs/WEBSOCKET_PROTOCOL.md"
   },
   {
-    "source": "service:pregnancy-engine",
-    "target": "service:data-service",
-    "relationship": "DEPENDS_ON",
-    "description": "Pregnancy Engine queries pregnancy records through Data Service"
-  },
-  {
     "source": "service:web-api",
     "target": "service:pregnancy-engine",
     "relationship": "DEPENDS_ON",

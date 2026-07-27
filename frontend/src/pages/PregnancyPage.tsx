@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/Skeleton";
-import { fetchPregnancy, startPregnancy, updatePregnancy, fetchCycles } from "@/lib/api";
+import { usePregnancy, useStartPregnancy, useUpdatePregnancy } from "@/hooks/usePregnancy";
+import { useCycles } from "@/hooks/useCycles";
 import { formatDate } from "@/lib/utils";
 import { Baby, Calendar } from "lucide-react";
-import type { PregnancyResponse, Cycle } from "@/types/fertility";
 
 const TRIMESTER_INFO: Record<number, { title: string; milestones: string[] }> = {
   1: {
@@ -67,112 +67,90 @@ function SkeletonLoader() {
 
 export default function PregnancyPage() {
   const navigate = useNavigate();
-  const [pregnancy, setPregnancy] = useState<PregnancyResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: pregnancy, isLoading, isError, refetch } = usePregnancy();
+  const { data: cycles = [] } = useCycles();
+  const startMutation = useStartPregnancy();
+  const updateMutation = useUpdatePregnancy();
+
   const [showForm, setShowForm] = useState(false);
-  const [cycles, setCycles] = useState<Cycle[]>([]);
   const [selectedCycleId, setSelectedCycleId] = useState("");
   const [lmpDate, setLmpDate] = useState("");
   const [ovulationDate, setOvulationDate] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [notes, setNotes] = useState("");
-  const [savingNotes, setSavingNotes] = useState(false);
-
-  const loadPregnancy = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchPregnancy();
-      if (data && data.id) {
-        setPregnancy(data);
-        setNotes(data.notes ?? "");
-      } else {
-        setPregnancy(null);
-      }
-    } catch {
-      setPregnancy(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    loadPregnancy();
-  }, [loadPregnancy]);
+    if (pregnancy) {
+      setNotes(pregnancy.notes ?? "");
+    }
+  }, [pregnancy]);
 
-  const handleStartTracking = async () => {
+  const handleStartTracking = () => {
     if (!selectedCycleId || !lmpDate) {
       toast.error("Please select a cycle and enter your LMP date.");
       return;
     }
-    setSubmitting(true);
-    try {
-      const data = await startPregnancy({
+    startMutation.mutate(
+      {
         cycle_id: selectedCycleId,
         lmp_date: lmpDate,
         ...(ovulationDate ? { ovulation_date: ovulationDate } : {}),
-      });
-      setPregnancy(data);
-      setNotes(data.notes ?? "");
-      setShowForm(false);
-      toast.success("Pregnancy tracking started!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start pregnancy tracking");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleToggleForm = async () => {
-    if (!showForm) {
-      try {
-        const data = await fetchCycles();
-        setCycles(data);
-        setShowForm(true);
-      } catch {
-        toast.error("Failed to load cycles");
+      },
+      {
+        onSuccess: () => {
+          setShowForm(false);
+          toast.success("Pregnancy tracking started!");
+        },
+        onError: (err) => {
+          toast.error(err.message || "Failed to start pregnancy tracking");
+        },
       }
-    } else {
-      setShowForm(false);
-    }
+    );
   };
 
-  const handleSaveNotes = async () => {
-    setSavingNotes(true);
-    try {
-      const data = await updatePregnancy({ notes });
-      setPregnancy(data);
-      toast.success("Notes saved");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save notes");
-    } finally {
-      setSavingNotes(false);
-    }
+  const handleToggleForm = () => {
+    setShowForm(!showForm);
   };
 
-  const handleEndTracking = async () => {
+  const handleSaveNotes = () => {
+    updateMutation.mutate(
+      { notes },
+      {
+        onSuccess: () => {
+          toast.success("Notes saved");
+        },
+        onError: (err) => {
+          toast.error(err.message || "Failed to save notes");
+        },
+      }
+    );
+  };
+
+  const handleEndTracking = () => {
     if (!window.confirm("Are you sure you want to end pregnancy tracking? This cannot be undone.")) {
       return;
     }
-    try {
-      await updatePregnancy({ is_active: false });
-      setPregnancy(null);
-      setNotes("");
-      toast.success("Pregnancy tracking ended");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to end tracking");
-    }
+    updateMutation.mutate(
+      { is_active: false },
+      {
+        onSuccess: () => {
+          setNotes("");
+          toast.success("Pregnancy tracking ended");
+        },
+        onError: (err) => {
+          toast.error(err.message || "Failed to end tracking");
+        },
+      }
+    );
   };
 
-  if (loading) return <SkeletonLoader />;
+  if (isLoading) return <SkeletonLoader />;
 
-  if (error) {
+  if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
         <Baby className="h-12 w-12 text-muted-foreground mb-4" />
-        <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={loadPregnancy}>Retry</Button>
+        <p className="text-muted-foreground mb-4">Failed to load pregnancy data</p>
+        <Button onClick={() => refetch()}>Retry</Button>
       </div>
     );
   }
@@ -247,8 +225,8 @@ export default function PregnancyPage() {
             </div>
 
             <div className="flex gap-2 pt-2">
-              <Button onClick={handleStartTracking} disabled={submitting}>
-                {submitting ? "Starting..." : "Start Tracking"}
+              <Button onClick={handleStartTracking} disabled={startMutation.isPending}>
+                {startMutation.isPending ? "Starting..." : "Start Tracking"}
               </Button>
               <Button variant="ghost" onClick={() => setShowForm(false)}>
                 Cancel
@@ -336,8 +314,8 @@ export default function PregnancyPage() {
                 onChange={(e) => setNotes(e.target.value)}
               />
               <div className="flex gap-2">
-                <Button onClick={handleSaveNotes} disabled={savingNotes} size="sm">
-                  {savingNotes ? "Saving..." : "Save Notes"}
+                <Button onClick={handleSaveNotes} disabled={updateMutation.isPending} size="sm">
+                  {updateMutation.isPending ? "Saving..." : "Save Notes"}
                 </Button>
               </div>
             </CardContent>
