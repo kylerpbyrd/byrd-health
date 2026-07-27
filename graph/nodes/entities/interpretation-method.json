@@ -1,0 +1,10 @@
+{
+  "id": "entity:interpretation-method",
+  "type": "entity",
+  "label": "Interpretation Method",
+  "description": "Fertility awareness method (standard or conservative).",
+  "source": "ADR-0004",
+  "properties": {
+    "key_fields": []
+  }
+}

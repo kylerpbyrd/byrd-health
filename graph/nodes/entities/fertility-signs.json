@@ -2,11 +2,11 @@
   "id": "entity:fertility-signs",
   "type": "entity",
   "label": "FertilitySigns",
-  "description": "Daily fertility observations: cervical mucus, cervix position, OPK results. Table: fertility_signs.",
+  "description": "Daily fertility observations: menstrual flow, cervical mucus, cervical position/firmness/opening, OPK results. Table: fertility_signs.",
   "source": "ADR-0003",
   "properties": {
     "table": "fertility_signs",
     "package": "data_service",
-    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "mucus_value", "cervix_position", "opk_result"]
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "menstrual_flow", "cervical_mucus", "cervical_position", "cervical_firmness", "cervical_opening", "opk_result"]
   }
 }

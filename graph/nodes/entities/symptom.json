@@ -7,6 +7,6 @@
   "properties": {
     "table": "symptoms",
     "package": "data_service",
-    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "symptom_type", "severity", "notes"]
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "symptom_type", "severity"]
   }
 }

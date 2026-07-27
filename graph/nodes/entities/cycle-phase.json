@@ -1,0 +1,10 @@
+{
+  "id": "entity:cycle-phase",
+  "type": "entity",
+  "label": "Cycle Phase",
+  "description": "Computed cycle phase (menstruation, pre_ovulatory, fertile, ovulation, luteal, post_ovulatory).",
+  "source": "ADR-0007",
+  "properties": {
+    "key_fields": []
+  }
+}

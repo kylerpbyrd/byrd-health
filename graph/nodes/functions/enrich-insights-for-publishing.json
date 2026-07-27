@@ -1,0 +1,6 @@
+{
+  "id": "function:enrich-insights-for-publishing",
+  "type": "function",
+  "label": "Enrich Insights for Publishing",
+  "description": "Transforms raw cycle insights into HA-publishable enriched format."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "document:migration-plan",
+  "type": "document",
+  "label": "Migration Plan",
+  "description": "Plan for migrating legacy data and features to the Byrd Health platform.",
+  "path": "docs/archive/MIGRATION_PLAN.md"
+}

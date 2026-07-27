@@ -1,0 +1,10 @@
+{
+  "id": "entity:device-reading",
+  "type": "entity",
+  "label": "Device Reading",
+  "description": "Temperature reading from a connected device adapter.",
+  "source": "ADR-0011",
+  "properties": {
+    "key_fields": []
+  }
+}

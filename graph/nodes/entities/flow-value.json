@@ -1,0 +1,10 @@
+{
+  "id": "entity:flow-value",
+  "type": "entity",
+  "label": "Menstrual Flow Value",
+  "description": "Menstrual flow observation value (none, spotting, light, medium, heavy).",
+  "source": "ADR-0003",
+  "properties": {
+    "key_fields": []
+  }
+}

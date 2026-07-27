@@ -1,0 +1,10 @@
+{
+  "id": "entity:temp-unit",
+  "type": "entity",
+  "label": "Temperature Unit",
+  "description": "Temperature unit preference (F or C).",
+  "source": "ADR-0004",
+  "properties": {
+    "key_fields": []
+  }
+}

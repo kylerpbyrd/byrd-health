@@ -1,0 +1,10 @@
+{
+  "id": "entity:opk-value",
+  "type": "entity",
+  "label": "OPK Result Value",
+  "description": "Ovulation predictor kit result (negative, positive, invalid).",
+  "source": "ADR-0003",
+  "properties": {
+    "key_fields": []
+  }
+}

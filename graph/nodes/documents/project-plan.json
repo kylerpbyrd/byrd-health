@@ -1,0 +1,7 @@
+{
+  "id": "document:project-plan",
+  "type": "document",
+  "label": "Project Plan",
+  "description": "Overall project plan for the Byrd Health fertility intelligence platform.",
+  "path": "PROJECTPLAN.md"
+}

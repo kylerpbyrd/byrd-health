@@ -1,0 +1,10 @@
+{
+  "id": "entity:mucus-value",
+  "type": "entity",
+  "label": "Cervical Mucus Value",
+  "description": "Cervical mucus observation value (none, sticky, creamy, egg_white, watery).",
+  "source": "ADR-0003",
+  "properties": {
+    "key_fields": []
+  }
+}

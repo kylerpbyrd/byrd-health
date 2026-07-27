@@ -7,6 +7,6 @@
   "properties": {
     "table": "cycles",
     "package": "data_service",
-    "key_fields": ["id (UUID)", "profile_id (FK)", "start_date", "end_date", "is_archived"]
+    "key_fields": ["id (UUID)", "profile_id (FK)", "start_date", "end_date", "cycle_length", "notes"]
   }
 }

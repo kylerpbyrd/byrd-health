@@ -1,0 +1,7 @@
+{
+  "id": "document:legacy-review",
+  "type": "document",
+  "label": "Legacy Review",
+  "description": "Review of the legacy fertility tracking application for migration planning.",
+  "path": "docs/archive/LEGACY_REVIEW.md"
+}

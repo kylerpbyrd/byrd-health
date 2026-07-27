@@ -1,0 +1,7 @@
+{
+  "id": "document:architecture-recommendations",
+  "type": "document",
+  "label": "Architecture Recommendations",
+  "description": "Recommendations for the platform architecture based on legacy review.",
+  "path": "docs/archive/ARCHITECTURE_RECOMMENDATIONS.md"
+}

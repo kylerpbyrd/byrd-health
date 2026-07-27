@@ -1,0 +1,8 @@
+{
+  "id": "milestone:phase-4",
+  "type": "milestone",
+  "label": "Phase 4",
+  "description": "Platform Expansion — multi-device, notifications, ByrdOS preparation.",
+  "status": "planned",
+  "phase": 4
+}

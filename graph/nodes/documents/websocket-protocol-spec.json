@@ -1,0 +1,7 @@
+{
+  "id": "document:websocket-protocol-spec",
+  "type": "document",
+  "label": "WebSocket Protocol Specification",
+  "description": "Specification for the WebSocket protocol used for real-time device readings and analysis updates.",
+  "path": "docs/specs/WEBSOCKET_PROTOCOL.md"
+}

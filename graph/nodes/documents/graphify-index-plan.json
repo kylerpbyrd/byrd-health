@@ -1,0 +1,7 @@
+{
+  "id": "document:graphify-index-plan",
+  "type": "document",
+  "label": "Graphify Index Plan",
+  "description": "Plan for indexing the codebase into the Graphify knowledge graph.",
+  "path": "docs/archive/GRAPHIFY_INDEX_PLAN.md"
+}

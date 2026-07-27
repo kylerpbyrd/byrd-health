@@ -7,6 +7,6 @@
   "properties": {
     "table": "temperatures",
     "package": "data_service",
-    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "value", "time_taken", "is_bbt"]
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "date", "temp_value", "time_taken", "is_discarded", "discard_reason", "notes"]
   }
 }

@@ -1,0 +1,7 @@
+{
+  "id": "document:audit-response",
+  "type": "document",
+  "label": "Audit Response",
+  "description": "Response and action plan for audit findings.",
+  "path": "docs/audits/AUDIT_RESPONSE.md"
+}

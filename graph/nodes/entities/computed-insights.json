@@ -2,11 +2,11 @@
   "id": "entity:computed-insights",
   "type": "entity",
   "label": "ComputedInsights",
-  "description": "Algorithmically derived insights for a cycle: coverline, ovulation date, fertile window, predictions. Table: computed_insights.",
+  "description": "Algorithmically derived insights for a cycle: coverline, ovulation date, fertile window, luteal phase, pregnancy indicator. Table: computed_insights.",
   "source": "ADR-0003, ADR-0007",
   "properties": {
     "table": "computed_insights",
     "package": "data_service",
-    "key_fields": ["id (UUID)", "cycle_id (FK)", "coverline_value", "ovulation_date", "fertile_window_start", "fertile_window_end", "predicted_next_period"]
+    "key_fields": ["id (UUID)", "cycle_id (FK)", "coverline", "ovulation_date", "ovulation_confirmed", "ovulation_method", "fertile_start_date", "fertile_end_date", "post_ovulatory_infertile_date", "luteal_length", "luteal_phase_short", "pregnancy_indicator", "consecutive_elevated_temps", "engine_version", "computed_at"]
   }
 }
