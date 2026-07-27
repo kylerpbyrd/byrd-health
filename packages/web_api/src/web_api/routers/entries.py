@@ -42,7 +42,18 @@ class EntryRequest(BaseModel):
     notes: str = ""
 
 
-@router.post("/", response_model=EntryResponse, status_code=201)
+@router.post(
+    "/",
+    response_model=EntryResponse,
+    status_code=201,
+    summary="Create a daily entry",
+    description="Creates or updates a daily fertility entry including temperature, signs, and symptoms. Triggers cycle analysis on completion.",
+    responses={
+        201: {"description": "Entry created"},
+        400: {"description": "Entry date before current cycle start"},
+        422: {"description": "Temperature out of valid range"},
+    },
+)
 async def create_entry(
     entry: EntryRequest,
     profile: Profile = Depends(get_active_profile),
@@ -183,7 +194,16 @@ async def create_entry(
     )
 
 
-@router.get("/today", response_model=EntryResponse)
+@router.get(
+    "/today",
+    response_model=EntryResponse,
+    summary="Get today's entry",
+    description="Returns the entry data for the current date.",
+    responses={
+        200: {"description": "Today's entry"},
+        404: {"description": "No data found for today"},
+    },
+)
 async def get_today_entry(
     profile: Profile = Depends(get_active_profile),
     data_svc: DataService = Depends(get_data_service),

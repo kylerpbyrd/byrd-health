@@ -38,7 +38,17 @@ def _export_phase(engine_phase: str) -> str:
     return _PHASE_MAP.get(engine_phase, engine_phase)
 
 
-@router.get("/", response_model=CalendarResponse)
+@router.get(
+    "/",
+    response_model=CalendarResponse,
+    summary="Get calendar data",
+    description="Returns a month-by-month fertility calendar view with phases, temperatures, signs, and cycle markers.",
+    responses={
+        200: {"description": "Calendar data"},
+        404: {"description": "Profile not found"},
+        422: {"description": "Invalid month format"},
+    },
+)
 async def get_calendar(
     month: str = Query(..., pattern=r"^\d{4}-\d{2}$"),
     profile_id: UUID | None = Query(None),

@@ -28,7 +28,15 @@ class NewCycleRequest(BaseModel):
     start_date: date
 
 
-@router.get("/", response_model=CycleListResponse)
+@router.get(
+    "/",
+    response_model=CycleListResponse,
+    summary="List all cycles",
+    description="Returns all cycles for the active profile with summary insights.",
+    responses={
+        200: {"description": "List of cycles"},
+    },
+)
 async def list_cycles(
     profile: Profile = Depends(get_active_profile),
     data_svc: DataService = Depends(get_data_service),
@@ -56,7 +64,15 @@ async def list_cycles(
     return CycleListResponse(cycles=items)
 
 
-@router.get("/current", response_model=CycleDetailResponse)
+@router.get(
+    "/current",
+    response_model=CycleDetailResponse,
+    summary="Get current cycle",
+    description="Returns the active (current) cycle with all entries and insights.",
+    responses={
+        200: {"description": "Current cycle details"},
+    },
+)
 async def get_current_cycle(
     profile: Profile = Depends(get_active_profile),
     data_svc: DataService = Depends(get_data_service),
@@ -65,7 +81,16 @@ async def get_current_cycle(
     return await _build_cycle_detail(data_svc, cycle.id, profile.id)
 
 
-@router.get("/{cycle_id}", response_model=CycleDetailResponse)
+@router.get(
+    "/{cycle_id}",
+    response_model=CycleDetailResponse,
+    summary="Get a cycle",
+    description="Returns a specific cycle by ID with all entries and insights.",
+    responses={
+        200: {"description": "Cycle details"},
+        404: {"description": "Cycle not found"},
+    },
+)
 async def get_cycle(
     cycle_id: UUID,
     profile: Profile = Depends(get_active_profile),
@@ -77,7 +102,16 @@ async def get_cycle(
     return await _build_cycle_detail(data_svc, cycle_id, profile.id)
 
 
-@router.get("/{cycle_id}/chart", response_model=ChartDataResponse)
+@router.get(
+    "/{cycle_id}/chart",
+    response_model=ChartDataResponse,
+    summary="Get cycle chart data",
+    description="Returns chart-ready data for a cycle including temperatures, signs, and interpretive overlays.",
+    responses={
+        200: {"description": "Chart data"},
+        404: {"description": "Cycle not found"},
+    },
+)
 async def get_cycle_chart(
     cycle_id: UUID,
     profile: Profile = Depends(get_active_profile),
@@ -146,7 +180,17 @@ async def get_cycle_chart(
     return result
 
 
-@router.post("/", response_model=CycleDetailResponse, status_code=201)
+@router.post(
+    "/",
+    response_model=CycleDetailResponse,
+    status_code=201,
+    summary="Start a new cycle",
+    description="Closes the current cycle and starts a new one with the given start date.",
+    responses={
+        201: {"description": "New cycle created"},
+        400: {"description": "New cycle start must be after current cycle start"},
+    },
+)
 async def start_new_cycle(
     body: NewCycleRequest,
     profile: Profile = Depends(get_active_profile),
@@ -156,7 +200,7 @@ async def start_new_cycle(
     if body.start_date <= current_cycle.start_date:
         raise HTTPException(
             status_code=400,
-            detail="New cycle start must be after the current cycle start.",
+            detail="New cycle start must be after the current cycle start",
         )
 
     prev_end = body.start_date - __import__("datetime").timedelta(days=1)

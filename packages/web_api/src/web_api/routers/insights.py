@@ -111,7 +111,15 @@ async def _build_insights_response(
     )
 
 
-@router.get("/", response_model=InsightsResponse)
+@router.get(
+    "/",
+    response_model=InsightsResponse,
+    summary="Get fertility insights",
+    description="Returns comprehensive fertility insights for the active profile including phase, fertile window, and predictions.",
+    responses={
+        200: {"description": "Fertility insights"},
+    },
+)
 async def get_insights(
     profile: Profile = Depends(get_active_profile),
     data_svc: DataService = Depends(get_data_service),
@@ -119,7 +127,15 @@ async def get_insights(
     return await _build_insights_response(data_svc, profile.id)
 
 
-@router.post("/reanalyze", response_model=InsightsResponse)
+@router.post(
+    "/reanalyze",
+    response_model=InsightsResponse,
+    summary="Reanalyze current cycle",
+    description="Forces a re-analysis of the current cycle and publishes updated insights.",
+    responses={
+        200: {"description": "Updated insights"},
+    },
+)
 async def reanalyze_insights(
     profile: Profile = Depends(get_active_profile),
     data_svc: DataService = Depends(get_data_service),

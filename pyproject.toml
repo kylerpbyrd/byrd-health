@@ -92,6 +92,7 @@ disable_error_code = ["arg-type", "assignment", "no-any-return", "union-attr", "
 [tool.pytest.ini_options]
 testpaths = [
     "packages/fertility_engine",
+    "packages/pregnancy_engine",
     "packages/data_service",
     "packages/web_api",
     "packages/ha_bridge",
@@ -99,6 +100,7 @@ testpaths = [
 ]
 pythonpath = [
     "packages/fertility_engine/src",
+    "packages/pregnancy_engine/src",
     "packages/data_service/src",
     "packages/web_api/src",
     "packages/ha_bridge/src",

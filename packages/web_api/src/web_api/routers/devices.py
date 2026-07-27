@@ -10,7 +10,14 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get(
+    "/",
+    summary="List devices",
+    description="Returns all registered device adapters and their metadata.",
+    responses={
+        200: {"description": "List of devices"},
+    },
+)
 async def list_devices():
     registry = get_device_registry()
     if registry is None:
@@ -18,12 +25,19 @@ async def list_devices():
     return {"devices": registry.list_adapters()}
 
 
-@router.post("/read")
+@router.post(
+    "/read",
+    summary="Read all devices",
+    description="Triggers a read from all connected devices and broadcasts readings via WebSocket.",
+    responses={
+        200: {"description": "Device readings"},
+        503: {"description": "Device registry not available"},
+    },
+)
 async def read_all_devices():
     registry = get_device_registry()
     if registry is None:
-        raise HTTPException(status_code=503, detail="Device registry not available")
-
+        raise HTTPException(status_code=503, detail="Device registry not available. Try again later.")
     readings = await registry.read_all()
 
     broker = get_ws_broker()
@@ -49,12 +63,20 @@ async def read_all_devices():
     return {"readings": readings}
 
 
-@router.get("/{device_id}/status")
+@router.get(
+    "/{device_id}/status",
+    summary="Get device status",
+    description="Returns the connection status and metadata for a specific device.",
+    responses={
+        200: {"description": "Device status"},
+        404: {"description": "Device not found"},
+        503: {"description": "Device registry not available"},
+    },
+)
 async def get_device_status(device_id: str):
     registry = get_device_registry()
     if registry is None:
-        raise HTTPException(status_code=503, detail="Device registry not available")
-
+        raise HTTPException(status_code=503, detail="Device registry not available. Try again later.")
     adapter = registry.get_adapter(device_id)
     if adapter is None:
         raise HTTPException(status_code=404, detail=f"Device '{device_id}' not found")

@@ -118,9 +118,11 @@ def create_app(lifespan: Callable[..., Any] | None = None) -> FastAPI:
     effective_lifespan = lifespan if lifespan is not None else _lifespan
     app = FastAPI(
         title="Byrd Health API",
-        version="1.0.0",
+        description="Privacy-first fertility intelligence platform. All endpoints require authentication via Home Assistant Ingress.",
+        version="2.1.0",
         lifespan=effective_lifespan,
         docs_url="/docs",
+        redoc_url="/redoc",
         openapi_url="/openapi.json",
     )
 
