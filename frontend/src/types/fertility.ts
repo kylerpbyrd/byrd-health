@@ -249,3 +249,15 @@ export interface CalendarResponse {
   days: CalendarDay[];
   cycles_in_range: CalendarCycleInRange[];
 }
+
+export interface PregnancyResponse {
+  id: string;
+  cycle_id: string;
+  lmp_date: string;
+  due_date: string | null;
+  current_week: number | null;
+  trimester: number | null;
+  days_remaining: number | null;
+  is_active: boolean;
+  notes: string | null;
+}

@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Activity } from "lucide-react";
+import { Activity, Baby, type LucideIcon } from "lucide-react";
 
-const navItems = [
+const navItems: Array<{ to: string; label: string; icon?: LucideIcon }> = [
   { to: "/", label: "Dashboard" },
   { to: "/calendar", label: "Calendar" },
   { to: "/entry", label: "Log Entry" },
   { to: "/history", label: "History" },
+  { to: "/pregnancy", label: "Pregnancy", icon: Baby },
   { to: "/profiles", label: "Profiles" },
   { to: "/settings", label: "Settings" },
 ];
@@ -47,6 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   )
                 }
               >
+                {item.icon && <item.icon className="h-4 w-4" />}
                 {item.label}
               </NavLink>
             ))}

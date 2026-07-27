@@ -12,6 +12,7 @@ import type {
   EntryResponse,
   EntryItem,
   CalendarResponse,
+  PregnancyResponse,
 } from "@/types/fertility";
 
 const INGRESS = (window as any).__INGRESS_PATH__ || "";
@@ -295,5 +296,31 @@ export async function createCycle(startDate: string): Promise<CycleDetailRespons
 export async function fetchCalendar(month: string): Promise<CalendarResponse> {
   const res = await fetch(`${API_BASE}/calendar/?month=${month}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function fetchPregnancy(): Promise<PregnancyResponse> {
+  const res = await fetch(`${API_BASE}/pregnancy`);
+  if (!res.ok) throw new Error("Failed to fetch pregnancy");
+  return res.json();
+}
+
+export async function startPregnancy(data: { cycle_id: string; lmp_date: string; ovulation_date?: string }): Promise<PregnancyResponse> {
+  const res = await fetch(`${API_BASE}/pregnancy`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to start pregnancy tracking");
+  return res.json();
+}
+
+export async function updatePregnancy(data: { notes?: string; is_active?: boolean }): Promise<PregnancyResponse> {
+  const res = await fetch(`${API_BASE}/pregnancy`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update pregnancy");
   return res.json();
 }
