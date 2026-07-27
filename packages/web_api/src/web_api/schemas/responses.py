@@ -85,23 +85,6 @@ class WarningItem(BaseModel):
     message: str
 
 
-class DashboardResponse(BaseModel):
-    phase: str
-    cycle_day: int
-    avg_cycle_length: int | None = None
-    next_period_date: date | None = None
-    fertile_start_date: date | None = None
-    fertile_end_date: date | None = None
-    ovulation_date: date | None = None
-    ovulation_confirmed: bool = False
-    coverline: float | None = None
-    last_temp: float | None = None
-    luteal_length: int | None = None
-    warnings: list[WarningItem] = []
-    today_temp: TempResponse | None = None
-    today_signs: SignsResponse | None = None
-
-
 class CycleListItem(BaseModel):
     id: UUID
     start_date: date

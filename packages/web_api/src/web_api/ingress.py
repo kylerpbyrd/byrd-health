@@ -1,3 +1,6 @@
+# NOTE: This middleware is intentionally duplicated across ha_bridge and web_api
+# to preserve package isolation (ADR-0006).
+
 """Single ingress abstraction for deployment prefix logic.
 
 Every subsystem MUST use `get_application_prefix()` for:

@@ -1,5 +1,5 @@
 from fertility_engine.analysis import analyze_cycle
-from fertility_engine.coverline import compute_coverline, estimate_baseline
+from fertility_engine.coverline import compute_coverline
 from fertility_engine.fertile_window import compute_fertile_window, get_cycle_phase
 from fertility_engine.models import (
     CycleInsights,
@@ -20,7 +20,6 @@ __all__ = [
     "CycleInsights",
     "ProfileSettings",
     "compute_coverline",
-    "estimate_baseline",
     "detect_ovulation",
     "compute_fertile_window",
     "get_cycle_phase",

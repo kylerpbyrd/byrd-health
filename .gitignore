@@ -49,5 +49,11 @@ coverage.xml
 # Tooling
 .opencode/
 
+# Generated test artifacts
+test-results/
+
 # Debug
 docs/api-debug/
+
+# Temp artifacts
+temp_body.json

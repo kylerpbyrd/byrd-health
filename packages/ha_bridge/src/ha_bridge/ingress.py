@@ -1,3 +1,6 @@
+# NOTE: This middleware is intentionally duplicated across ha_bridge and web_api
+# to preserve package isolation (ADR-0006).
+
 from collections.abc import Awaitable, Callable, MutableMapping
 from typing import Any
 
