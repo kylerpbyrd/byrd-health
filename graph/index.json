@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "project": "byrd-health",
-  "last_updated": "2026-07-26T23:00:00Z",
+  "last_updated": "2026-07-26T23:15:00Z",
   "nodes": {
     "services": [
       "fertility-engine",
@@ -26,7 +26,9 @@
       "opk-value",
       "interpretation-method",
       "temp-unit",
-      "pregnancy"
+      "pregnancy",
+      "symptom-catalog",
+      "medication"
     ],
     "agents": [
       "architect",
@@ -107,7 +109,8 @@
       "p3-m3",
       "p3-m4",
       "p3-m5",
-      "phase-4a"
+      "phase-4a",
+      "phase-4b"
     ]
   }
 }

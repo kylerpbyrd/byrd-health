@@ -1,0 +1,10 @@
+{
+  "id": "entity:symptom-catalog",
+  "type": "entity",
+  "label": "Symptom Catalog",
+  "description": "Structured symptom reference with categories. 24 seeded symptoms across 6 categories.",
+  "table": "symptom_catalog",
+  "key_fields": ["id", "name", "category", "severity_scale"],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

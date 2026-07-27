@@ -508,5 +508,47 @@
     "target": "entity:pregnancy",
     "relationship": "OWNS",
     "description": "Database Engineer owns the Pregnancy entity"
+  },
+  {
+    "source": "entity:symptom-catalog",
+    "target": "service:data-service",
+    "relationship": "CONTAINED_IN",
+    "description": "Symptom Catalog entity managed by Data Service"
+  },
+  {
+    "source": "entity:medication",
+    "target": "service:data-service",
+    "relationship": "CONTAINED_IN",
+    "description": "Medication entity managed by Data Service"
+  },
+  {
+    "source": "milestone:phase-4b",
+    "target": "milestone:phase-4",
+    "relationship": "PRECEDES",
+    "description": "Phase 4B (symptoms + medication) completes before full Phase 4 platform expansion"
+  },
+  {
+    "source": "service:web-api",
+    "target": "entity:symptom-catalog",
+    "relationship": "PRODUCES",
+    "description": "Web API serves symptom catalog via REST endpoints"
+  },
+  {
+    "source": "service:web-api",
+    "target": "entity:medication",
+    "relationship": "PRODUCES",
+    "description": "Web API serves medication records via REST endpoints"
+  },
+  {
+    "source": "agent:backend-engineer",
+    "target": "entity:symptom-catalog",
+    "relationship": "OWNS",
+    "description": "Backend Engineer owns the Symptom Catalog entity"
+  },
+  {
+    "source": "agent:database-engineer",
+    "target": "entity:medication",
+    "relationship": "OWNS",
+    "description": "Database Engineer owns the Medication entity"
   }
 ]

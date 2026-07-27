@@ -1,0 +1,28 @@
+{
+  "id": "milestone:phase-4b",
+  "type": "milestone",
+  "label": "Phase 4B Complete",
+  "description": "Symptoms catalog and medication tracking. Structured symptom picker, medication log, HA entities for pregnancy/medication, WebSocket heartbeat.",
+  "phase": 4,
+  "status": "completed",
+  "depends_on": ["milestone:phase-4a"],
+  "deliverables": [
+    "Symptom catalog data model (24 seeded symptoms)",
+    "Medication tracking data model",
+    "Symptom catalog REST endpoint",
+    "Medication REST endpoints",
+    "Symptom catalog frontend picker",
+    "Medication frontend page",
+    "HA entities: pregnancy (6) + medication (1)",
+    "WebSocket heartbeat (30s interval)"
+  ],
+  "acceptance_criteria": [
+    "307 tests pass",
+    "15 HA entities per profile",
+    "3 new frontend pages (Pregnancy, Medications)",
+    "24 REST endpoints total",
+    "npm run build succeeds"
+  ],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}
