@@ -128,7 +128,7 @@ Compatible with the legacy format (`bbt-fertility-tracker-export` v1) where fiel
 
 ## 4. References
 
-- `docs/LEGACY_REVIEW.md §11` — Legacy security concerns
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md §12` — Security architecture recommendations
+- `docs/archive/LEGACY_REVIEW.md §11` — Legacy security concerns
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md §12` — Security architecture recommendations
 - `ADR-0001` — Platform architecture
 - `ADR-0003` — Database strategy (encryption deferral)

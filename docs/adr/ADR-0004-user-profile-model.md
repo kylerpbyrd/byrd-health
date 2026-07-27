@@ -105,7 +105,7 @@ The transition path is additive — add a `user_accounts` table with a foreign k
 
 ## 4. References
 
-- `docs/LEGACY_REVIEW.md §5.1` — Legacy profile table design
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md §12.2` — Authentication model
+- `docs/archive/LEGACY_REVIEW.md §5.1` — Legacy profile table design
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md §12.2` — Authentication model
 - `ADR-0001` — Platform architecture
 - `ADR-0003` — Database strategy

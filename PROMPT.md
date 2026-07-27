@@ -41,7 +41,7 @@ Treat the legacy application as historical reference material.
 
 Create:
 
-docs/LEGACY_REVIEW.md
+docs/archive/LEGACY_REVIEW.md
 
 Include:
 
@@ -76,7 +76,7 @@ Explain the reasoning behind each decision.
 
 Create:
 
-docs/ARCHITECTURE_RECOMMENDATIONS.md
+docs/archive/ARCHITECTURE_RECOMMENDATIONS.md
 
 Recommend:
 

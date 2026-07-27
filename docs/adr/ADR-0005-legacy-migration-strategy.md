@@ -104,7 +104,7 @@ During Phase 1, the new platform starts with a fresh database. The legacy `bbt.d
 
 ## 5. References
 
-- `docs/LEGACY_REVIEW.md §5` — Legacy schema design
+- `docs/archive/LEGACY_REVIEW.md §5` — Legacy schema design
 - `docs/MIGRATION_PLAN.md §4` — Data migration strategy
 - `ADR-0003` — Database strategy
 - `ADR-0004` — User/profile model

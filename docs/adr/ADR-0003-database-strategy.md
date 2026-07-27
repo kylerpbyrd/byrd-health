@@ -114,7 +114,7 @@ Per decision: encryption at rest is deferred to Phase 2. Phase 1 must:
 
 ## 5. References
 
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md §5` — Database strategy
-- `docs/LEGACY_REVIEW.md §5` — Legacy database design analysis
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md §5` — Database strategy
+- `docs/archive/LEGACY_REVIEW.md §5` — Legacy database design analysis
 - `ADR-0001` — Platform architecture
 - `ADR-0004` — User/profile model

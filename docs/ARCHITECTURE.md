@@ -1,6 +1,6 @@
 # Platform Architecture — Byrd Health
 
-> Based on [ADR-0001](adr/ADR-0001-platform-architecture.md) and [Architecture Recommendations](ARCHITECTURE_RECOMMENDATIONS.md).
+> Based on [ADR-0001](adr/ADR-0001-platform-architecture.md) and [Architecture Recommendations](archive/ARCHITECTURE_RECOMMENDATIONS.md).
 
 ---
 
@@ -12,7 +12,7 @@
 │                                                                   │
 │  ┌──────────────┐                            ┌──────────────┐    │
 │  │ Web Frontend │                            │  HA Bridge   │    │
-│  │ (React SPA)  │                            │ (Phase 2+)   │    │
+│  │ (React SPA)  │                            │ (Phase 2 — Complete) │    │
 │  └──────┬───────┘                            └──────┬───────┘    │
 │         │                                           │            │
 │         ▼                                           ▼            │
@@ -148,6 +148,7 @@ All major decisions are formalized as ADRs in [`docs/adr/`](adr/):
 | [ADR-0010](adr/ADR-0010-graphify-knowledge-architecture.md) | Graphify canonical knowledge graph |
 | [ADR-0011](adr/ADR-0011-device-adapter-pattern.md) | Protocol-based device adapter pattern with DeviceRegistry |
 | [ADR-0012](adr/ADR-0012-websocket-architecture.md) | In-memory WebSocketBroker pub/sub via FastAPI native WebSocket |
+| [ADR-0013](adr/ADR-0013-home-assistant-container-distribution.md) | Home Assistant Container Distribution |
 
 ---
 

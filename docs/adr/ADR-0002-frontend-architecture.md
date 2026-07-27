@@ -111,6 +111,6 @@ The Lovelace card is a **separate component** using Lit + TypeScript. It does no
 
 ## 5. References
 
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md §4` — Frontend recommendations
-- `docs/LEGACY_REVIEW.md §8.10` — Chart.js implementation analysis
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md §4` — Frontend recommendations
+- `docs/archive/LEGACY_REVIEW.md §8.10` — Chart.js implementation analysis
 - `ADR-0001` — Platform architecture

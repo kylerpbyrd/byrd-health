@@ -142,7 +142,7 @@ class CycleInsights(BaseModel):
 
 ## 5. References
 
-- `docs/LEGACY_REVIEW.md §6` — Business logic architecture analysis
-- `docs/LEGACY_REVIEW.md §4.2` — Algorithm feature inventory
+- `docs/archive/LEGACY_REVIEW.md §6` — Business logic architecture analysis
+- `docs/archive/LEGACY_REVIEW.md §4.2` — Algorithm feature inventory
 - `docs/MIGRATION_PLAN.md §2.1` — Algorithm package migration decision
 - `ADR-0001` — Platform architecture

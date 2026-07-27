@@ -103,6 +103,6 @@ HA Bridge and Device Adapters begin in Phase 2-3.
 
 ## 5. References
 
-- `docs/LEGACY_REVIEW.md` — Analysis of existing application
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md` — Detailed architecture recommendations
+- `docs/archive/LEGACY_REVIEW.md` — Analysis of existing application
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md` — Detailed architecture recommendations
 - `PROJECTPLAN.md` — Project phases

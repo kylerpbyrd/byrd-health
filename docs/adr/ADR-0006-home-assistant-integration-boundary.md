@@ -135,6 +135,6 @@ HA Supervisor bashio config
 
 ## 5. References
 
-- `docs/LEGACY_REVIEW.md §4.3` — Legacy HA integration features
-- `docs/ARCHITECTURE_RECOMMENDATIONS.md §6` — HA integration recommendations
+- `docs/archive/LEGACY_REVIEW.md §4.3` — Legacy HA integration features
+- `docs/archive/ARCHITECTURE_RECOMMENDATIONS.md §6` — HA integration recommendations
 - `ADR-0001` — Platform architecture (service boundaries)

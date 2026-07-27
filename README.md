@@ -2,7 +2,7 @@
 
 Privacy-first, self-hosted fertility intelligence platform. Deployed as a Home Assistant Add-on. Architected for future ByrdOS migration.
 
-**Status:** Phase 2 — Production Release Candidate
+**Status:** Phase 3 — Device Integration & Real-Time (Complete)
 
 ---
 
@@ -51,6 +51,7 @@ Privacy-first, self-hosted fertility intelligence platform. Deployed as a Home A
 - `data_service` — Database layer with AES-256-GCM encryption
 - `web_api` — FastAPI REST gateway with Ingress support
 - `ha_bridge` — Home Assistant entity publishing (isolated)
+- `device_adapters` — Pluggable device integration (BLE, ESPHome, HA sensors)
 - `frontend` — React + TypeScript + Tailwind SPA
 
 ---
@@ -118,8 +119,9 @@ cd frontend && npm test
 | [Architecture](docs/ARCHITECTURE.md) | Developers understanding the platform |
 | [Developer Guide](docs/DEVELOPER_GUIDE.md) | Developers setting up locally |
 | [Milestone Guide](docs/MILESTONE_GUIDE.md) | Project roadmap and progress |
-| [Phase 3 Plan](docs/PHASE3_PLAN.md) | Device integration roadmap |
-| [ADR Index](docs/adr/) | Architecture Decision Records (12) |
+| [Phase 3 Execution Plan](docs/PHASE3_EXECUTION_PLAN.md) | Device integration roadmap |
+| [WebSocket Protocol](docs/specs/WEBSOCKET_PROTOCOL.md) | Real-time device communication |
+| [ADR Index](docs/adr/) | Architecture Decision Records (13) |
 | [Changelog](CHANGELOG.md) | Version history |
 
 ---
