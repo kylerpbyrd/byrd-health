@@ -10,7 +10,9 @@ repos:
     rev: v1.11.0
     hooks:
       - id: mypy
-        args: [--strict]
+        # NOTE: --strict removed to align with CI (mypy packages/ without --strict).
+        # The [tool.mypy] config in pyproject.toml controls behavior.
+        # CI also currently does not run ruff-format; format checks are pre-commit only.
         additional_dependencies: []
 
   - repo: https://github.com/pre-commit/pre-commit-hooks

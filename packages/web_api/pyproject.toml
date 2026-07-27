@@ -13,6 +13,7 @@ dependencies = [
     "fertility-engine",
     "data-service",
     "device-adapters",
+    "ha-bridge",
 ]
 
 [project.optional-dependencies]
