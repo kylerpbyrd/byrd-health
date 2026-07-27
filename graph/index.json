@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "project": "byrd-health",
-  "last_updated": "2026-07-26T22:00:00Z",
+  "last_updated": "2026-07-26T23:00:00Z",
   "nodes": {
     "services": [
       "fertility-engine",
@@ -9,7 +9,8 @@
       "web-api",
       "web-frontend",
       "ha-bridge",
-      "device-adapters"
+      "device-adapters",
+      "pregnancy-engine"
     ],
     "entities": [
       "profile",
@@ -24,7 +25,8 @@
       "mucus-value",
       "opk-value",
       "interpretation-method",
-      "temp-unit"
+      "temp-unit",
+      "pregnancy"
     ],
     "agents": [
       "architect",
@@ -104,7 +106,8 @@
       "p3-m2",
       "p3-m3",
       "p3-m4",
-      "p3-m5"
+      "p3-m5",
+      "phase-4a"
     ]
   }
 }

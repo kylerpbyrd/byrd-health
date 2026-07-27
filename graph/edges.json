@@ -472,5 +472,47 @@
     "target": "document:websocket-protocol-spec",
     "relationship": "REFERENCES",
     "description": "ADR-0012 references the WebSocket protocol specification at docs/specs/WEBSOCKET_PROTOCOL.md"
+  },
+  {
+    "source": "service:pregnancy-engine",
+    "target": "service:data-service",
+    "relationship": "DEPENDS_ON",
+    "description": "Pregnancy Engine queries pregnancy records through Data Service"
+  },
+  {
+    "source": "service:web-api",
+    "target": "service:pregnancy-engine",
+    "relationship": "DEPENDS_ON",
+    "description": "Web API uses Pregnancy Engine for pregnancy date calculations"
+  },
+  {
+    "source": "entity:pregnancy",
+    "target": "service:data-service",
+    "relationship": "CONTAINED_IN",
+    "description": "Pregnancy entity managed by Data Service"
+  },
+  {
+    "source": "milestone:phase-4a",
+    "target": "milestone:phase-4",
+    "relationship": "PRECEDES",
+    "description": "Phase 4A (hardening + pregnancy) must complete before full Phase 4 expansion"
+  },
+  {
+    "source": "service:pregnancy-engine",
+    "target": "adr:adr-0001",
+    "relationship": "GOVERNED_BY",
+    "description": "Pregnancy Engine governed by platform architecture ADR-0001"
+  },
+  {
+    "source": "agent:backend-engineer",
+    "target": "service:pregnancy-engine",
+    "relationship": "OWNS",
+    "description": "Backend Engineer owns the Pregnancy Engine service"
+  },
+  {
+    "source": "agent:database-engineer",
+    "target": "entity:pregnancy",
+    "relationship": "OWNS",
+    "description": "Database Engineer owns the Pregnancy entity"
   }
 ]

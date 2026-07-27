@@ -1,0 +1,18 @@
+{
+  "id": "service:pregnancy-engine",
+  "type": "service",
+  "label": "Pregnancy Engine",
+  "description": "Pure Python pregnancy date math package. Due date, current week, trimester, days remaining calculations.",
+  "source": "ADR-0001",
+  "phase": 4,
+  "status": "active",
+  "owner": "backend-engineer",
+  "governed_by": ["adr:adr-0001"],
+  "properties": {
+    "language": "Python 3.12+",
+    "framework_dependencies": "none",
+    "ha_dependency": false
+  },
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

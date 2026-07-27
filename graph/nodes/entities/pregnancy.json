@@ -1,0 +1,10 @@
+{
+  "id": "entity:pregnancy",
+  "type": "entity",
+  "label": "Pregnancy",
+  "description": "Pregnancy tracking record linked to a cycle. Stores LMP date, due date, current week, trimester, and status.",
+  "table": "pregnancies",
+  "key_fields": ["id", "profile_id", "cycle_id", "lmp_date", "due_date", "current_week", "trimester", "is_active", "notes", "created_at", "updated_at"],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}

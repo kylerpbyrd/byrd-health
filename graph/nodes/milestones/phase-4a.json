@@ -1,0 +1,28 @@
+{
+  "id": "milestone:phase-4a",
+  "type": "milestone",
+  "label": "Phase 4A Complete",
+  "description": "Platform hardening and pregnancy tracking. Schema consolidation, OpenAPI docs, branding, pregnancy engine + REST + frontend.",
+  "phase": 4,
+  "status": "completed",
+  "depends_on": ["milestone:phase-3"],
+  "deliverables": [
+    "Schema consolidation (TD-008)",
+    "Pregnancy data model + migration",
+    "Pregnancy engine (calculator)",
+    "Pregnancy REST endpoints",
+    "Pregnancy frontend dashboard",
+    "Cycle explanation (AI template)",
+    "Branding assets for HA Community Store",
+    "OpenAPI documentation for all endpoints",
+    "Error response standardization",
+    "ADR accuracy updates"
+  ],
+  "acceptance_criteria": [
+    "285 tests pass",
+    "npm run build succeeds",
+    "All 10 deliverables complete"
+  ],
+  "created_at": "2026-07-26T00:00:00Z",
+  "updated_at": "2026-07-26T00:00:00Z"
+}
