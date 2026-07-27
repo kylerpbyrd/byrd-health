@@ -6,6 +6,7 @@ from data_service.models import (
     ComputedInsights,
     Cycle,
     FertilitySigns,
+    Pregnancy,
     Profile,
     Symptom,
     Temperature,
@@ -247,3 +248,88 @@ class TestCascadeDeletes:
             select(Temperature).where(Temperature.id == temp.id)
         )
         assert result.scalar_one_or_none() is None
+
+
+class TestPregnancyModel:
+    async def test_create_pregnancy(self, async_session: AsyncSession):
+        profile = Profile(name="PregTest", slug="pregtest")
+        async_session.add(profile)
+        await async_session.flush()
+
+        cycle = Cycle(profile_id=profile.id, start_date=date(2026, 10, 1))
+        async_session.add(cycle)
+        await async_session.flush()
+
+        pregnancy = Pregnancy(
+            profile_id=profile.id,
+            cycle_id=cycle.id,
+            lmp_date=date(2026, 9, 15),
+            due_date=date(2027, 6, 21),
+            current_week=8,
+            trimester=1,
+        )
+        async_session.add(pregnancy)
+        await async_session.flush()
+
+        assert pregnancy.id is not None
+        assert pregnancy.profile_id == profile.id
+        assert pregnancy.cycle_id == cycle.id
+        assert pregnancy.lmp_date == date(2026, 9, 15)
+        assert pregnancy.due_date == date(2027, 6, 21)
+        assert pregnancy.current_week == 8
+        assert pregnancy.trimester == 1
+        assert pregnancy.is_active == True
+        assert pregnancy.notes is None
+
+    async def test_cycle_id_unique(self, async_session: AsyncSession):
+        profile = Profile(name="UniqPreg", slug="uniqpreg")
+        async_session.add(profile)
+        await async_session.flush()
+
+        cycle = Cycle(profile_id=profile.id, start_date=date(2026, 11, 1))
+        async_session.add(cycle)
+        await async_session.flush()
+
+        p1 = Pregnancy(
+            profile_id=profile.id,
+            cycle_id=cycle.id,
+            lmp_date=date(2026, 10, 1),
+        )
+        p2 = Pregnancy(
+            profile_id=profile.id,
+            cycle_id=cycle.id,
+            lmp_date=date(2026, 12, 1),
+        )
+        async_session.add(p1)
+        await async_session.flush()
+        async_session.add(p2)
+        with pytest.raises(Exception):
+            await async_session.flush()
+
+    async def test_pregnancy_profile_relationship(self, async_session: AsyncSession):
+        from sqlalchemy.orm import selectinload
+
+        profile = Profile(name="PregRel", slug="pregrel")
+        async_session.add(profile)
+        await async_session.flush()
+
+        cycle = Cycle(profile_id=profile.id, start_date=date(2026, 12, 1))
+        async_session.add(cycle)
+        await async_session.flush()
+
+        pregnancy = Pregnancy(
+            profile_id=profile.id,
+            cycle_id=cycle.id,
+            lmp_date=date(2026, 11, 20),
+        )
+        async_session.add(pregnancy)
+        await async_session.flush()
+
+        result = await async_session.execute(
+            select(Profile)
+            .options(selectinload(Profile.pregnancies))
+            .where(Profile.id == profile.id)
+        )
+        loaded = result.unique().scalar_one()
+        assert len(loaded.pregnancies) == 1
+        assert loaded.pregnancies[0].lmp_date == date(2026, 11, 20)

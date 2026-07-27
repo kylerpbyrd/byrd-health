@@ -3,7 +3,7 @@ from uuid import UUID
 from data_service.models import Profile
 from data_service.service import DataService
 from fastapi import APIRouter, Depends
-from fertility_engine import get_current_cycle_day, get_cycle_phase, predict_next_period
+from fertility_engine import generate_explanation, get_current_cycle_day, get_cycle_phase, predict_next_period
 from fertility_engine.models import FertileWindowResult
 
 from ..analysis import enrich_insights_for_publishing, run_cycle_analysis
@@ -84,6 +84,12 @@ async def _build_insights_response(
             )
         )
 
+    explanation_text = generate_explanation(
+        {**ins, "cycle_day": cycle_day, "phase": phase},
+        temp_unit=profile.temp_unit,
+        cycle_start_date=cycle.start_date,
+    )
+
     return InsightsResponse(
         cycle_day=cycle_day,
         phase=phase,
@@ -100,6 +106,7 @@ async def _build_insights_response(
         next_period_date=next_period,
         avg_cycle_length=avg_cycle_length,
         warnings=warnings,
+        explanation=explanation_text,
         engine_version=ins.get("engine_version", "1.0.0"),
     )
 

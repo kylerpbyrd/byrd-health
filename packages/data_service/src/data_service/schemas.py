@@ -140,6 +140,7 @@ class InsightsResponse(BaseModel):
     fertile_end: date | None = None
     next_period_date: date | None = None
     avg_cycle_length: int | None = None
+    explanation: str = ""
     warnings: list[WarningItem] = []
 
     model_config = {"from_attributes": True}

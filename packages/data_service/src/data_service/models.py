@@ -28,6 +28,9 @@ class Profile(Base):
     cycles: Mapped[list[Cycle]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
+    pregnancies: Mapped[list["Pregnancy"]] = relationship(
+        back_populates="profile", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Profile(id={self.id}, name={self.name!r})>"
@@ -57,6 +60,9 @@ class Cycle(Base):
     )
     computed_insight: Mapped[ComputedInsights | None] = relationship(
         back_populates="cycle", cascade="all, delete-orphan", uselist=False
+    )
+    pregnancy: Mapped["Pregnancy | None"] = relationship(
+        back_populates="cycle", uselist=False
     )
 
     def __repr__(self) -> str:
@@ -151,3 +157,29 @@ class ComputedInsights(Base):
 
     def __repr__(self) -> str:
         return f"<ComputedInsights(id={self.id}, cycle_id={self.cycle_id})>"
+
+
+class Pregnancy(Base):
+    __tablename__ = "pregnancies"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    profile_id: Mapped[UUID] = mapped_column(
+        ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    cycle_id: Mapped[UUID] = mapped_column(
+        ForeignKey("cycles.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+    lmp_date: Mapped[date] = mapped_column(nullable=False)
+    due_date: Mapped[date | None] = mapped_column(nullable=True)
+    current_week: Mapped[int | None] = mapped_column(nullable=True)
+    trimester: Mapped[int | None] = mapped_column(nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime | None] = mapped_column(onupdate=func.now(), default=None)
+
+    profile: Mapped["Profile"] = relationship(back_populates="pregnancies")
+    cycle: Mapped["Cycle"] = relationship(back_populates="pregnancy")
+
+    def __repr__(self) -> str:
+        return f"<Pregnancy(id={self.id}, profile_id={self.profile_id}, lmp={self.lmp_date})>"

@@ -9,6 +9,7 @@ from .repositories import (
     EntryRepository,
     ExportRepository,
     InsightsRepository,
+    PregnancyRepository,
     ProfileRepository,
 )
 from .schemas import EntryCreate
@@ -22,6 +23,7 @@ class DataService:
         self.cycles = CycleRepository(session)
         self.entries = EntryRepository(session)
         self.insights_repo = InsightsRepository(session)
+        self.pregnancies = PregnancyRepository(session)
         self.exports = ExportRepository(session)
 
     def entries_for(self, profile_id: UUID) -> EntryRepository:

@@ -5,6 +5,7 @@ from data_service.repositories import (
     EntryRepository,
     ExportRepository,
     InsightsRepository,
+    PregnancyRepository,
     ProfileRepository,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -398,3 +399,48 @@ class TestExportRepository:
         export_repo = ExportRepository(async_session)
         data = await export_repo.export_profile(uuid4())
         assert data is None
+
+
+class TestPregnancyRepository:
+    async def test_create(self, async_session: AsyncSession):
+        profile_repo = ProfileRepository(async_session)
+        profile = await profile_repo.create("PregUser")
+        await async_session.commit()
+
+        cycle_repo = CycleRepository(async_session)
+        cycle = await cycle_repo.create(profile.id, date(2026, 1, 10))
+        await async_session.commit()
+
+        repo = PregnancyRepository(async_session)
+        pregnancy = await repo.create(
+            profile.id,
+            cycle.id,
+            date(2026, 1, 10),
+            date(2026, 10, 17),
+        )
+        assert pregnancy.profile_id == profile.id
+        assert pregnancy.cycle_id == cycle.id
+        assert pregnancy.lmp_date == date(2026, 1, 10)
+        assert pregnancy.due_date == date(2026, 10, 17)
+        assert pregnancy.is_active == True
+
+    async def test_get_active(self, async_session: AsyncSession):
+        profile_repo = ProfileRepository(async_session)
+        profile = await profile_repo.create("ActivePreg")
+        await async_session.commit()
+
+        cycle_repo = CycleRepository(async_session)
+        cycle1 = await cycle_repo.create(profile.id, date(2026, 1, 1))
+        cycle2 = await cycle_repo.create(profile.id, date(2026, 3, 1))
+        await async_session.commit()
+
+        repo = PregnancyRepository(async_session)
+        p1 = await repo.create(profile.id, cycle1.id, date(2026, 1, 1))
+        p2 = await repo.create(profile.id, cycle2.id, date(2026, 3, 1))
+        p2.is_active = False
+        await async_session.commit()
+
+        active = await repo.get_active(profile.id)
+        assert active is not None
+        assert active.cycle_id == cycle1.id
+        assert active.is_active == True
