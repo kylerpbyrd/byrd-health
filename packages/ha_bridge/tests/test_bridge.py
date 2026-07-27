@@ -15,7 +15,7 @@ async def test_bridge_publish_delegates(mock_client, sample_insights):
     bridge = HABridge(HABridgeConfig(), mock_client)
     await bridge.publish_insights("alice", "Alice", "F", sample_insights)
 
-    assert len(mock_client.posted_states) == 9
+    assert len(mock_client.posted_states) == 15
     ids = {s["entity_id"] for s in mock_client.posted_states}
     assert "sensor.bbt_alice_cycle_day" in ids
 

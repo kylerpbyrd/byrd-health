@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Any, Literal, cast
 from uuid import UUID
 
@@ -13,6 +13,11 @@ from fertility_engine import (
     predict_next_period,
 )
 from fertility_engine.models import FertileWindowResult
+from pregnancy_engine import (
+    calculate_current_week,
+    calculate_days_remaining,
+    calculate_trimester,
+)
 
 
 async def run_cycle_analysis(
@@ -145,5 +150,31 @@ async def enrich_insights_for_publishing(
     enriched["next_period_date"] = (
         next_period.isoformat() if isinstance(next_period, date) else None
     )
+
+    pregnancy = await data_svc.pregnancies.get_active(profile_id)
+    if pregnancy:
+        current_week = calculate_current_week(pregnancy.lmp_date)
+        trimester = calculate_trimester(current_week)
+        days_left = None
+        if pregnancy.due_date:
+            days_left = calculate_days_remaining(pregnancy.due_date)
+        enriched["pregnancy"] = {
+            "is_active": True,
+            "current_week": current_week,
+            "trimester": trimester,
+            "due_date": pregnancy.due_date.isoformat() if pregnancy.due_date else None,
+            "days_remaining": days_left,
+        }
+
+    medications = await data_svc.medications.list_all(profile_id)
+    if medications:
+        latest = medications[0]
+        med_data: dict[str, Any] = {
+            "name": latest.name,
+            "taken_at": latest.taken_at.isoformat() if isinstance(latest.taken_at, datetime) else str(latest.taken_at),
+        }
+        if latest.dosage:
+            med_data["dosage"] = latest.dosage
+        enriched["last_medication"] = med_data
 
     return enriched

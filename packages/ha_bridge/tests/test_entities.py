@@ -1,5 +1,9 @@
 from ha_bridge.bridge import HABridge, HABridgeConfig
-from ha_bridge.entities import publish_profile_entities
+from ha_bridge.entities import (
+    publish_last_medication_entity,
+    publish_pregnancy_entities,
+    publish_profile_entities,
+)
 
 
 async def test_publish_all_nine_entities(mock_client):
@@ -193,4 +197,133 @@ async def test_bridge_publish_insights_delegates(mock_client, sample_insights):
     bridge = HABridge(HABridgeConfig(), mock_client)
     await bridge.publish_insights("alice", "Alice", "F", sample_insights, "2026-02-01")
 
-    assert len(mock_client.posted_states) == 9
+    assert len(mock_client.posted_states) == 15
+
+
+async def test_pregnancy_entities_published_when_active(mock_client):
+    pregnancy_data = {
+        "is_active": True,
+        "current_week": 20,
+        "trimester": 2,
+        "due_date": "2026-12-15",
+        "days_remaining": 142,
+    }
+    await publish_pregnancy_entities(mock_client, "alice", "Alice", pregnancy_data)
+
+    assert len(mock_client.posted_states) == 5
+
+    ids = {s["entity_id"] for s in mock_client.posted_states}
+    assert ids == {
+        "sensor.bbt_alice_pregnancy_week",
+        "sensor.bbt_alice_pregnancy_trimester",
+        "sensor.bbt_alice_pregnancy_due_date",
+        "sensor.bbt_alice_pregnancy_days_left",
+        "binary_sensor.bbt_alice_pregnancy_active",
+    }
+
+
+async def test_pregnancy_entities_have_correct_values(mock_client):
+    pregnancy_data = {
+        "is_active": True,
+        "current_week": 20,
+        "trimester": 2,
+        "due_date": "2026-12-15",
+        "days_remaining": 142,
+    }
+    await publish_pregnancy_entities(mock_client, "alice", "Alice", pregnancy_data)
+
+    by_id = {s["entity_id"]: s for s in mock_client.posted_states}
+
+    assert by_id["sensor.bbt_alice_pregnancy_week"]["state"] == "20"
+    assert by_id["sensor.bbt_alice_pregnancy_week"]["attributes"]["unit_of_measurement"] == "weeks"
+
+    assert by_id["sensor.bbt_alice_pregnancy_trimester"]["state"] == "2"
+
+    assert by_id["sensor.bbt_alice_pregnancy_due_date"]["state"] == "2026-12-15"
+    assert by_id["sensor.bbt_alice_pregnancy_due_date"]["attributes"]["device_class"] == "date"
+
+    assert by_id["sensor.bbt_alice_pregnancy_days_left"]["state"] == "142"
+    assert by_id["sensor.bbt_alice_pregnancy_days_left"]["attributes"]["unit_of_measurement"] == "days"
+
+    assert by_id["binary_sensor.bbt_alice_pregnancy_active"]["state"] == "on"
+    assert by_id["binary_sensor.bbt_alice_pregnancy_active"]["attributes"]["device_class"] == "presence"
+
+
+async def test_pregnancy_entities_unavailable_when_inactive(mock_client):
+    await publish_pregnancy_entities(mock_client, "alice", "Alice", None)
+
+    for s in mock_client.posted_states:
+        entity_id = s["entity_id"]
+        if "pregnancy_active" in entity_id:
+            assert s["state"] == "off"
+        else:
+            assert s["state"] == "unavailable"
+
+
+async def test_pregnancy_entities_unavailable_when_not_active_flag(mock_client):
+    pregnancy_data = {"is_active": False}
+    await publish_pregnancy_entities(mock_client, "alice", "Alice", pregnancy_data)
+
+    for s in mock_client.posted_states:
+        entity_id = s["entity_id"]
+        if "pregnancy_active" in entity_id:
+            assert s["state"] == "off"
+        else:
+            assert s["state"] == "unavailable"
+
+
+async def test_medication_entity_shows_last_medication(mock_client):
+    medication_data = {
+        "name": "Aspirin",
+        "taken_at": "2026-07-26T08:00:00",
+        "dosage": "81mg",
+    }
+    await publish_last_medication_entity(mock_client, "alice", "Alice", medication_data)
+
+    assert len(mock_client.posted_states) == 1
+
+    med = mock_client.posted_states[0]
+    assert med["entity_id"] == "sensor.bbt_alice_last_medication"
+    assert med["state"] == "Aspirin"
+    assert med["attributes"]["medication_name"] == "Aspirin"
+    assert med["attributes"]["taken_at"] == "2026-07-26T08:00:00"
+    assert med["attributes"]["dosage"] == "81mg"
+    assert med["attributes"]["friendly_name"] == "BBT Alice Last Medication"
+
+
+async def test_medication_entity_unavailable_when_no_data(mock_client):
+    await publish_last_medication_entity(mock_client, "alice", "Alice", None)
+
+    assert len(mock_client.posted_states) == 1
+    med = mock_client.posted_states[0]
+    assert med["entity_id"] == "sensor.bbt_alice_last_medication"
+    assert med["state"] == "unavailable"
+
+
+async def test_bridge_routes_pregnancy_and_medication_from_insights(mock_client):
+    insights = {
+        "cycle_day": 14,
+        "phase": "luteal",
+        "pregnancy": {
+            "is_active": True,
+            "current_week": 12,
+            "trimester": 1,
+            "due_date": "2027-02-10",
+            "days_remaining": 199,
+        },
+        "last_medication": {
+            "name": "Prenatal Vitamin",
+            "taken_at": "2026-07-26T09:00:00",
+            "dosage": "1 tablet",
+        },
+    }
+    bridge = HABridge(HABridgeConfig(), mock_client)
+    await bridge.publish_insights("alice", "Alice", "F", insights)
+
+    by_id = {s["entity_id"]: s for s in mock_client.posted_states}
+    assert "sensor.bbt_alice_pregnancy_week" in by_id
+    assert by_id["sensor.bbt_alice_pregnancy_week"]["state"] == "12"
+    assert "binary_sensor.bbt_alice_pregnancy_active" in by_id
+    assert by_id["binary_sensor.bbt_alice_pregnancy_active"]["state"] == "on"
+    assert "sensor.bbt_alice_last_medication" in by_id
+    assert by_id["sensor.bbt_alice_last_medication"]["state"] == "Prenatal Vitamin"

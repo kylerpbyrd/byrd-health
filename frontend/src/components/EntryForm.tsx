@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSymptomCatalog } from "@/hooks/useSymptomCatalog";
 import type { EntryFormData } from "@/types/fertility";
 
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -122,6 +123,7 @@ export function EntryForm({
   deviceTemp,
   deviceName,
 }: EntryFormProps) {
+  const { data: catalogItems } = useSymptomCatalog();
   const [date, setDate] = useState(TODAY);
   const [tempValue, setTempValue] = useState("");
   const userEditedTemp = useRef(false);
@@ -328,6 +330,43 @@ export function EntryForm({
 
           <div className="space-y-2">
             <Label>Symptoms</Label>
+            {catalogItems && catalogItems.length > 0 && (
+              <div className="mb-3 space-y-2 rounded-md border border-dashed p-3">
+                <p className="text-xs font-medium text-muted-foreground">Quick Add from Catalog</p>
+                {(() => {
+                  const grouped = catalogItems.reduce<Record<string, typeof catalogItems>>((acc, item) => {
+                    (acc[item.category] ??= []).push(item);
+                    return acc;
+                  }, {});
+                  return Object.entries(grouped).map(([category, items]) => (
+                    <div key={category}>
+                      <p className="text-xs font-semibold text-muted-foreground capitalize">
+                        {category}
+                      </p>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {items.map((item) => {
+                          const active = symptoms.includes(item.name);
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => toggleSymptom(item.name)}
+                              className={`inline-flex cursor-pointer items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors ${
+                                active
+                                  ? "border-primary bg-accent text-accent-foreground"
+                                  : "border-input bg-background text-muted-foreground hover:bg-accent/50"
+                              }`}
+                            >
+                              {item.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+            )}
             <div className="flex flex-wrap gap-2">
               {SYMPTOM_LIST.map((sym) => {
                 const checked = symptoms.includes(sym.value);

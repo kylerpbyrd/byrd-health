@@ -137,3 +137,166 @@ async def publish_profile_entities(
     for entity_id, state, attrs in entities:
         await client.post_state(entity_id, state, attrs)
         logger.debug("Published %s = %s", entity_id, state)
+
+
+async def publish_pregnancy_entities(
+    client: HAClient,
+    slug: str,
+    name: str,
+    pregnancy_data: dict[str, Any] | None,
+) -> None:
+    active = bool(pregnancy_data.get("is_active")) if pregnancy_data else False
+
+    if not active:
+        entities: list[tuple[str, str, dict[str, Any]]] = [
+            (
+                f"sensor.bbt_{slug}_pregnancy_week",
+                "unavailable",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Week",
+                    "icon": "mdi:baby-face-outline",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_week",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_trimester",
+                "unavailable",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Trimester",
+                    "icon": "mdi:numeric",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_trimester",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_due_date",
+                "unavailable",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Due Date",
+                    "icon": "mdi:calendar-star",
+                    "device_class": "date",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_due_date",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_days_left",
+                "unavailable",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Days Left",
+                    "icon": "mdi:timer-sand",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_days_left",
+                },
+            ),
+            (
+                f"binary_sensor.bbt_{slug}_pregnancy_active",
+                "off",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Active",
+                    "icon": "mdi:baby-face",
+                    "device_class": "presence",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_active",
+                },
+            ),
+        ]
+    else:
+        week = pregnancy_data.get("current_week", "")
+        trimester = pregnancy_data.get("trimester", "")
+        due_date = pregnancy_data.get("due_date") or ""
+        days_left = pregnancy_data.get("days_remaining")
+        days_left_str = str(days_left) if days_left is not None else ""
+
+        entities = [
+            (
+                f"sensor.bbt_{slug}_pregnancy_week",
+                str(week),
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Week",
+                    "unit_of_measurement": "weeks",
+                    "icon": "mdi:baby-face-outline",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_week",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_trimester",
+                str(trimester),
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Trimester",
+                    "icon": "mdi:numeric",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_trimester",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_due_date",
+                str(due_date),
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Due Date",
+                    "icon": "mdi:calendar-star",
+                    "device_class": "date",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_due_date",
+                },
+            ),
+            (
+                f"sensor.bbt_{slug}_pregnancy_days_left",
+                days_left_str,
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Days Left",
+                    "unit_of_measurement": "days",
+                    "icon": "mdi:timer-sand",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_days_left",
+                },
+            ),
+            (
+                f"binary_sensor.bbt_{slug}_pregnancy_active",
+                "on",
+                {
+                    "friendly_name": f"BBT {name} Pregnancy Active",
+                    "icon": "mdi:baby-face",
+                    "device_class": "presence",
+                    "unique_id": f"byrd_health_{slug}_pregnancy_active",
+                },
+            ),
+        ]
+
+    for entity_id, state, attrs in entities:
+        await client.post_state(entity_id, state, attrs)
+        logger.debug("Published %s = %s", entity_id, state)
+
+
+async def publish_last_medication_entity(
+    client: HAClient,
+    slug: str,
+    name: str,
+    medication_data: dict[str, Any] | None,
+) -> None:
+    if medication_data is None:
+        await client.post_state(
+            f"sensor.bbt_{slug}_last_medication",
+            "unavailable",
+            {
+                "friendly_name": f"BBT {name} Last Medication",
+                "icon": "mdi:pill",
+                "unique_id": f"byrd_health_{slug}_last_medication",
+            },
+        )
+        return
+
+    med_name = medication_data.get("name", "Unknown")
+    state = med_name
+    attrs: dict[str, Any] = {
+        "friendly_name": f"BBT {name} Last Medication",
+        "icon": "mdi:pill",
+        "unique_id": f"byrd_health_{slug}_last_medication",
+        "medication_name": med_name,
+    }
+    taken_at = medication_data.get("taken_at")
+    if taken_at is not None:
+        attrs["taken_at"] = str(taken_at)
+    dosage = medication_data.get("dosage")
+    if dosage:
+        attrs["dosage"] = dosage
+
+    await client.post_state(
+        f"sensor.bbt_{slug}_last_medication",
+        state,
+        attrs,
+    )
+    logger.debug("Published sensor.bbt_%s_last_medication = %s", slug, state)

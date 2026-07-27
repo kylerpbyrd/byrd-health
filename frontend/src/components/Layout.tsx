@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Activity, Baby, type LucideIcon } from "lucide-react";
+import { Activity, Baby, Pill, type LucideIcon } from "lucide-react";
 
 const navItems: Array<{ to: string; label: string; icon?: LucideIcon }> = [
   { to: "/", label: "Dashboard" },
@@ -8,6 +8,7 @@ const navItems: Array<{ to: string; label: string; icon?: LucideIcon }> = [
   { to: "/entry", label: "Log Entry" },
   { to: "/history", label: "History" },
   { to: "/pregnancy", label: "Pregnancy", icon: Baby },
+  { to: "/medications", label: "Meds", icon: Pill },
   { to: "/profiles", label: "Profiles" },
   { to: "/settings", label: "Settings" },
 ];

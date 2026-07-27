@@ -6,7 +6,11 @@ from datetime import date
 from typing import Any
 
 from ha_bridge.client import HAClient
-from ha_bridge.entities import publish_profile_entities
+from ha_bridge.entities import (
+    publish_last_medication_entity,
+    publish_pregnancy_entities,
+    publish_profile_entities,
+)
 from ha_bridge.ingress import IngressMiddleware
 from ha_bridge.notifications import HANotifier, TempReminderScheduler
 from ha_bridge.poller import SensorPoller
@@ -51,6 +55,8 @@ class HABridge:
         temp_unit: str,
         insights: dict[str, Any],
         next_period: str | None = None,
+        pregnancy_data: dict[str, Any] | None = None,
+        medication_data: dict[str, Any] | None = None,
     ) -> None:
         await publish_profile_entities(
             client=self._client,
@@ -60,6 +66,23 @@ class HABridge:
             insights=insights,
             next_period=next_period,
         )
+
+        pregnancy = pregnancy_data or insights.get("pregnancy")
+        await publish_pregnancy_entities(
+            client=self._client,
+            slug=slug,
+            name=name,
+            pregnancy_data=pregnancy,
+        )
+
+        medication = medication_data or insights.get("last_medication")
+        await publish_last_medication_entity(
+            client=self._client,
+            slug=slug,
+            name=name,
+            medication_data=medication,
+        )
+
         await self._check_notifications(slug, insights)
 
     async def start_polling(self, on_reading: Callable[[str, float], Awaitable[None]]) -> None:

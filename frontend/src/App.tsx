@@ -15,6 +15,7 @@ const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 const PregnancyPage = lazy(() => import("@/pages/PregnancyPage"));
 const ProfilesPage = lazy(() => import("@/pages/ProfilesPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const MedicationsPage = lazy(() => import("@/pages/MedicationsPage"));
 
 declare global {
   interface Window {
@@ -54,6 +55,7 @@ export default function App() {
                 <Route path="/history" element={<HistoryPage />} />
                 <Route path="/history/:cycleId" element={<CycleDetailPage />} />
                 <Route path="/profiles" element={<ProfilesPage />} />
+                <Route path="/medications" element={<MedicationsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </Suspense>

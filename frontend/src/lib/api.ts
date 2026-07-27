@@ -324,3 +324,49 @@ export async function updatePregnancy(data: { notes?: string; is_active?: boolea
   if (!res.ok) throw new Error("Failed to update pregnancy");
   return res.json();
 }
+
+export interface SymptomCatalogItem {
+  id: string;
+  name: string;
+  category: string;
+  severity_scale: number;
+}
+
+export async function fetchSymptomCatalog(category?: string): Promise<SymptomCatalogItem[]> {
+  const url = category ? `${API_BASE}/symptoms/catalog?category=${category}` : `${API_BASE}/symptoms/catalog`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch symptom catalog");
+  return res.json();
+}
+
+export interface MedicationLog {
+  id: string;
+  name: string;
+  dosage: string | null;
+  schedule: string;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface CreateMedicationPayload {
+  name: string;
+  dosage?: string;
+  schedule: string;
+  notes?: string;
+}
+
+export async function fetchMedications(): Promise<MedicationLog[]> {
+  const res = await fetch(`${API_BASE}/medications`);
+  if (!res.ok) throw new Error("Failed to fetch medications");
+  return res.json();
+}
+
+export async function createMedication(data: CreateMedicationPayload): Promise<MedicationLog> {
+  const res = await fetch(`${API_BASE}/medications`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to log medication");
+  return res.json();
+}
